@@ -13,7 +13,7 @@ export function ZvazMenu() {
 
   function handler(ev: any) {
     const val: string = ev.target.value;
-    dispatch({type: EActionType.CHANGE_PAGE, payload: {pagePath: val}})
+    dispatch({type: EActionType.CHANGE_PAGE, payload: val})
   }
 
   pages.options.forEach(op => op.callback = handler)

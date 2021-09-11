@@ -1,6 +1,7 @@
 import { WnouT2 } from './utils/WnouLib';
 
 export const PORT_JSON_SERVER = '22102'
+export const API_ADDRESS = `http://localhost:${PORT_JSON_SERVER}/`
 
 export enum EPageValues {
   MAIN = 'Главная',
@@ -20,6 +21,8 @@ export const pages: WnouT2<EPageValues> = {
 export enum EActionType {
   CHANGE_PAGE = 'change_page',
   CARD_LIST_INIT = 'card_list_init',
+  CARDS_ALL_RECEIVED = 'cards_all_received',
+  CARDS_ALL_NOT_RECEIVED = 'cards_all_not_received',
 }
 
 export type ZvazT1 = {
