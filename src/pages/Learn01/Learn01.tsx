@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { API_ADDRESS, EActionType } from '../../consts';
 import { useEffect } from 'react';
 import { RsuvTxJsonServer } from 'rsuv-lib';
+import { bindsAllThunk } from '../../store/bindsSlice';
 
 const cardsThunk = (dispatch: Function) => {
   const server = new RsuvTxJsonServer(API_ADDRESS, 'cards')
@@ -23,7 +24,9 @@ const cardsThunk = (dispatch: Function) => {
 export function Learn01() {
   const dispatch = useDispatch()
   // @ts-ignore
-  const cards = useSelector(state => state.cards)
+  const cards = useSelector(state => state.cards.cards)
+  // @ts-ignore
+  const binds = useSelector(state => state.binds.binds)
 
   const fnCards = (cards0: any) => {
     console.log('!!-!!-!! cards0 {210911165701}\n', cards0); // del+
@@ -33,14 +36,26 @@ export function Learn01() {
     return 0
   }
 
+  const fnBinds = (binds0: any) => {
+    debugger; // del+
+    if (binds0) {
+      return binds0.length
+    }
+    return 0
+  }
+
   useEffect(() => {
     dispatch(cardsThunk)
+    dispatch(bindsAllThunk)
   }, []);
 
-  return (<div className={'learn01-container'}>
-    <ZvazCUDElem/>
-    <ZvazCardList/>
-    <div>count: {fnCards(cards)}</div>
+  return (<div>
+    <div className={'learn01-container'}>
+      <ZvazCUDElem/>
+      <ZvazCardList/>
+    </div>
+    <div>cards count: {fnCards(cards)}</div>
+    <div>binds count: {fnBinds(binds)}</div>
   </div>)
 }
 

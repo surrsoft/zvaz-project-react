@@ -1,42 +1,40 @@
-import { EActionType, pages } from '../consts';
+import { EActionType } from '../consts';
 import { AnyAction } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
+import { bindsSlice } from './bindsSlice';
+import { initialState } from './common';
 
-type CardModel = {
-  id: number,
-  title?: string,
-  comm?: string,
-  body?: string,
-  counter?: number
-}
-
-type T2220 = { pagePath: string, cards: CardModel[] }
-
-const initialState: T2220 = {
-  pagePath: pages.options[0].value,
-  cards: []
-}
-
-const rootReducer = (state: any = initialState, action: AnyAction) => {
-  debugger; // del+
+const cardsReducer = (state: any, action: AnyAction) => {
+  if (state === undefined) {
+    return null
+  }
   switch (action.type) {
     case EActionType.CARDS_ALL_RECEIVED:
       return {...state, cards: action.payload}
     case EActionType.CARDS_ALL_NOT_RECEIVED:
       return state;
+    default:
+      return state
+  }
+}
+
+const mainReducer = (state: any, action: AnyAction) => {
+  if (state === undefined) {
+    return null
+  }
+  switch (action.type) {
     case EActionType.CHANGE_PAGE:
-      debugger; // del+
       return {...state, pagePath: action.payload}
     default:
       return state
   }
 }
 
-const pagePathReducer = (state: any = initialState, action: AnyAction) => {
-  debugger; // del+
-  return state;
-}
-
 export const store = configureStore({
-  reducer: rootReducer
+  reducer: {
+    main: mainReducer,
+    cards: cardsReducer,
+    binds: bindsSlice.reducer
+  },
+  preloadedState: initialState
 })
