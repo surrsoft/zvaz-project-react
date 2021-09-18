@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Golos";
+  src: url("assert/fonts/Golos-Text_Regular.woff") format("woff")
+}
+
 .App {
   background-color: silver;
   min-height: 100vh;

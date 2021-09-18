@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialState } from './common';
 import { RsuvTxJsonServer } from 'rsuv-lib';
-import { API_ADDRESS, EActionType } from '../consts';
+import { API_ADDRESS } from '../consts';
 
 export const bindsSlice = createSlice({
   name: 'binds',
@@ -10,7 +10,6 @@ export const bindsSlice = createSlice({
     allGetted(state, action) {
       const binds = action.payload
       console.log('!!-!!-!! binds {210912202956}\n', binds); // del+
-      debugger; // del+
       state.binds = binds
     }
   }

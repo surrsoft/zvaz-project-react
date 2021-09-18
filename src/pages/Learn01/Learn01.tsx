@@ -37,7 +37,6 @@ export function Learn01() {
   }
 
   const fnBinds = (binds0: any) => {
-    debugger; // del+
     if (binds0) {
       return binds0.length
     }
@@ -52,7 +51,7 @@ export function Learn01() {
   return (<div>
     <div className={'learn01-container'}>
       <ZvazCUDElem/>
-      <ZvazCardList/>
+      <ZvazCardList cards={cards}/>
     </div>
     <div>cards count: {fnCards(cards)}</div>
     <div>binds count: {fnBinds(binds)}</div>

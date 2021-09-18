@@ -1,0 +1,17 @@
+.zvaz-cardlist-elem-container {
+  .cardContainer {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid blue;
+    padding: 8px;
+
+    .id {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: red;
+      font-family: Golos;
+    }
+  }
+}
