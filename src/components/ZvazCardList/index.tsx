@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import './style.scss'
-import ZvazCardListElem from '../ZvazCardListElem';
+import ZvazCardListElem from './ZvazCardListElem';
 
 interface ZvazCardListProps {
   cards?: any[]
@@ -15,7 +15,7 @@ const ZvazCardList: React.FC<ZvazCardListProps> = ({cards}) => {
 
   const fnCards = (argCards: any[]) => {
     return argCards.map((el) => {
-      return <ZvazCardListElem card={el} />
+      return <ZvazCardListElem key={el.id} card={el}/>
     })
   }
 

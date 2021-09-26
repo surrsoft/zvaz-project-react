@@ -6,6 +6,10 @@
     border: 1px solid blue;
     padding: 8px;
 
+    .button {
+      align-self: flex-start;
+    }
+
     .id {
       position: absolute;
       top: 0;

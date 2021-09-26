@@ -41,7 +41,6 @@ const UeurSelectNav: React.FC<UeurSelectNavProps> = ({data}) => {
             option.callback(ev)
           }
         }
-
       }}
     >
       {

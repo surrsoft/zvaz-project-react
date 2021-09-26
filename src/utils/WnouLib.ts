@@ -1,11 +1,11 @@
-import { EPageValues } from '../consts';
+import { EPageName } from '../consts';
 
 /**
  * ID [[210808105738]] rev 1 1.0.0 2021-08-08
  */
 export type WnouT2<T> = {
   options: WnouT3<T>[],
-  selectedValue: EPageValues
+  selectedValue: EPageName
 }
 
 /**

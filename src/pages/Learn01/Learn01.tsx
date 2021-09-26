@@ -3,7 +3,7 @@ import ZvazCardList from '../../components/ZvazCardList';
 import './style.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { API_ADDRESS, EActionType } from '../../consts';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { RsuvTxJsonServer } from 'rsuv-lib';
 import { bindsAllThunk } from '../../store/bindsSlice';
 
@@ -21,7 +21,9 @@ const cardsThunk = (dispatch: Function) => {
     })
 }
 
-export function Learn01() {
+export const Learn01 = (props: any) => {
+  console.log('!!-!!-!! props {210926185017}\n', props); // del+
+
   const dispatch = useDispatch()
   // @ts-ignore
   const cards = useSelector(state => state.cards.cards)

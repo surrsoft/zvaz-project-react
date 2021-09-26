@@ -1,21 +1,29 @@
 import { WnouT2 } from './utils/WnouLib';
+import _ from 'lodash';
 
 export const PORT_JSON_SERVER = '22102'
 export const API_ADDRESS = `http://localhost:${PORT_JSON_SERVER}/`
 
-export enum EPageValues {
+export enum EPageName {
   MAIN = 'Главная',
   LEARN_01 = 'Learn01',
   LEARN_02 = 'Learn02',
 }
 
-export const pages: WnouT2<EPageValues> = {
+export const pages: WnouT2<EPageName> = {
   options: [
-    {value: EPageValues.MAIN, text: 'Главная', subValue: '/'},
-    {value: EPageValues.LEARN_01, text: 'Learn01', subValue: '/Learn01'},
-    {value: EPageValues.LEARN_02, text: 'Learn02', subValue: '/Learn02'},
+    {value: EPageName.MAIN, text: 'Главная', subValue: '/'},
+    {value: EPageName.LEARN_01, text: 'Learn01', subValue: '/Learn01'},
+    {value: EPageName.LEARN_02, text: 'Learn02', subValue: '/Learn02'},
   ],
-  selectedValue: EPageValues.MAIN
+  selectedValue: EPageName.MAIN
+}
+
+export class ZvazPageUtils {
+  static pagePathByName(pageName: EPageName): string | null {
+    const obj = pages.options.find(el => el.value === pageName)
+    return _.get(obj, 'subValue', null)
+  }
 }
 
 export enum EActionType {
