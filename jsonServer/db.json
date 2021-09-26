@@ -1,0 +1,27 @@
+{
+  "cards": [
+    {
+      "id": 1,
+      "title": "Пылесос Samsung",
+      "comm": "comment",
+      "body": "body",
+      "counter": 0
+    },
+    {
+      "id": 2,
+      "title": "card 2",
+      "comm": "comment",
+      "body": "body",
+      "counter": 2
+    }
+  ],
+  "binds": [
+    {
+      "id": 1,
+      "title": "bind 1",
+      "comm": "info",
+      "aside": 1,
+      "bside": 2
+    }
+  ]
+}
