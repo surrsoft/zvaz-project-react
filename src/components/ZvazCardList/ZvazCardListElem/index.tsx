@@ -18,9 +18,11 @@ const ZvazCardListElem: React.FC<ZvazCardListElemProps> = ({card}) => {
     }
   }
 
+  const buttonName = '<'
+
   return <div className={'zvaz-cardlist-elem-container'}>
     <div className={'cardContainer'} key={card.id}>
-      <button className={'button'} onClick={() => showHandle(card.id)}>show</button>
+      <button className={'button'} onClick={() => showHandle(card.id)}>{buttonName}</button>
       <div className={'id'}>id: {card.id}</div>
       <div className={'title'}>{card.title}</div>
       <div className={'comm'}>{card.comm}</div>
