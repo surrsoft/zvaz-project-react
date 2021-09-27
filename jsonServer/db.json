@@ -2,16 +2,16 @@
   "cards": [
     {
       "id": 1,
-      "title": "Пылесос Samsung",
-      "comm": "comment",
+      "title": "Пылесос Samsung11122",
+      "comm": "comment11",
       "body": "body",
       "counter": 0
     },
     {
       "id": 2,
-      "title": "card 2",
-      "comm": "comment",
-      "body": "body",
+      "title": "card 21",
+      "comm": "comment1",
+      "body": "body\n\nv",
       "counter": 2
     }
   ],

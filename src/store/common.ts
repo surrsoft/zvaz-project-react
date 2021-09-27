@@ -3,7 +3,7 @@ import { pages } from '../consts';
 export const initialState: any = {
   cards: {
     cards: [],
-    cardCurrent: null,
+    cardCurrent: {},
   },
   binds: {
     binds: []

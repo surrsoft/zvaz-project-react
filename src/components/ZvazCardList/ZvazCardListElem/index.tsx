@@ -2,6 +2,8 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import './styles.scss';
 import { EPageName, ZvazPageUtils } from '../../../consts';
+import { useDispatch } from 'react-redux';
+import { cardsSlice } from '../../../store/store';
 
 interface ZvazCardListElemProps {
   card?: any
@@ -9,11 +11,13 @@ interface ZvazCardListElemProps {
 
 const ZvazCardListElem: React.FC<ZvazCardListElemProps> = ({card}) => {
   const history = useHistory()
+  const dispatch = useDispatch()
 
   const showHandle = (cardId: string | number) => {
     const pagePath = ZvazPageUtils.pagePathByName(EPageName.LEARN_01)
     if (pagePath) {
       history.push(`${pagePath}/${cardId}`)
+      dispatch(cardsSlice.actions.cardCurrentSet(card))
     }
   }
 

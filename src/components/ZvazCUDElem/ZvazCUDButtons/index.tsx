@@ -1,11 +1,16 @@
 import React from 'react';
 import './style.scss'
+import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
+import { cardUpdateThunk } from '../../../pages/Learn01/Learn01';
 
 interface ZvazCUDButtonsProps {
   some?: string
 }
 
 const ZvazCUDButtons: React.FC<ZvazCUDButtonsProps> = ({children, some}) => {
+  const dispatch = useDispatch()
+
   const createHandle = () => {
 
   }
@@ -13,7 +18,7 @@ const ZvazCUDButtons: React.FC<ZvazCUDButtonsProps> = ({children, some}) => {
 
   }
   const updateHandle = () => {
-
+    dispatch(cardUpdateThunk)
   }
   const cloneHandle = () => {
 

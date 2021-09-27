@@ -6,19 +6,37 @@ import { API_ADDRESS, EActionType } from '../../consts';
 import React, { useEffect } from 'react';
 import { RsuvTxJsonServer } from 'rsuv-lib';
 import { bindsAllThunk } from '../../store/bindsSlice';
+import { cardsSlice } from '../../store/store';
+import _ from 'lodash';
+
+const server = new RsuvTxJsonServer(API_ADDRESS, 'cards')
 
 const cardsThunk = (dispatch: Function) => {
-  const server = new RsuvTxJsonServer(API_ADDRESS, 'cards')
   server
     .elemsGetAll()
     .then((cards) => {
       console.log('!!-!!-!! cards {210904092257}\n', cards); // del+
-      dispatch({type: EActionType.CARDS_ALL_RECEIVED, payload: cards})
+      dispatch(cardsSlice.actions.cardsAllReceived(cards))
     })
     .catch((err) => {
       console.log('!!-!!-!! err {210904100021}\n', err); // del+
-      dispatch({type: EActionType.CARDS_ALL_NOT_RECEIVED, error: true, payload: err})
+      dispatch(cardsSlice.actions.cardsAllNotReceived(err))
     })
+}
+
+export const cardUpdateThunk = async (dispatch: Function, getState: Function) => {
+  const state = getState()
+  const cardCurrent = _.get(state, 'cards.cardCurrent')
+  console.log('!!-!!-!! 1518- thunk cardCurrent {210927151838}\n', cardCurrent); // del+
+  if (cardCurrent) {
+    const res = await server.elemUpdate(cardCurrent)
+    console.log('!!-!!-!! 1518- res {210927151932}\n', res); // del+
+    if (res.success) {
+      dispatch(cardsSlice.actions.cardUpdate(cardCurrent))
+    } else {
+      console.warn(res)
+    }
+  }
 }
 
 export const Learn01 = () => {

@@ -3,26 +3,9 @@ import { AnyAction } from 'redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { bindsSlice } from './bindsSlice';
 import { initialState } from './common';
+import _ from 'lodash';
 
-const cardsReducer = (state: any, action: AnyAction) => {
-  if (state === undefined) {
-    return null
-  }
-  switch (action.type) {
-    case EActionType.CARDS_ALL_RECEIVED:
-      return {...state, cards: action.payload}
-    case EActionType.CARDS_ALL_NOT_RECEIVED:
-      return state;
-    case EActionType.CARD_CURRENT_SET:
-      const card = action.payload;
-      console.log('!!-!!-!! action card {210927102514}\n', card); // del+
-      return state;
-    default:
-      return state;
-  }
-}
-
-const cardsSlice = createSlice({
+export const cardsSlice = createSlice({
   name: 'cards',
   initialState: initialState.cards,
   reducers: {
@@ -32,8 +15,16 @@ const cardsSlice = createSlice({
     cardsAllNotReceived: (state, action) => {
     },
     cardCurrentSet: (state, action) => {
-      state.cards.cardCurrent = action.payload
-    }
+      console.log('!!-!!-!! 1146- action {210927114610}\n', action); // del+
+      state.cardCurrent = action.payload
+    },
+    cardUpdate: (state, action) => {
+      const card = action.payload
+      const index = state.cards.findIndex((el: any) => el.id === _.toInteger(card.id))
+      if (index !== -1) {
+        state.cards[index] = card
+      }
+    },
   }
 })
 
@@ -52,7 +43,7 @@ const mainReducer = (state: any, action: AnyAction) => {
 export const store = configureStore({
   reducer: {
     main: mainReducer,
-    cards: cardsReducer,
+    cards: cardsSlice.reducer,
     binds: bindsSlice.reducer
   },
   preloadedState: initialState

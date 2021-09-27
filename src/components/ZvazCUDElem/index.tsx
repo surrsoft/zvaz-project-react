@@ -4,28 +4,21 @@ import './style.scss'
 import ZvazCUDButtons from './ZvazCUDButtons';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { EActionType } from '../../consts';
+import { cardsSlice } from '../../store/store';
 
-const CardForm: React.FC<any> = ({card}) => {
-  console.log('!!-!!-!! 0937- fn card {210927093201}\n', card); // del+
+const CardForm: React.FC<any> = () => {
 
   const dispatch = useDispatch()
 
-  const [cardTitle, cardTitleSet] = useState(card.title);
-  const [cardComm, cardCommSet] = useState(card.comm);
-  const [cardBody, cardBodySet] = useState(card.body);
-  const [cardCounter, cardCounterSet] = useState(card.counter);
-
-  useEffect(() => {
-    console.log('!!-!!-!! 0937- useEffect card {210927093717}\n', card); // del+
-    cardTitleSet(card.title)
-    cardCommSet(card.comm)
-    cardBodySet(card.body)
-    cardCounterSet(card.counter)
-  }, [card]);
+  const cardId = useSelector(state => _.get(state, 'cards.cardCurrent.id', null))
+  const cardTitle = useSelector(state => _.get(state, 'cards.cardCurrent.title', null))
+  const cardComm = useSelector(state => _.get(state, 'cards.cardCurrent.comm', null))
+  const cardBody = useSelector(state => _.get(state, 'cards.cardCurrent.body', null))
+  const cardCounter = useSelector(state => _.get(state, 'cards.cardCurrent.counter', null))
 
   const cardCurrent = () => {
     return {
+      id: cardId,
       title: cardTitle,
       comm: cardComm,
       body: cardBody,
@@ -33,47 +26,48 @@ const CardForm: React.FC<any> = ({card}) => {
     }
   }
 
+  function onChangeHandler(cardFieldName: string) {
+    return (ev: any) => {
+      const value = ev.target.value
+      dispatch(cardsSlice.actions.cardCurrentSet({...(cardCurrent()), [cardFieldName]: value}))
+    };
+  }
+
   return <div className={'form-container'}>
     <form>
-      <label className={'card-id'}>id: {card.id}</label>
+      <label className={'card-id'}>id: {cardId || ''}</label>
 
       <br/>
       <label>
         Title:
-        <input type={'text'} value={cardTitle} onChange={(ev) => {
-          const value = ev.target.value
-          cardTitleSet(value);
-          dispatch({type: EActionType.CARD_CURRENT_SET, payload: {...(cardCurrent()), title: value}})
-        }}/>
+        <input type={'text'} value={cardTitle || ''} onChange={onChangeHandler('title')}/>
       </label>
 
       <br/>
       <label>
         Comment:
-        <input type={'text'} value={cardComm} onChange={(ev) => cardCommSet(ev.target.value)}/>
+        <input type={'text'} value={cardComm || ''} onChange={onChangeHandler('comm')}/>
       </label>
 
       <br/>
       <label>
         Body:
-        <textarea onChange={(ev) => cardBodySet(ev.target.value)}>{cardBody}</textarea>
+        <textarea value={cardBody || ''} onChange={onChangeHandler('body')}/>
       </label>
 
       <br/>
       <label>
         Counter:
-        <input type={'number'} value={cardCounter} onChange={(ev) => cardCounterSet(ev.target.value)}/>
+        <input type={'number'} value={cardCounter || ''} onChange={onChangeHandler('counter')}/>
       </label>
 
     </form>
   </div>
 }
 
-interface ZvazCUDElemProps {
-  some?: string
-}
+const ZvazCUDElem = () => {
+  console.log(`!!-!!-!! 1317- -> :::::::::::::: ZvazCUDElem() {210927131725}:${Date.now()}`); // del+
 
-const ZvazCUDElem: React.FC<ZvazCUDElemProps> = ({children, some}) => {
   // --- cardId
   const match = useRouteMatch()
   const cardId = _.get(match, 'params.cardId', null)
@@ -90,7 +84,7 @@ const ZvazCUDElem: React.FC<ZvazCUDElemProps> = ({children, some}) => {
     <ZvazCUDButtons/>
     {!card
       ? <div>no data</div>
-      : <CardForm card={card}/>
+      : <CardForm/>
     }
 
   </div>)
