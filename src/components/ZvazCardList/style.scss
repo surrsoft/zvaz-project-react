@@ -1,8 +1,15 @@
 .zvaz-cardlist-container {
   padding: 8px;
   border: 1px solid green;
+  border-radius: 8px;
   background-color: yellow;
   width: 50%;
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+  }
 }
 
 

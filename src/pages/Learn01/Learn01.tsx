@@ -2,7 +2,7 @@ import ZvazCUDElem from '../../components/ZvazCUDElem';
 import ZvazCardList from '../../components/ZvazCardList';
 import './style.scss'
 import { useDispatch, useSelector } from 'react-redux';
-import { API_ADDRESS, EActionType } from '../../consts';
+import { API_ADDRESS, EPageName, ZvazPageUtils } from '../../consts';
 import React, { useEffect } from 'react';
 import { RsuvTxJsonServer } from 'rsuv-lib';
 import { bindsAllThunk } from '../../store/bindsSlice';
@@ -25,16 +25,46 @@ const cardsThunk = (dispatch: Function) => {
 }
 
 export const cardUpdateThunk = async (dispatch: Function, getState: Function) => {
-  const state = getState()
-  const cardCurrent = _.get(state, 'cards.cardCurrent')
-  console.log('!!-!!-!! 1518- thunk cardCurrent {210927151838}\n', cardCurrent); // del+
+  const cardCurrent = _.get(getState(), 'cards.cardCurrent')
   if (cardCurrent) {
     const res = await server.elemUpdate(cardCurrent)
     console.log('!!-!!-!! 1518- res {210927151932}\n', res); // del+
     if (res.success) {
-      dispatch(cardsSlice.actions.cardUpdate(cardCurrent))
+      dispatch(cardsSlice.actions.cardUpdated(cardCurrent))
     } else {
       console.warn(res)
+    }
+  }
+}
+
+export const cardCreateThunk = (history: any) => {
+  return async (dispatch: Function, getState: Function) => {
+    const cardCurrent = _.get(getState(), 'cards.cardCurrent')
+    if (cardCurrent) {
+      const res = await server.elemCreateB(_.omit(cardCurrent, 'id'))
+      console.log('!!-!!-!! 1611- res {210927161148}\n', res); // del+
+      if (res.success) {
+        const cardNewId = _.toInteger(res.value)
+        const cardNew = {...cardCurrent, id: cardNewId};
+        dispatch(cardsSlice.actions.cardCreated(cardNew))
+        dispatch(cardsSlice.actions.cardCurrentSet(cardNew))
+        history.push(ZvazPageUtils.pagePathByName(EPageName.LEARN_01) + '/' + cardNewId)
+      }
+    }
+  }
+}
+
+export const cardDeleteThunk = (history: any) => {
+  return async (dispatch: Function, getState: Function) => {
+    const cardCurrent = _.get(getState(), 'cards.cardCurrent')
+    if (cardCurrent) {
+      const id = cardCurrent.id
+      const res = await server.elemDelete(id)
+      if (res.success) {
+        dispatch(cardsSlice.actions.cardDeleted(id))
+        dispatch(cardsSlice.actions.cardCurrentSet(null))
+        history.push(ZvazPageUtils.pagePathByName(EPageName.LEARN_01))
+      }
     }
   }
 }

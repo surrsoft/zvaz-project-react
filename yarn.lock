@@ -10252,10 +10252,10 @@ rollup@^1.31.1:
     "@types/node" "*"
     acorn "^7.1.0"
 
-rsuv-lib@^1.13.12:
-  version "1.13.12"
-  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-1.13.12.tgz#76bf3106b523226178a3a60f2c74a927667c60fa"
-  integrity sha512-4Hej1OBj8OdeByPKxgp+vwLqaH2O2U0qMpfm0tHPCJiEhBW+CVqU/WgLF6rUoPxeekznxjeormAgXHoZJ+DNrg==
+rsuv-lib@^1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-1.14.0.tgz#214474f76d6bcbbd81002fb26fab7c4ad608b544"
+  integrity sha512-4cKWyZ8fA5X0d6O0Ldedk8hpjbCnYmMSibQy0+3IjJYuGS2sjaiVRyo3sBaaugDMFaHMLN7tU89LxW42r/o4Pg==
   dependencies:
     "@types/lodash" "^4.14.170"
     "@types/validator" "^13.6.2"

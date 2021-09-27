@@ -1,21 +1,61 @@
 .zvaz-cardlist-elem-container {
+  font-family: Golos;
+
   .cardContainer {
     display: flex;
     flex-direction: column;
     position: relative;
-    border: 1px solid blue;
+    border: 1px solid #6767a1;
+    border-radius: 8px;
     padding: 8px;
+    background-color: #bae0b3;
 
-    .button {
-      align-self: flex-start;
+    .button-and-title {
+      display: flex;
+      column-gap: 8px;
+
+      .button {
+        align-self: flex-start;
+      }
+
+      .title {
+        //font-weight: bold;
+        font-size: 18px;
+      }
     }
 
     .id {
       position: absolute;
-      top: 0;
-      right: 0;
-      color: red;
-      font-family: Golos;
+      top: 4px;
+      right: 6px;
+      color: white;
+      font-size: 10px;
+      background-color: #938c8c;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid #7d6767;
+    }
+
+
+    .comm {
+      font-size: 12px;
+    }
+
+    .body {
+      font-size: 14px;
+      border-radius: 8px;
+      margin: 8px 0 0 0;
+    }
+
+    .counter {
+      font-size: 10px;
+      background-color: rgba(50, 106, 12, 0.54);
+      border: 1px solid #8d7b7b;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 8px;
+      align-self: flex-start;
+      margin-top: 8px;
     }
   }
 }

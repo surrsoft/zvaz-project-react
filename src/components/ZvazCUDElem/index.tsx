@@ -29,7 +29,14 @@ const CardForm: React.FC<any> = () => {
   function onChangeHandler(cardFieldName: string) {
     return (ev: any) => {
       const value = ev.target.value
-      dispatch(cardsSlice.actions.cardCurrentSet({...(cardCurrent()), [cardFieldName]: value}))
+      const cardCurrentObj = cardCurrent()
+      let obj = {...cardCurrentObj, [cardFieldName]: value};
+      const someNotEmpty = obj.title || obj.comm || obj.body || _.isFinite(_.toInteger(obj.counter))
+      if (!someNotEmpty) {
+        // @ts-ignore
+        obj = null
+      }
+      dispatch(cardsSlice.actions.cardCurrentSet(obj))
     };
   }
 
@@ -82,11 +89,7 @@ const ZvazCUDElem = () => {
   // ---
   return (<div className={"zvaz-cudelem-container"}>
     <ZvazCUDButtons/>
-    {!card
-      ? <div>no data</div>
-      : <CardForm/>
-    }
-
+    <CardForm/>
   </div>)
 }
 

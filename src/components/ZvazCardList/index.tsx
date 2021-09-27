@@ -21,9 +21,7 @@ const ZvazCardList: React.FC<ZvazCardListProps> = ({cards}) => {
 
   const cards0 = cards || []
   return <div className={'zvaz-cardlist-container'}>
-    <div>ZvazCardList</div>
-    <div>pane ...</div>
-    <div>{fnCards(cards0)}</div>
+    <div className={'cards-container'}>{fnCards(cards0)}</div>
   </div>
 }
 
