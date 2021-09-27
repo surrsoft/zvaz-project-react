@@ -12,17 +12,14 @@ const ZvazCardListElem: React.FC<ZvazCardListElemProps> = ({card}) => {
 
   const showHandle = (cardId: string | number) => {
     const pagePath = ZvazPageUtils.pagePathByName(EPageName.LEARN_01)
-    console.log('!!-!!-!! pagePath {210926220822}\n', pagePath); // del+
     if (pagePath) {
       history.push(`${pagePath}/${cardId}`)
     }
   }
 
-  const buttonName = '<'
-
   return <div className={'zvaz-cardlist-elem-container'}>
     <div className={'cardContainer'} key={card.id}>
-      <button className={'button'} onClick={() => showHandle(card.id)}>{buttonName}</button>
+      <button className={'button'} onClick={() => showHandle(card.id)}>{'<'}</button>
       <div className={'id'}>id: {card.id}</div>
       <div className={'title'}>{card.title}</div>
       <div className={'comm'}>{card.comm}</div>

@@ -31,6 +31,7 @@ export enum EActionType {
   CARD_LIST_INIT = 'card_list_init',
   CARDS_ALL_RECEIVED = 'cards_all_received',
   CARDS_ALL_NOT_RECEIVED = 'cards_all_not_received',
+  CARD_CURRENT_SET = 'card_current_set',
 }
 
 export type ZvazT1 = {

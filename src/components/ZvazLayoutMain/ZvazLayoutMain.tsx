@@ -22,10 +22,9 @@ function ZvazLayoutMain() {
           <Route exact path={fnPath(EPageName.MAIN)}>
             <div>Главная</div>
           </Route>
-          <Route
-            path={[fnPath(EPageName.LEARN_01) + '/:cardId', fnPath(EPageName.LEARN_01)]}
-            render={(routeProps) => <Learn01 {...routeProps}/>}
-          />
+          <Route path={[fnPath(EPageName.LEARN_01) + '/:cardId', fnPath(EPageName.LEARN_01)]}>
+            <Learn01/>
+          </Route>
           <Route exact path={fnPath(EPageName.LEARN_02)}>
             <Learn02/>
           </Route>

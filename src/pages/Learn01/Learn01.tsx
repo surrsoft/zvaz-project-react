@@ -21,8 +21,7 @@ const cardsThunk = (dispatch: Function) => {
     })
 }
 
-export const Learn01 = (props: any) => {
-  console.log('!!-!!-!! props {210926185017}\n', props); // del+
+export const Learn01 = () => {
 
   const dispatch = useDispatch()
   // @ts-ignore
