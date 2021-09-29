@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import { ChakraProvider } from '@chakra-ui/react';
 
 // import { createBrowserHistory } from 'history'; // del+
 // // del+
@@ -15,7 +16,9 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <React.StrictMode>
-        <App/>
+        <ChakraProvider>
+          <App/>
+        </ChakraProvider>
       </React.StrictMode>
     </BrowserRouter>
   </Provider>,

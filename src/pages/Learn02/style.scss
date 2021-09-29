@@ -1,0 +1,50 @@
+.zvaz-telems-page {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 8px;
+  column-gap: 8px;
+
+  .belems-container {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 8px;
+    flex: 1 0 0;
+  }
+
+  .telem-container {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 8px;
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+
+    .titleInput {
+      padding: 4px 8px;
+    }
+
+    & div[data-rbd-droppable-id="d2"] {
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 0;
+    }
+
+    .buttons {
+      padding: 4px 8px;
+      border: 1px solid black;
+      border-radius: 4px;
+      display: flex;
+      column-gap: 8px;
+    }
+  }
+
+  .telems-container {
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 8px;
+    flex: 1 0 0;
+  }
+
+}

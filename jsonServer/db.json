@@ -44,5 +44,11 @@
       "aside": 1,
       "bside": 2
     }
+  ],
+  "telems": [
+    {
+      "id": 1,
+      "title": "telem 1"
+    }
   ]
 }
