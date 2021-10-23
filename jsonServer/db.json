@@ -45,10 +45,30 @@
       "bside": 2
     }
   ],
-  "telems": [
+  "telems": {
+    "ids": [
+      "cc",
+      "dd"
+    ],
+    "entities": {
+      "cc": {
+        "id": "cc",
+        "title": "elem-cc"
+      },
+      "dd": {
+        "id": "dd",
+        "title": "elem-dd"
+      }
+    }
+  },
+  "telems2": [
     {
       "id": 1,
-      "title": "telem 1"
+      "title": "title-1"
+    },
+    {
+      "id": 2,
+      "title": "title-2"
     }
   ]
 }

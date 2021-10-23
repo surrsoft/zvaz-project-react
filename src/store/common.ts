@@ -11,7 +11,4 @@ export const initialState: any = {
   main: {
     pagePath: pages.options[0].value,
   },
-  telemsSlice: {
-    telems: [],
-  },
 }

@@ -11,8 +11,7 @@ import { IconButton, Tooltip } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon, DeleteIcon, RepeatIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { telemsReceiveThunk } from '../../store/store';
+import { store, telemsCreateThunk, telemsReceiveThunk, telemsSelectors } from '../../store/store';
 
 enum DND_ID {
   D1 = 'd1',
@@ -39,13 +38,27 @@ const BElems = () => {
     </DroppableWrapper>
   </div>)
 }
+
 const TElemConstructor: React.FC<any> = ({selFields}) => {
   const telemCurrent = useSelector(state => _.get(state, 'telemsSlice.telemCurrent', null))
+  const dispatch = useDispatch()
 
   const createHandle = () => {
-    if (telemCurrent) {
+    console.log(`!!-!!-!! -> :::::::::::::: createHandle() {211023132847}:${Date.now()}`) // del+
+    dispatch(telemsCreateThunk())
+  }
 
-    }
+  function clearHandle() {
+
+  }
+
+  function deleteHandle() {
+
+  }
+
+  function updateHandler() {
+    const state = store.getState()
+    console.log('!!-!!-!! state {211023133407}\n', state) // del+
   }
 
   return (<div className={'telem-container'}>
@@ -55,13 +68,13 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
         <IconButton aria-label="Create" icon={<CheckIcon/>} colorScheme={'blue'} onClick={createHandle}/>
       </Tooltip>
       <Tooltip placement={'top'} label={'Обновить'}>
-        <IconButton aria-label="Update" icon={<RepeatIcon/>} colorScheme={'green'}/>
+        <IconButton aria-label="Update" icon={<RepeatIcon/>} colorScheme={'green'} onClick={updateHandler}/>
       </Tooltip>
       <Tooltip placement={'top'} label={'Удалить'}>
-        <IconButton aria-label="Remove" icon={<DeleteIcon/>} colorScheme={'red'}/>
+        <IconButton aria-label="Remove" icon={<DeleteIcon/>} colorScheme={'red'} onClick={deleteHandle}/>
       </Tooltip>
       <Tooltip placement={'top'} label={'Очистить'}>
-        <IconButton aria-label="Clear" icon={<CloseIcon/>}/>
+        <IconButton aria-label="Clear" icon={<CloseIcon/>} onClick={clearHandle}/>
       </Tooltip>
     </div>
 
@@ -97,8 +110,11 @@ export function Learn02() {
   const dispatch = useDispatch()
   const [selFields, selFieldsSet] = useState([] as FieldNT[]);
 
+  const telems = telemsSelectors.selectAll(store.getState())
+  console.log('!!-!!-!! L02 telems {211023124613}\n', telems) // del+
+
   useEffect(() => {
-    console.log(`!!-!!-!! -> :::::::::::::: dispatch () {210928200024}:${Date.now()}`); // del+
+    console.log(`!!-!!-!! L02 -> :::::::::::::: dispatch () {210928200024}:${Date.now()}`); // del+
     dispatch(telemsReceiveThunk())
   }, []);
 
