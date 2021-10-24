@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import './styles.scss';
 import { EPageName, ZvazPageUtils } from '../../../consts';
 import { useDispatch } from 'react-redux';
-import { cardsSlice } from '../../../store/store';
+import { cardsSlice } from '../../../store/cardsSlice/cardsSlice';
 
 interface ZvazCardListElemProps {
   card?: any

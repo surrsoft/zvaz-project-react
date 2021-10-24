@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { initialState } from './common';
+import { initialState } from '../common';
 import { RsuvTxJsonServer } from 'rsuv-lib';
-import { API_ADDRESS } from '../consts';
+import { API_ADDRESS } from '../../consts';
 
 export const bindsSlice = createSlice({
   name: 'binds',

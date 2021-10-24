@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { API_ADDRESS, EPageName, ZvazPageUtils } from '../../consts';
 import React, { useEffect } from 'react';
 import { RsuvTxJsonServer } from 'rsuv-lib';
-import { bindsAllThunk } from '../../store/bindsSlice';
-import { cardsSlice } from '../../store/store';
+import { bindsAllThunk } from '../../store/bindsSlice/bindsSlice';
 import _ from 'lodash';
+import { cardsSlice } from '../../store/cardsSlice/cardsSlice';
 
 const server = new RsuvTxJsonServer(API_ADDRESS, 'cards')
 

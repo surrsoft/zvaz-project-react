@@ -3,9 +3,9 @@ import './style.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { cardCreateThunk, cardDeleteThunk, cardUpdateThunk } from '../../../pages/Learn01/Learn01';
 import { useHistory } from 'react-router-dom';
-import { cardsSlice } from '../../../store/store';
 import _ from 'lodash';
 import { EPageName, ZvazPageUtils } from '../../../consts';
+import { cardsSlice } from '../../../store/cardsSlice/cardsSlice';
 
 interface ZvazCUDButtonsProps {
   some?: string

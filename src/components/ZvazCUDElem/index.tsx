@@ -4,7 +4,7 @@ import './style.scss'
 import ZvazCUDButtons from './ZvazCUDButtons';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { cardsSlice } from '../../store/store';
+import { cardsSlice } from '../../store/cardsSlice/cardsSlice';
 
 const CardForm: React.FC<any> = () => {
 

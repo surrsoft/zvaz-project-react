@@ -11,7 +11,10 @@ import { IconButton, Tooltip } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon, DeleteIcon, RepeatIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { store, telemsCreateThunk, telemsReceiveThunk, telemsSelectors } from '../../store/store';
+import { telemsAllSelector, telemsCreateThunk, telemsReceiveThunk } from '../../store/telemsSlice/telemsSlice';
+import { metaReceiveThunk } from '../../store/metaSlice/metaSlice';
+import { telemCurrentUpdate } from '../../store/appSlice/appSlice';
+import { RsuvTuString } from 'rsuv-lib';
 
 enum DND_ID {
   D1 = 'd1',
@@ -40,12 +43,16 @@ const BElems = () => {
 }
 
 const TElemConstructor: React.FC<any> = ({selFields}) => {
-  const telemCurrent = useSelector(state => _.get(state, 'telemsSlice.telemCurrent', null))
+  const telemCurrent = useSelector(state => {
+    return _.get(state, 'app.telemCurrent', {})
+  })
+  console.log('!!-!!-!! TElemConstructor: telemCurrent {211024190736}\n', telemCurrent) // del+
+
   const dispatch = useDispatch()
 
   const createHandle = () => {
     console.log(`!!-!!-!! -> :::::::::::::: createHandle() {211023132847}:${Date.now()}`) // del+
-    dispatch(telemsCreateThunk())
+    dispatch(telemsCreateThunk({...telemCurrent}))
   }
 
   function clearHandle() {
@@ -57,8 +64,15 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
   }
 
   function updateHandler() {
-    const state = store.getState()
-    console.log('!!-!!-!! state {211023133407}\n', state) // del+
+
+  }
+
+  function inputChangeHandler(ev: any) {
+    console.log('!!-!!-!! 0944- ev {211024094422}\n', ev.target.value) // del+
+    console.log('!!-!!-!! telemCurrent {211024094930}\n', telemCurrent) // del+
+    const title = ev?.target?.value
+    const telemCurrentNew = {...telemCurrent, title}
+    dispatch(telemCurrentUpdate(telemCurrentNew))
   }
 
   return (<div className={'telem-container'}>
@@ -81,8 +95,13 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
     <SmGapH h={24}/>
 
     <DroppableWrapper droppableId={DND_ID.D2}>
-      <input className={'titleInput'} type={'text'} placeholder={'название'} required={true}/>
+      {telemCurrent?.id ? (<div>id: {telemCurrent.id}</div>) : ''}
+
+      <input className={'titleInput'} type={'text'} placeholder={'название'} required={true}
+             onChange={inputChangeHandler} value={telemCurrent.title}/>
+
       <SmGapH h={16}/>
+
       {
         selFields.map((field: any, index: any) => {
           return <DraggableItemWrapper
@@ -100,9 +119,40 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
     </DroppableWrapper>
   </div>)
 }
-const TElems = () => {
-  return (<div className={'telems-container'}>telems</div>)
+
+// ---
+
+const TElem = ({telem}: any) => {
+  const dispatch = useDispatch()
+
+  const editHandle = () => {
+    dispatch(telemCurrentUpdate(telem))
+  }
+
+  return (<div key={telem.id} style={{marginTop: 16}}>
+    <div><span>id: </span><span>{telem.id}</span></div>
+    <div><span>title: </span><span>{telem.title}</span></div>
+    <button onClick={editHandle}>[edit]</button>
+  </div>)
 }
+
+// ---
+
+const TElems = () => {
+  const telems = useSelector((state: any) => {
+    // [211024184516]
+    return telemsAllSelector(state)
+  })
+
+  // ---
+  return (<div className={'telems-container'}>
+    {
+      telems.map((telem: any) => (<TElem telem={telem}/>))
+    }
+  </div>)
+}
+
+// ---
 
 let index0 = 0;
 
@@ -110,12 +160,10 @@ export function Learn02() {
   const dispatch = useDispatch()
   const [selFields, selFieldsSet] = useState([] as FieldNT[]);
 
-  const telems = telemsSelectors.selectAll(store.getState())
-  console.log('!!-!!-!! L02 telems {211023124613}\n', telems) // del+
-
   useEffect(() => {
     console.log(`!!-!!-!! L02 -> :::::::::::::: dispatch () {210928200024}:${Date.now()}`); // del+
     dispatch(telemsReceiveThunk())
+    dispatch(metaReceiveThunk())
   }, []);
 
   const onDragEndHandler = (result: any) => {
@@ -150,6 +198,11 @@ export function Learn02() {
   }
 
   return (<div className={'zvaz-telems-page'}>
+    <button onClick={() => {
+      dispatch(metaReceiveThunk())
+    }}>debug
+    </button>
+
     <DragDropContext onDragEnd={onDragEndHandler}>
       <BElems/>
       <TElemConstructor selFields={selFields}/>
