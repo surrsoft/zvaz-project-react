@@ -3,6 +3,7 @@ import { API_ADDRESS } from '../../consts';
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { store } from '../store';
+import { telemCurrentUpdate } from '../appSlice/appSlice';
 
 const telemsServer = new RsuvTxJsonServer(API_ADDRESS, 'telems2')
 
@@ -25,7 +26,7 @@ export const telemsReceiveThunk = createAsyncThunk('telems/telemsReceived', asyn
   return suazStruct.entities
 })
 
-export const telemsCreateThunk = createAsyncThunk('telems/telemsCreated', async (elem: any) => {
+export const telemsTelemCreateThunk = createAsyncThunk('telems/telemsCreated', async (elem: any) => {
   console.log('!!-!!-!! 1414- elem {211023163437}\n', elem) // del+
   let ret: RsuvResultTibo<string> = await telemsServer.elemCreateB(elem)
   console.log('!!-!!-!! 1414- ret {211010141439}\n', ret) // del+
@@ -39,6 +40,22 @@ export const telemsCreateThunk = createAsyncThunk('telems/telemsCreated', async 
   throw new Error('ERR* [[211023164131]]');
 })
 
+export const telemsTelemUpdateThunk = createAsyncThunk('telems/telemsTelemUpdated', async (elem: any) => {
+  const res = await telemsServer.elemUpdate(elem)
+  if (res.success) {
+    return elem
+  }
+  throw Error(res.errCode + '|' + res.errMessage);
+})
+
+export const telemsTelemDeleteThunk = createAsyncThunk('telems/telemsTelemDelete', async ({id, dispatch}: any) => {
+  const res = await telemsServer.elemDelete(id)
+  if (res.success) {
+    dispatch(telemCurrentUpdate({}))
+    return id
+  }
+  throw Error(res.errCode + '|' + res.errMessage)
+})
 
 // ---
 export const telemsAdapter = createEntityAdapter<TelemType>()
@@ -55,23 +72,26 @@ export const telemsSlice = createSlice({
       telemsAdapter.setAll(state, action)
     })
     // [[211024101059]]
-    builder.addCase(telemsCreateThunk.fulfilled, (state, action) => {
+    builder.addCase(telemsTelemCreateThunk.fulfilled, (state, action) => {
       console.log(`!!-!!-!! -> :::::::::::::: () {211023132949}:${Date.now()}`) // del+
       console.log('!!-!!-!! action {211023133136}\n', action) // del+
       telemsAdapter.addOne(state, action)
     })
-    builder.addCase(telemsCreateThunk.rejected, (state, action) => {
+    builder.addCase(telemsTelemCreateThunk.rejected, (state, action) => {
       console.log(`!!-!!-!! 1650- -> :::::::::::::: rejected {211023165035}:${Date.now()}`) // del+
       console.log('!!-!!-!! 1650- action {211023165040}\n', action) // del+
+    })
+    builder.addCase(telemsTelemUpdateThunk.fulfilled, (state, action) => {
+      telemsAdapter.setOne(state, action)
+    })
+    builder.addCase(telemsTelemDeleteThunk.fulfilled, (state, action) => {
+      const id = action.payload
+      telemsAdapter.removeOne(state, id)
     })
   },
   reducers: {
     // telemsReceived: (state, action) => {
     //   state.telems = action.payload
-    // }
-    // telemsReceived(state, action) {
-    //   console.log('!!-!!-!! 1316- action {211023131338}\n', action) // del+
-    //   telemsAdapter.setAll(state, action.payload.telems)
     // }
   }
 })

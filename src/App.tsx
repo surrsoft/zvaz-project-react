@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 function App() {
   const history = useHistory()
   console.log('!!-!!-!! history {210924112349}\n', history); // del+
-
+  
   return (
     <div className="App">
       <ZvazLayoutMain/>

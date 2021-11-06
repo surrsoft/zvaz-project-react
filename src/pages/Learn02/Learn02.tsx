@@ -7,16 +7,30 @@ import FieldTypeUI from '../../components/FieldTypeUI';
 import { stdArrElemMove } from '../../components/simple/utils';
 import React, { useEffect, useState } from 'react';
 import SmGapH from '../../components/simple/SmGapH';
-import { IconButton, Tooltip } from '@chakra-ui/react';
+import {
+  Button,
+  Container,
+  IconButton,
+  Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader,
+  ModalOverlay,
+  Stack,
+  Tooltip,
+  useDisclosure,
+  VStack
+} from '@chakra-ui/react';
 import { CheckIcon, CloseIcon, DeleteIcon, RepeatIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import { telemsAllSelector, telemsCreateThunk, telemsReceiveThunk } from '../../store/telemsSlice/telemsSlice';
+import {
+  telemsAllSelector,
+  telemsTelemCreateThunk,
+  telemsReceiveThunk,
+  telemsTelemUpdateThunk, telemsTelemDeleteThunk
+} from '../../store/telemsSlice/telemsSlice';
 import { metaReceiveThunk } from '../../store/metaSlice/metaSlice';
 import { telemCurrentUpdate } from '../../store/appSlice/appSlice';
-import { RsuvTuString } from 'rsuv-lib';
 
-enum DND_ID {
+enum DRAGGABLE_ID {
   D1 = 'd1',
   D2 = 'd2'
 }
@@ -30,16 +44,47 @@ function fnFieldUI(field: FieldNT) {
 
 const BElems = () => {
   return (<div className={'belems-container'}>
-    <DroppableWrapper droppableId={DND_ID.D1}>
+    <DroppableWrapper droppableId={DRAGGABLE_ID.D1}>
       {
         Fields.values().map((field, index) => {
-          return <DraggableItemWrapper key={index} draggableId={`${DND_ID.D1}-${index}`} index={index}>
+          return <DraggableItemWrapper key={index} draggableId={`${DRAGGABLE_ID.D1}-${index}`} index={index}>
             <FieldTypeUI field={field}/>
           </DraggableItemWrapper>
         })
       }
     </DroppableWrapper>
   </div>)
+}
+
+function DeleteModal({disabled, handler}: any) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const handler0 = () => {
+    handler();
+    onClose();
+  }
+  return (
+    <>
+      <Tooltip placement={'top'} label={'Удалить'}>
+        <IconButton aria-label="Remove" icon={<DeleteIcon/>} colorScheme={'red'} onClick={onOpen} disabled={disabled}/>
+      </Tooltip>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>удаление</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            удалить один элемент?
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              отмена
+            </Button>
+            <Button variant="ghost" onClick={handler0}>да</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  )
 }
 
 const TElemConstructor: React.FC<any> = ({selFields}) => {
@@ -50,22 +95,26 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
 
   const dispatch = useDispatch()
 
+  const dis1 = !!telemCurrent.id
+  const dis2 = !telemCurrent.id
+
   const createHandle = () => {
     console.log(`!!-!!-!! -> :::::::::::::: createHandle() {211023132847}:${Date.now()}`) // del+
-    dispatch(telemsCreateThunk({...telemCurrent}))
-  }
-
-  function clearHandle() {
-
-  }
-
-  function deleteHandle() {
-
+    dispatch(telemsTelemCreateThunk({...telemCurrent}))
   }
 
   function updateHandler() {
-
+    dispatch(telemsTelemUpdateThunk({...telemCurrent}))
   }
+
+  function clearHandle() {
+    dispatch(telemCurrentUpdate({}))
+  }
+
+  function deleteHandle() {
+    dispatch(telemsTelemDeleteThunk({id: telemCurrent?.id, dispatch}))
+  }
+
 
   function inputChangeHandler(ev: any) {
     console.log('!!-!!-!! 0944- ev {211024094422}\n', ev.target.value) // del+
@@ -78,15 +127,15 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
   return (<div className={'telem-container'}>
 
     <div className={'buttons'}>
-      <Tooltip placement={'top'} label={'Создать'}>
-        <IconButton aria-label="Create" icon={<CheckIcon/>} colorScheme={'blue'} onClick={createHandle}/>
+      <Tooltip placement={'top'} label={'Создать новый элемент'}>
+        <IconButton aria-label="Create" icon={<CheckIcon/>} colorScheme={'blue'} onClick={createHandle} disabled={dis1} />
       </Tooltip>
       <Tooltip placement={'top'} label={'Обновить'}>
-        <IconButton aria-label="Update" icon={<RepeatIcon/>} colorScheme={'green'} onClick={updateHandler}/>
+        <IconButton aria-label="Update" icon={<RepeatIcon/>} colorScheme={'green'} onClick={updateHandler} disabled={dis2}/>
       </Tooltip>
-      <Tooltip placement={'top'} label={'Удалить'}>
-        <IconButton aria-label="Remove" icon={<DeleteIcon/>} colorScheme={'red'} onClick={deleteHandle}/>
-      </Tooltip>
+
+      <DeleteModal handler={deleteHandle} disabled={dis2} />
+
       <Tooltip placement={'top'} label={'Очистить'}>
         <IconButton aria-label="Clear" icon={<CloseIcon/>} onClick={clearHandle}/>
       </Tooltip>
@@ -94,11 +143,11 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
 
     <SmGapH h={24}/>
 
-    <DroppableWrapper droppableId={DND_ID.D2}>
+    <DroppableWrapper droppableId={DRAGGABLE_ID.D2}>
       {telemCurrent?.id ? (<div>id: {telemCurrent.id}</div>) : ''}
 
-      <input className={'titleInput'} type={'text'} placeholder={'название'} required={true}
-             onChange={inputChangeHandler} value={telemCurrent.title}/>
+      <input className={'titleInput'} type={'text'} placeholder={'title'} required={true}
+             onChange={inputChangeHandler} value={telemCurrent.title || ''}/>
 
       <SmGapH h={16}/>
 
@@ -106,7 +155,7 @@ const TElemConstructor: React.FC<any> = ({selFields}) => {
         selFields.map((field: any, index: any) => {
           return <DraggableItemWrapper
             key={index0++}
-            draggableId={`${DND_ID.D2}-${index}`}
+            draggableId={`${DRAGGABLE_ID.D2}-${index}`}
             index={index}
             className={'op_draggable'}
           >
@@ -129,11 +178,11 @@ const TElem = ({telem}: any) => {
     dispatch(telemCurrentUpdate(telem))
   }
 
-  return (<div key={telem.id} style={{marginTop: 16}}>
+  return (<Container bg={'coral'} borderRadius={'md'} p={2}>
     <div><span>id: </span><span>{telem.id}</span></div>
     <div><span>title: </span><span>{telem.title}</span></div>
-    <button onClick={editHandle}>[edit]</button>
-  </div>)
+    <Button colorScheme={'teal'} variant={'solid'} size={'sm'} onClick={editHandle}>edit</Button>
+  </Container>)
 }
 
 // ---
@@ -145,11 +194,11 @@ const TElems = () => {
   })
 
   // ---
-  return (<div className={'telems-container'}>
+  return (<VStack className={'telems-container'}>
     {
-      telems.map((telem: any) => (<TElem telem={telem}/>))
+      telems.map((telem: any) => (<TElem key={telem.id} telem={telem}/>))
     }
-  </div>)
+  </VStack>)
 }
 
 // ---
@@ -159,6 +208,10 @@ let index0 = 0;
 export function Learn02() {
   const dispatch = useDispatch()
   const [selFields, selFieldsSet] = useState([] as FieldNT[]);
+
+  const telemCurrent = useSelector(state => {
+    return _.get(state, 'app.telemCurrent', {})
+  })
 
   useEffect(() => {
     console.log(`!!-!!-!! L02 -> :::::::::::::: dispatch () {210928200024}:${Date.now()}`); // del+
@@ -177,25 +230,28 @@ export function Learn02() {
       return
     }
 
-    const sIndex = source.index;
-    const dIndex = destination.index;
-    const sDid = source.droppableId
-    const dDid = destination.droppableId
+    const sourceIndex = source.index;
+    const destinationIndex = destination.index;
+    const sourceDraggableId = source.droppableId
+    const destinationDraggableId = destination.droppableId
 
-    const sField = Fields.values()[sIndex]
+    const fieldInfo: FieldNT = Fields.values()[sourceIndex]
 
-    if (sDid !== dDid) {
-      if (dDid === DND_ID.D2) {
-        selFields.splice(dIndex, 0, sField)
+    if (sourceDraggableId !== destinationDraggableId) {
+      if (destinationDraggableId === DRAGGABLE_ID.D2) {
+        // ^ если пермещение из D1 в D2
+        selFields.splice(destinationIndex, 0, fieldInfo)
         selFieldsSet([...selFields])
+        // dispatch(telemCurrentUpdate({...telemCurrent}))
       }
-    } else if (dDid === DND_ID.D2) {
+    } else if (destinationDraggableId === DRAGGABLE_ID.D2) {
+      // ^ если перемещение внутри D2
       const arr0 = [...selFields]
-      stdArrElemMove(arr0, sIndex, dIndex)
+      stdArrElemMove(arr0, sourceIndex, destinationIndex)
       selFieldsSet(arr0)
     }
 
-  }
+  } // </ onDragEndHandler
 
   return (<div className={'zvaz-telems-page'}>
     <button onClick={() => {

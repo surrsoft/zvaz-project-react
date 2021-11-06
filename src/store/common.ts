@@ -12,3 +12,5 @@ export const initialState: any = {
     pagePath: pages.options[0].value,
   },
 }
+
+

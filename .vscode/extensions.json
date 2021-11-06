@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "naumovs.color-highlight",
+    "ms-vscode.cmake-tools",
+    "aaron-bond.better-comments",
+    "mhutchie.git-graph",
+    "steoates.autoimport",
+    "ritwickdey.live-sass",
+    "gruntfuggly.todo-tree",
+    "mechatroner.rainbow-csv",
+    "wallabyjs.quokka-vscode",
+    "mtxr.sqltools",
+    "burkeholland.simple-react-snippets",
+    "formulahendry.terminal",
+    "quicktype.quicktype",
+    "syler.sass-indented",
+    "anseki.vscode-color",
+    "cssho.vscode-svgviewer"
+  ]
+}
