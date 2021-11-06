@@ -4,10 +4,11 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/too
 import _ from 'lodash';
 import { store } from '../store';
 import { telemCurrentUpdate } from '../appSlice/appSlice';
+import { TelemType } from '../../blogic/misc';
 
 const telemsServer = new RsuvTxJsonServer(API_ADDRESS, 'telems2')
 
-export type TelemType = { id: number, title: string }
+
 type SuazType = { ids: number[], entities: any }
 
 export const telemsReceiveThunk = createAsyncThunk('telems/telemsReceived', async () => {

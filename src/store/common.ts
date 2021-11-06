@@ -1,4 +1,4 @@
-import { pages } from '../consts';
+import { pages } from '../consts'
 
 export const initialState: any = {
   cards: {
@@ -6,11 +6,10 @@ export const initialState: any = {
     cardCurrent: {},
   },
   binds: {
-    binds: []
+    binds: [],
   },
   main: {
     pagePath: pages.options[0].value,
   },
 }
-
 

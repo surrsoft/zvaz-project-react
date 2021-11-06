@@ -1,9 +1,9 @@
 import { EActionType } from '../consts';
 import { AnyAction } from 'redux';
-import { configureStore, EntitySelectors } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { bindsSlice } from './bindsSlice/bindsSlice';
 import { initialState } from './common';
-import { telemsAdapter, telemsSlice, TelemType } from './telemsSlice/telemsSlice';
+import { telemsSlice } from './telemsSlice/telemsSlice';
 import { metaSlice } from './metaSlice/metaSlice';
 import { cardsSlice } from './cardsSlice/cardsSlice';
 import { appSlice } from './appSlice/appSlice';

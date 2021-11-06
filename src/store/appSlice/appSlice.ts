@@ -1,16 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'
 
 export const appSlice = createSlice({
   name: 'app',
   initialState: {
-    telemCurrent: {}
+    telemCurrent: {},
   },
   reducers: {
     telemCurrentUpdate(state, action) {
       const telem = action.payload
+      debugger; // del+
       state.telemCurrent = telem
-    }
-  }
+    },
+  },
 })
 
-export const {telemCurrentUpdate} = appSlice.actions
+export const { telemCurrentUpdate } = appSlice.actions
