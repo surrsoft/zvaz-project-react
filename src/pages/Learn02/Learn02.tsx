@@ -5,11 +5,13 @@ import { BElemCls, FieldNT, Fields, TElemCurrent } from "../../blogic/misc";
 import DraggableItemWrapper from "../../components/drag_and_drop/DraggableItemWrapper";
 import FieldTypeUI from "../../components/FieldTypeUI";
 import { stdArrElemMove } from "../../components/simple/utils";
-import React, { useEffect, useState } from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import SmGapH from "../../components/simple/SmGapH";
 import {
+  Badge,
   Button,
   Container,
+  Heading,
   IconButton,
   Modal,
   ModalBody,
@@ -40,19 +42,19 @@ enum DRAGGABLE_ID {
   D2 = "d2",
 }
 
-function fnFieldUI(belem: BElemCls) {
+const FieldUiFCM: React.FC<{ belem: BElemCls }> = ({ belem }) => {
   const techName = belem.id;
   const field = Fields.fieldByTechName(techName);
   if (!field) {
-    return "";
+    return null;
   }
   return (
     <div className={"op_elem"}>
       <div>{field.nameVisual}</div>
-      {Fields.inputByField(field)}
+      {Fields.fieldJsx(field)}
     </div>
   );
-}
+};
 
 const BElemsFCM = () => {
   return (
@@ -210,7 +212,7 @@ const TElemConstructorFCM: React.FC<any> = ({ selFields: belems }) => {
               index={index}
               className={"op_draggable"}
             >
-              {fnFieldUI(belem)}
+              <FieldUiFCM belem={belem} />
             </DraggableItemWrapper>
           );
         })}
@@ -229,15 +231,21 @@ const TElemFCM = ({ telem }: any) => {
   };
 
   return (
-    <Container bg={"coral"} borderRadius={"md"} p={2}>
-      <div>
-        <span>id: </span>
-        <span>{telem.id}</span>
-      </div>
-      <div>
-        <span>title: </span>
-        <span>{telem.title}</span>
-      </div>
+    <Container bg={"coral"} borderRadius={"md"} p={2} pos="relative">
+      <Badge
+        variant="outline"
+        colorScheme="green"
+        bgColor="white"
+        pos="absolute"
+        bottom="0"
+        right="0"
+        m={2}
+      >
+        id: {telem.id}
+      </Badge>
+      <Heading size="sm" mb={2}>
+        {telem.title}
+      </Heading>
       <Button
         colorScheme={"teal"}
         variant={"solid"}
@@ -252,7 +260,7 @@ const TElemFCM = ({ telem }: any) => {
 
 // ---
 
-const TElems = () => {
+const TElemsCFM = () => {
   const telems = useSelector((state: any) => {
     // [211024184516]
     return telemsAllSelector(state);
@@ -274,7 +282,6 @@ let index0 = 0;
 
 export function Learn02() {
   const dispatch = useDispatch();
-  const [selFields, selFieldsSet] = useState([] as FieldNT[]);
 
   const telemCurrent = useSelector((state) => {
     return _.get(state, "app.telemCurrent", {});
@@ -296,7 +303,6 @@ export function Learn02() {
     console.log("!!-!!-!! 1212-10 destination {210423121200}\n", destination); // del+
     console.log("!!-!!-!! 1212-20 source {210423121214}\n", source); // del+
     console.log("!!-!!-!! 1212-30 draggableId {210423121227}\n", draggableId); // del+
-    debugger; // del+
 
     if (!destination) {
       return;
@@ -307,25 +313,22 @@ export function Learn02() {
     const sourceDraggableId = source.droppableId;
     const destinationDraggableId = destination.droppableId;
 
-    const fieldInfo: FieldNT = Fields.values()[sourceIndex];
-
     const telemCurrentNew = new TElemCurrent(telemCurrent);
     if (sourceDraggableId !== destinationDraggableId) {
       if (destinationDraggableId === DRAGGABLE_ID.D2) {
         // ^ если пермещение из D1 в D2
-        selFields.splice(destinationIndex, 0, fieldInfo);
-        selFieldsSet([...selFields]);
         const field: FieldNT | null = Fields.fieldByIndex(sourceIndex);
         if (field) {
           telemCurrentNew.belemAdd({ id: field.nameTech }, destinationIndex);
           dispatch(telemCurrentUpdate({ ...telemCurrentNew }));
         }
+      } else if (destinationDraggableId === DRAGGABLE_ID.D1) {
+        // ^ если перемещение из D2 в D1
+        telemCurrentNew.belemDelete(sourceIndex);
+        dispatch(telemCurrentUpdate({ ...telemCurrentNew }));
       }
     } else if (destinationDraggableId === DRAGGABLE_ID.D2) {
       // ^ если перемещение внутри D2
-      const arr0 = [...selFields];
-      stdArrElemMove(arr0, sourceIndex, destinationIndex);
-      selFieldsSet(arr0);
       telemCurrentNew.belemMove(sourceIndex, destinationIndex);
       dispatch(telemCurrentUpdate({ ...telemCurrentNew }));
     }
@@ -333,18 +336,10 @@ export function Learn02() {
 
   return (
     <div className={"zvaz-telems-page"}>
-      <button
-        onClick={() => {
-          dispatch(metaReceiveThunk());
-        }}
-      >
-        debug
-      </button>
-
       <DragDropContext onDragEnd={onDragEndHandler}>
         <BElemsFCM />
         <TElemConstructorFCM selFields={_.get(telemCurrent, "belems", [])} />
-        <TElems />
+        <TElemsCFM />
       </DragDropContext>
     </div>
   );

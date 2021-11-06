@@ -54,56 +54,115 @@
   "telems2": [
     {
       "id": 1,
-      "title": "title-11"
+      "title": "дата рождения",
+      "belems": [
+        {
+          "id": "Date"
+        }
+      ]
     },
     {
       "id": 32,
-      "title": "ttt1",
+      "title": "дата смерти",
+      "belems": [
+        {
+          "id": "Date"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "title": "телефон рабочий",
       "belems": [
         {
           "id": "Tel"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "title": "email рабочий",
+      "belems": [
+        {
+          "id": "Email"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "title": "цвет основной",
+      "belems": [
+        {
+          "id": "Color"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "title": "URL",
+      "belems": [
+        {
+          "id": "URL"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "title": "вес, кг",
+      "belems": [
+        {
+          "id": "Number"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "title": "звезды github, шт на дату",
+      "belems": [
+        {
+          "id": "Number"
         },
+        {
+          "id": "Date"
+        }
+      ]
+    },
+    {
+      "title": "пол мужской",
+      "id": 41
+    },
+    {
+      "title": "пол женский",
+      "id": 42
+    },
+    {
+      "title": "под другой",
+      "id": 43
+    },
+    {
+      "id": 44,
+      "title": "рост, см",
+      "belems": [
+        {
+          "id": "Number"
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "title": "комментарий",
+      "belems": [
         {
           "id": "TextArea"
         }
       ]
     },
     {
-      "title": "111",
-      "id": 33
-    },
-    {
-      "id": 34
-    },
-    {
-      "title": "222",
-      "id": 36
-    },
-    {
-      "title": "вываы",
-      "id": 37
-    },
-    {
-      "id": 38,
-      "title": "aa",
+      "id": 46,
+      "title": "ник в telegram",
       "belems": [
         {
-          "id": "Color"
-        },
-        {
-          "id": "Tel"
-        },
-        {
-          "id": "Email"
-        },
-        {
-          "id": "Number"
-        },
-        {
-          "id": "TextArea"
-        },
-        {
-          "id": "Range"
+          "id": "TextField"
         }
       ]
     }

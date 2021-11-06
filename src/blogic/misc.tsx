@@ -111,7 +111,7 @@ export class Fields {
     });
   }
 
-  static inputByField(field: FieldNT): JSX.Element {
+  static fieldJsx(field: FieldNT): JSX.Element {
     switch (field.nameTech) {
       case FIELD_NAME_TECH_ASAU9.TEXT_FIELD:
         return <Input type={"text"} />;
@@ -178,7 +178,6 @@ export class TElemCurrent {
   }
 
   belemAdd(belem: BElemCls, index: number) {
-    debugger; // del+
     return RsuvTuArray.elemAdd(this.belems, index, belem);
   }
 
@@ -192,6 +191,10 @@ export class TElemCurrent {
 
   belemMove(indexFrom: number, indexTo: number) {
     return RsuvTuArray.elemMove(this.belems, indexFrom, indexTo);
+  }
+
+  belemDelete(index: number) {
+    return RsuvTuArray.elemDelete(this.belems, index);
   }
 }
 

@@ -8,7 +8,6 @@ export const appSlice = createSlice({
   reducers: {
     telemCurrentUpdate(state, action) {
       const telem = action.payload
-      debugger // del+
       state.telemCurrent = telem
     },
   },
