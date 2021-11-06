@@ -4,14 +4,16 @@ import DroppableWrapper from "../../components/drag_and_drop/DroppableWrapper";
 import { BElemCls, FieldNT, Fields, TElemCurrent } from "../../blogic/misc";
 import DraggableItemWrapper from "../../components/drag_and_drop/DraggableItemWrapper";
 import FieldTypeUI from "../../components/FieldTypeUI";
-import { stdArrElemMove } from "../../components/simple/utils";
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import SmGapH from "../../components/simple/SmGapH";
+import { MdDns, MdSettings } from "react-icons/md";
 import {
   Badge,
   Button,
   Container,
   Heading,
+  HStack,
+  Icon,
   IconButton,
   Modal,
   ModalBody,
@@ -20,11 +22,20 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
   Tooltip,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { CheckIcon, CloseIcon, DeleteIcon, RepeatIcon } from "@chakra-ui/icons";
+import {
+  CheckIcon,
+  CloseIcon,
+  DeleteIcon,
+  EditIcon,
+  RepeatIcon,
+} from "@chakra-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import {
@@ -231,29 +242,41 @@ const TElemFCM = ({ telem }: any) => {
   };
 
   return (
-    <Container bg={"coral"} borderRadius={"md"} p={2} pos="relative">
-      <Badge
-        variant="outline"
-        colorScheme="green"
-        bgColor="white"
-        pos="absolute"
-        bottom="0"
-        right="0"
-        m={2}
-      >
-        id: {telem.id}
-      </Badge>
-      <Heading size="sm" mb={2}>
+    <Container bg={"coral"} borderRadius={"md"} p={2}>
+      <Heading size="sm" mb={4}>
         {telem.title}
       </Heading>
-      <Button
-        colorScheme={"teal"}
-        variant={"solid"}
-        size={"sm"}
-        onClick={editHandle}
-      >
-        edit
-      </Button>
+      <HStack pos="relative">
+        <Badge
+          variant="outline"
+          colorScheme="green"
+          bgColor="white"
+          pos="absolute"
+          bottom="0"
+          right="0"
+          m={2}
+        >
+          id: {telem.id}
+        </Badge>
+
+        <Tooltip placement={"top"} label={"Изменить"}>
+          <IconButton
+            aria-label="edit"
+            icon={<EditIcon />}
+            colorScheme={"teal"}
+            variant={"solid"}
+            size={"sm"}
+            onClick={editHandle}
+          />
+        </Tooltip>
+
+        <Tooltip placement="top" label="Количество элементов">
+          <Tag size="sm" variant="outline" colorScheme="teal">
+            <TagLeftIcon as={MdSettings} />
+            <TagLabel>{_.get(telem, "belems.length", "0")}</TagLabel>
+          </Tag>
+        </Tooltip>
+      </HStack>
     </Container>
   );
 };
