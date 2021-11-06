@@ -57,8 +57,16 @@
       "title": "title-11"
     },
     {
+      "id": 32,
       "title": "ttt1",
-      "id": 32
+      "belems": [
+        {
+          "id": "Tel"
+        },
+        {
+          "id": "TextArea"
+        }
+      ]
     },
     {
       "title": "111",
@@ -74,6 +82,30 @@
     {
       "title": "вываы",
       "id": 37
+    },
+    {
+      "id": 38,
+      "title": "aa",
+      "belems": [
+        {
+          "id": "Color"
+        },
+        {
+          "id": "Tel"
+        },
+        {
+          "id": "Email"
+        },
+        {
+          "id": "Number"
+        },
+        {
+          "id": "TextArea"
+        },
+        {
+          "id": "Range"
+        }
+      ]
     }
   ]
 }

@@ -40,7 +40,12 @@ enum DRAGGABLE_ID {
   D2 = "d2",
 }
 
-function fnFieldUI(field: FieldNT) {
+function fnFieldUI(belem: BElemCls) {
+  const techName = belem.id;
+  const field = Fields.fieldByTechName(techName);
+  if (!field) {
+    return "";
+  }
   return (
     <div className={"op_elem"}>
       <div>{field.nameVisual}</div>
@@ -106,12 +111,13 @@ function DeleteModalFCM({ disabled, handler }: any) {
   );
 }
 
-const TElemConstructorFCM: React.FC<any> = ({ selFields }) => {
+const TElemConstructorFCM: React.FC<any> = ({ selFields: belems }) => {
   const telemCurrent = useSelector((state) => {
+    console.log(state, "!!-!!-!! state {1636226302-1}"); // del+
     return _.get(state, "app.telemCurrent", {});
   });
   console.log(
-    "!!-!!-!! TElemConstructor: telemCurrent {211024190736}\n",
+    "!!-!!-!! TElemConstructor: telemCurrent {1636226302-2}\n",
     telemCurrent
   ); // del+
 
@@ -196,7 +202,7 @@ const TElemConstructorFCM: React.FC<any> = ({ selFields }) => {
 
         <SmGapH h={16} />
 
-        {selFields.map((field: any, index: any) => {
+        {belems.map((belem: BElemCls, index: any) => {
           return (
             <DraggableItemWrapper
               key={index0++}
@@ -204,7 +210,7 @@ const TElemConstructorFCM: React.FC<any> = ({ selFields }) => {
               index={index}
               className={"op_draggable"}
             >
-              {fnFieldUI(field)}
+              {fnFieldUI(belem)}
             </DraggableItemWrapper>
           );
         })}
@@ -303,6 +309,7 @@ export function Learn02() {
 
     const fieldInfo: FieldNT = Fields.values()[sourceIndex];
 
+    const telemCurrentNew = new TElemCurrent(telemCurrent);
     if (sourceDraggableId !== destinationDraggableId) {
       if (destinationDraggableId === DRAGGABLE_ID.D2) {
         // ^ если пермещение из D1 в D2
@@ -310,10 +317,7 @@ export function Learn02() {
         selFieldsSet([...selFields]);
         const field: FieldNT | null = Fields.fieldByIndex(sourceIndex);
         if (field) {
-          const telemCurrentNew = new TElemCurrent(telemCurrent);
-          debugger; // del+
           telemCurrentNew.belemAdd({ id: field.nameTech }, destinationIndex);
-          debugger; // del+
           dispatch(telemCurrentUpdate({ ...telemCurrentNew }));
         }
       }
@@ -322,6 +326,8 @@ export function Learn02() {
       const arr0 = [...selFields];
       stdArrElemMove(arr0, sourceIndex, destinationIndex);
       selFieldsSet(arr0);
+      telemCurrentNew.belemMove(sourceIndex, destinationIndex);
+      dispatch(telemCurrentUpdate({ ...telemCurrentNew }));
     }
   }; // </ onDragEndHandler
 
@@ -337,7 +343,7 @@ export function Learn02() {
 
       <DragDropContext onDragEnd={onDragEndHandler}>
         <BElemsFCM />
-        <TElemConstructorFCM selFields={selFields} />
+        <TElemConstructorFCM selFields={_.get(telemCurrent, "belems", [])} />
         <TElems />
       </DragDropContext>
     </div>

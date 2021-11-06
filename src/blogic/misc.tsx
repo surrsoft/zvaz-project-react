@@ -105,6 +105,12 @@ export class Fields {
     return _.get(values, index, null);
   }
 
+  static fieldByTechName(techName: FIELD_NAME_TECH_ASAU9) {
+    return _.find(Fields.values(), (el) => {
+      return el.nameTech === techName;
+    });
+  }
+
   static inputByField(field: FieldNT): JSX.Element {
     switch (field.nameTech) {
       case FIELD_NAME_TECH_ASAU9.TEXT_FIELD:
@@ -176,6 +182,7 @@ export class TElemCurrent {
     return RsuvTuArray.elemAdd(this.belems, index, belem);
   }
 
+  // to remove // TODO
   static belemAddB(telemCurrent: TElemCurrent, belem: BElemCls, index: number) {
     if (!telemCurrent.belems) {
       telemCurrent.belems = [];
