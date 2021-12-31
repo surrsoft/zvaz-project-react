@@ -108,4 +108,3 @@ const telemsSelectors = telemsAdapter.getSelectors<RootState>(
 
 // [[211024184516]]
 export const telemsAllSelector = telemsSelectors.selectAll
-
