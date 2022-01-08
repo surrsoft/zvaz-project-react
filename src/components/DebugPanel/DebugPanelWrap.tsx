@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { useDebugPanelHandler } from './useDebugPanel';
 import { debugPanelUpdate } from '../../store/appSlice/appSlice';
 import { useDispatch } from 'react-redux';
+import { timerMsec } from './DebugPanel';
 
 interface DebugPanelWrapProps {
   info?: string
@@ -18,14 +19,17 @@ const DebugPanelWrap: React.FC<DebugPanelWrapProps> = ({children, info}) => {
   return (<>
     {
       React.Children.map(children, (elChild) => {
+        console.log('!!-!!-!! 2028- elChild {211231195540}\n', elChild) // del+
         if (React.isValidElement(elChild)) {
-          return React.cloneElement(elChild, {
+          const elem = React.cloneElement(elChild, {
             onMouseOver: function debugPanelHandler(ev: any) {
+              console.log('!!-!!-!! 1132- ev {220102113246}\n', ev) // del+
               if (ev?.shiftKey) {
                 dispatch(debugPanelUpdate({info}))
               }
-            }
+            },
           })
+          return elem;
         }
         return elChild
       })

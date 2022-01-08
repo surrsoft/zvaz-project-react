@@ -1,7 +1,29 @@
 .debugPanelContainer {
-  background: #287c40;
+  // display: block;
+
+  background: rgba(255, 227, 41, 0.48);
+  color: #3a3636;
+
   padding: 6px 12px;
-  border: 1px solid silver;
+  margin: 8px;
+
+  border: 2px solid #3a3636;
   border-radius: 8px;
-  color: white;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &.display-on {
+    display: block;
+  }
+
+  &.display-off {
+    display: none;
+  }
+
+}
+
+.debugPanel211231202100 {
+  outline: 2px solid red !important;
 }

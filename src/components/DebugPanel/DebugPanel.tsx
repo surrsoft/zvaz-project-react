@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './styles.scss'
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
@@ -11,15 +11,31 @@ export interface DebugPanelInfo {
   info?: string
 }
 
+export const timerMsec = 3000;
+
 const DebugPanel: React.FC<DebugPanelProps> = () => {
+  const refElem = useRef(null)
+  const [$timerId, $timerIdSet] = useState<any>();
+  const [$displayClass, $displayClassSet] = useState('display-on');
+
   const debugPanelValue = useSelector(state => {
-    const val = (state as any)?.app?.debugPanel;
-    return !_.isEmpty(val) ? val : {info: '-'}
+    const obj = (state as any)?.app?.debugPanel;
+    return !_.isEmpty(obj) ? obj.info : '-'
   })
 
+  useEffect(() => {
+    console.log(`!!-!!-!! -> :::::::::::::: 1011- () {211231101113}:${Date.now()}`) // del+
+    clearTimeout($timerId)
+    $displayClassSet('display-on')
+    const timerId = setTimeout(() => {
+      $displayClassSet('display-off')
+    }, timerMsec);
+    $timerIdSet(timerId)
+  }, [debugPanelValue]);
+
   return (<>
-    <div className="debugPanelContainer">
-      {debugPanelValue?.info}
+    <div className={`debugPanelContainer ${$displayClass}`} ref={refElem}>
+      {debugPanelValue}
     </div>
   </>)
 }

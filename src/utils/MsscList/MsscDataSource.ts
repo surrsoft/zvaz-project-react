@@ -1,33 +1,33 @@
 import { RsuvResultTibo, RsuvSearchElems, RsuvTxNumIntAB } from 'rsuv-lib'
 
-export class MsscFilter {
+export class MsscFilter2 {
   constructor(public elems: RsuvSearchElems) {}
 }
 
 /**
  * ПОНЯТИЯ:
- * -- А - 
- * 
- * @type <T> тип данных получаемых из А, и отправляемых для А 
+ * -- А -
+ *
+ * @type <T> тип данных получаемых из А, и отправляемых для А
  */
 export interface MsscDataSource<T> {
-  
+
   /**
    * Общее число элементов
    */
-  elemsCountWhole(): Promise<RsuvResultTibo<RsuvTxNumIntAB>>
+  elemsCountAll(): Promise<RsuvResultTibo<RsuvTxNumIntAB>>
 
   /**
    * Число элементов удовлетворяющих фильтру (1)
    * @param filter (1)
    */
-  elemsCount(filter: MsscFilter): Promise<RsuvResultTibo<RsuvTxNumIntAB>>
+  elemsCount(filter: MsscFilter2): Promise<RsuvResultTibo<RsuvTxNumIntAB>>
 
   /**
    * Элементы удолетворяющие фильтру (1). Если (1) is falsy то возвращает первые элементы (10 максимум)
    * @param filter (1) --
    */
-  elems(filter: MsscFilter): Promise<RsuvResultTibo<T[]>>
+  elems(filter: MsscFilter2): Promise<RsuvResultTibo<T[]>>
 
   /**
    * С каждым элементом из (1) поступает так: добавляет его как новый.
