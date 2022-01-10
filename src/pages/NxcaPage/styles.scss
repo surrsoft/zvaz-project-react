@@ -1,0 +1,32 @@
+.cn1 {
+  margin-top: 16px;
+}
+
+.cn2 {
+  margin-top: 16px;
+  display: flex;
+  column-gap: 8px;
+}
+
+.cn3 {
+  border: 1px solid silver;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.cnInput {
+  padding: 4px 8px;
+  border: 1px solid blue;
+  border-radius: 6px;
+}
+
+.cnLabel {
+  margin-right: 8px;
+}
+
+.cnButton {
+  margin-left: 16px;
+  padding: 4px 8px;
+  border: 1px solid silver;
+  cursor: pointer;
+}

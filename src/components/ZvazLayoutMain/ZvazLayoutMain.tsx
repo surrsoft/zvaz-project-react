@@ -5,6 +5,9 @@ import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { EPageName, pages } from '../../consts';
 import { Learn01 } from '../../pages/Learn01/Learn01';
 import { Learn02 } from '../../pages/Learn02/Learn02';
+import { MsscPage } from '../../pages/MsscPage/MsscPage';
+import NxcaPage from '../../pages/NxcaPage/NxcaPage';
+import { MvroPage } from '../../pages/MvroPage/MvroPage';
 
 function fnPath(pageName: string) {
   return pages.options.find(el => el.value === pageName)?.subValue || ''
@@ -18,6 +21,7 @@ function ZvazLayoutMain() {
     <div className="main">
       <ZvazMenu/>
       <div className={'body'}>
+        {/* routes */}
         <Switch>
           <Route exact path={fnPath(EPageName.MAIN)}>
             <div>Главная</div>
@@ -27,6 +31,15 @@ function ZvazLayoutMain() {
           </Route>
           <Route exact path={fnPath(EPageName.LEARN_02)}>
             <Learn02/>
+          </Route>
+          <Route exact path={fnPath(EPageName.MSSC)}>
+            <MsscPage/>
+          </Route>
+          <Route exact path={fnPath(EPageName.NXCA)}>
+            <NxcaPage/>
+          </Route>
+          <Route exact path={fnPath(EPageName.MVRO)}>
+            <MvroPage/>
           </Route>
           <Redirect to={fnPath(EPageName.MAIN) || '/'}/>
         </Switch>

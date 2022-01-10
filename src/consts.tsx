@@ -8,6 +8,9 @@ export enum EPageName {
   MAIN = 'Главная',
   LEARN_01 = 'Learn01',
   LEARN_02 = 'Learn02',
+  MSSC = 'MSSC',
+  NXCA = 'NxcaPage',
+  MVRO = 'MvroPage',
 }
 
 export const pages: WnouT2<EPageName> = {
@@ -15,6 +18,9 @@ export const pages: WnouT2<EPageName> = {
     {value: EPageName.MAIN, text: 'Главная', subValue: '/'},
     {value: EPageName.LEARN_01, text: 'Learn01', subValue: '/Learn01'},
     {value: EPageName.LEARN_02, text: 'Learn02', subValue: '/Learn02'},
+    {value: EPageName.MSSC, text: 'MSSC', subValue: '/mssc'},
+    {value: EPageName.NXCA, text: 'NxcaPage', subValue: '/nxca'},
+    {value: EPageName.MVRO, text: 'MvroPage', subValue: '/mvro'},
   ],
   selectedValue: EPageName.MAIN
 }

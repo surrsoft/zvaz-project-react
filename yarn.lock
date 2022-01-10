@@ -11241,10 +11241,10 @@ rsuv-lib@^1.2.0:
     lodash-es "^4.17.21"
     validator "^13.7.0"
 
-rsuv-lib@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-2.0.0.tgz#a5a4a0b7445b5fdaa3ee8b04c3a68ea17426e38c"
-  integrity sha512-IyHhw/XGW/5jydwrLZ3lvUIyfIxqtG4kz5/d6ApsxCVp2TsFenMbnl1wo0wmjD9WwqLBzIfa1NqDg3hn9GE0wQ==
+rsuv-lib@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-2.1.0.tgz#3d5ef76730b4dcab7227d49aaf8c172eff9f1b97"
+  integrity sha512-VySCyhoGhj1bktWgCdOj8HIPrnxQ9qPU9xANFHjGI9cESydMAMaOn8RhFjint8OCNZ/Gwwgx0RdWhLp/WgOPww==
   dependencies:
     "@types/lodash" "^4.14.170"
     "@types/validator" "^13.6.2"
