@@ -61,19 +61,6 @@ export function nxcaFrom(enPerson: MvroEnVerbPerson, enTense: MvroEnVerbTense): 
           break;
       }
       break;
-    case MvroEnVerbPerson.IT:
-      switch (enTense) {
-        case MvroEnVerbTense.PRESENT:
-          ret = NxcaDeclensionForm.YOU_A
-          break;
-        case MvroEnVerbTense.PAST:
-          ret = NxcaDeclensionForm.YOU_B
-          break;
-        case MvroEnVerbTense.FUTURE:
-          ret = NxcaDeclensionForm.YOU_F
-          break;
-      }
-      break;
     case MvroEnVerbPerson.HE:
       switch (enTense) {
         case MvroEnVerbTense.PRESENT:

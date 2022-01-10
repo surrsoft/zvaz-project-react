@@ -29,7 +29,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
                 enForm = personRand + ' ' + wordObjRand.wordBaseForm
                 break;
               case MvroEnVerbPerson.HE:
@@ -44,7 +43,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 if (wordObjRand.types.includes(MvroEnWordType.VERB_IRREGULAR)) {
@@ -62,7 +60,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 enForm = personRand + ' will ' + wordObjRand.wordBaseForm
@@ -79,7 +76,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
                 enForm = personRand + ' don\'t ' + wordObjRand.wordBaseForm
                 break;
               case MvroEnVerbPerson.HE:
@@ -94,7 +90,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 enForm = personRand + ' didn\'t ' + wordObjRand.wordBaseForm
@@ -107,7 +102,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 enForm = personRand + ' will not ' + wordObjRand.wordBaseForm
@@ -124,7 +118,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
                 enForm = `Do ${personRand} ${wordObjRand.wordBaseForm}?`
                 break;
               case MvroEnVerbPerson.HE:
@@ -139,7 +132,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 enForm = `Did ${personRand} ${wordObjRand.wordBaseForm}?`
@@ -152,7 +144,6 @@ export class MvroRandom {
               case MvroEnVerbPerson.YOU:
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
-              case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 enForm = `Will ${personRand} ${wordObjRand.wordBaseForm}?`

@@ -3,7 +3,6 @@ export enum MvroEnVerbPerson {
   YOU = 'you',
   WE = 'we',
   THEY = 'they',
-  IT = 'it',
   HE = 'he',
   SHE = 'she',
 }

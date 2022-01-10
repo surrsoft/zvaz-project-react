@@ -103,8 +103,12 @@ export class NxcaTuSklon {
   static sklon(wordPart: string, sklonEnum: NxcaEnSklon): NxcaResElem[] {
     const ret: NxcaResElem[] = []
 
-    const fn1 = (sklonForm: NxcaDeclensionForm, suffix: string = '', prefix: string = '') => {
-      ret.push(new NxcaResElem(sklonForm, prefix + wordPart + suffix))
+    const fn1 = (sklonForm: NxcaDeclensionForm, suffix = '', prefix = '', replace = false) => {
+      if (!replace) {
+        ret.push(new NxcaResElem(sklonForm, prefix + wordPart + suffix))
+      } else {
+        ret.push(new NxcaResElem(sklonForm, suffix))
+      }
     }
 
     switch (sklonEnum) {
@@ -275,6 +279,78 @@ export class NxcaTuSklon {
         fn1(NxcaDeclensionForm.THEY_F, 'ить', 'будут ')
         fn1(NxcaDeclensionForm.HE_F, 'ить', 'будет ')
         fn1(NxcaDeclensionForm.SHE_F, 'ить', 'будет ')
+        break;
+      case NxcaEnSklon.S8:
+        fn1(NxcaDeclensionForm.BASE, 'ится')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_A, 'люсь')
+        fn1(NxcaDeclensionForm.YOU_A, 'ишься')
+        fn1(NxcaDeclensionForm.WE_A, 'имся')
+        fn1(NxcaDeclensionForm.THEY_A, 'ятся')
+        fn1(NxcaDeclensionForm.HE_A, 'ится')
+        fn1(NxcaDeclensionForm.SHE_A, 'ится')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_B, 'ился')
+        fn1(NxcaDeclensionForm.YOU_B, 'ился')
+        fn1(NxcaDeclensionForm.WE_B, 'ились')
+        fn1(NxcaDeclensionForm.THEY_B, 'ились')
+        fn1(NxcaDeclensionForm.HE_B, 'ился')
+        fn1(NxcaDeclensionForm.SHE_B, 'илась')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_F, 'иться', 'буду ')
+        fn1(NxcaDeclensionForm.YOU_F, 'иться', 'будешь ')
+        fn1(NxcaDeclensionForm.WE_F, 'иться', 'будем ')
+        fn1(NxcaDeclensionForm.THEY_F, 'иться', 'будут ')
+        fn1(NxcaDeclensionForm.HE_F, 'иться', 'будет ')
+        fn1(NxcaDeclensionForm.SHE_F, 'иться', 'будет ')
+        break;
+      case NxcaEnSklon.S9_GO:
+        fn1(NxcaDeclensionForm.BASE, 'ти')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_A, 'у')
+        fn1(NxcaDeclensionForm.YOU_A, 'ёшь')
+        fn1(NxcaDeclensionForm.WE_A, 'ём')
+        fn1(NxcaDeclensionForm.THEY_A, 'ут')
+        fn1(NxcaDeclensionForm.HE_A, 'ёт')
+        fn1(NxcaDeclensionForm.SHE_A, 'ёт')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_B, 'шёл', '', true)
+        fn1(NxcaDeclensionForm.YOU_B, 'шёл', '', true)
+        fn1(NxcaDeclensionForm.WE_B, 'шли', '', true)
+        fn1(NxcaDeclensionForm.THEY_B, 'шли', '', true)
+        fn1(NxcaDeclensionForm.HE_B, 'шёл', '', true)
+        fn1(NxcaDeclensionForm.SHE_B, 'шла', '', true)
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_F, 'ти', 'буду ')
+        fn1(NxcaDeclensionForm.YOU_F, 'ти', 'будешь ')
+        fn1(NxcaDeclensionForm.WE_F, 'ти', 'будем ')
+        fn1(NxcaDeclensionForm.THEY_F, 'ти', 'будут ')
+        fn1(NxcaDeclensionForm.HE_F, 'ти', 'будет ')
+        fn1(NxcaDeclensionForm.SHE_F, 'ти', 'будет ')
+        break;
+      case NxcaEnSklon.S10:
+        fn1(NxcaDeclensionForm.BASE, 'овать')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_A, 'ую')
+        fn1(NxcaDeclensionForm.YOU_A, 'уешь')
+        fn1(NxcaDeclensionForm.WE_A, 'уем')
+        fn1(NxcaDeclensionForm.THEY_A, 'уют')
+        fn1(NxcaDeclensionForm.HE_A, 'ует')
+        fn1(NxcaDeclensionForm.SHE_A, 'ует')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_B, 'овал')
+        fn1(NxcaDeclensionForm.YOU_B, 'овал')
+        fn1(NxcaDeclensionForm.WE_B, 'овали')
+        fn1(NxcaDeclensionForm.THEY_B, 'овали')
+        fn1(NxcaDeclensionForm.HE_B, 'овал')
+        fn1(NxcaDeclensionForm.SHE_B, 'овала')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_F, 'овать', 'буду ')
+        fn1(NxcaDeclensionForm.YOU_F, 'овать', 'будешь ')
+        fn1(NxcaDeclensionForm.WE_F, 'овать', 'будем ')
+        fn1(NxcaDeclensionForm.THEY_F, 'овать', 'будут ')
+        fn1(NxcaDeclensionForm.HE_F, 'овать', 'будет ')
+        fn1(NxcaDeclensionForm.SHE_F, 'овать', 'будет ')
         break;
     }
 

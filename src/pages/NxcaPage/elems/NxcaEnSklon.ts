@@ -16,6 +16,12 @@ export enum NxcaEnSklon {
   S6 = 's6',
   /** ж|ить */
   S7 = 's7',
+  /** нрав|ится */
+  S8 = 's8',
+  /** ид/ти */
+  S9_GO = 's9-go',
+  /** рис/овать */
+  S10 = 's10',
 }
 
 export const NxcaEnSklonAll: NxcaEnSklon[] = Object.values(NxcaEnSklon)

@@ -25,6 +25,18 @@ mvroWords.push({
   id: '220110153512', wordBaseForm: 'close', types: [MvroEnWordType.VERB, MvroEnWordType.VERB_REGULAR],
   wordRus: {wordPart: 'закрыв', enSklon: NxcaEnSklon.S4} as MvroWordRus
 } as MvroWord)
+mvroWords.push({
+  id: '220110190629', wordBaseForm: 'like', types: [MvroEnWordType.VERB, MvroEnWordType.VERB_REGULAR],
+  wordRus: {wordPart: 'нрав', enSklon: NxcaEnSklon.S8} as MvroWordRus
+} as MvroWord)
+mvroWords.push({
+  id: '220110190630', wordBaseForm: 'start', types: [MvroEnWordType.VERB, MvroEnWordType.VERB_REGULAR],
+  wordRus: {wordPart: 'начин', enSklon: NxcaEnSklon.S4} as MvroWordRus
+} as MvroWord)
+mvroWords.push({
+  id: '220110190631', wordBaseForm: 'finish', types: [MvroEnWordType.VERB, MvroEnWordType.VERB_REGULAR],
+  wordRus: {wordPart: 'заканчив', enSklon: NxcaEnSklon.S4} as MvroWordRus
+} as MvroWord)
 
 mvroWords.push({
   id: '22011017103601',
@@ -53,6 +65,34 @@ mvroWords.push({
   wordFormVerbIrregular: 'thought',
   types: [MvroEnWordType.VERB, MvroEnWordType.VERB_IRREGULAR],
   wordRus: {wordPart: 'дум', enSklon: NxcaEnSklon.S4} as MvroWordRus
+} as MvroWord)
+mvroWords.push({
+  id: '22011017103605',
+  wordBaseForm: 'go',
+  wordFormVerbIrregular: 'went',
+  types: [MvroEnWordType.VERB, MvroEnWordType.VERB_IRREGULAR],
+  wordRus: {wordPart: 'ид', enSklon: NxcaEnSklon.S9_GO} as MvroWordRus
+} as MvroWord)
+mvroWords.push({
+  id: '22011017103606',
+  wordBaseForm: 'draw',
+  wordFormVerbIrregular: 'drew',
+  types: [MvroEnWordType.VERB, MvroEnWordType.VERB_IRREGULAR],
+  wordRus: {wordPart: 'рис', enSklon: NxcaEnSklon.S10} as MvroWordRus
+} as MvroWord)
+mvroWords.push({
+  id: '22011017103607',
+  wordBaseForm: 'feel',
+  wordFormVerbIrregular: 'felt',
+  types: [MvroEnWordType.VERB, MvroEnWordType.VERB_IRREGULAR],
+  wordRus: {wordPart: 'чувств', enSklon: NxcaEnSklon.S10} as MvroWordRus
+} as MvroWord)
+mvroWords.push({
+  id: '22011017103608',
+  wordBaseForm: 'freeze',
+  wordFormVerbIrregular: 'froze',
+  types: [MvroEnWordType.VERB, MvroEnWordType.VERB_IRREGULAR],
+  wordRus: {wordPart: 'замерз', enSklon: NxcaEnSklon.S4} as MvroWordRus
 } as MvroWord)
 
 

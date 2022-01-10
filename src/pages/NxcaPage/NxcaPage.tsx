@@ -62,6 +62,7 @@ const NxcaPage = (): JSX.Element => {
       <div>S5: ви - (деть)</div>
       <div>S6: прихо - (дить)</div>
       <div>S7: ж - (ить)</div>
+      <div>S8: начин - (ать)</div>
       <div>марин|овать</div>
     </div>
   </div>)
