@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import './styles.scss';
-import { NxcaResElem, NxcaResElemB, NxcaTuSklon } from './elems/NxcaTuSklon';
+import { NXCA_NEGATE, NxcaResElem, NxcaResElemB, NxcaTuSklon } from './elems/NxcaTuSklon';
 import { NxcaEnSklonAll } from './elems/NxcaEnSklon';
 
 function InputCMP() {
@@ -24,7 +24,7 @@ function InputCMP() {
       <div>{el?.sklonEnum}</div>
       {
         el?.elems.map((el0) => {
-          return (<div>{el0.res}</div>)
+          return (<div>{el0.res?.filter(el => el !== NXCA_NEGATE).join(' ')}</div>)
         })
       }
     </div>)
@@ -58,7 +58,10 @@ const NxcaPage = (): JSX.Element => {
       <div>S1: люб|дым|(ить),</div>
       <div>S3: вал|пар|бан|стел|мор|сверл|(ить)</div>
       <div>S2: дыш|крич|торч|(ать)</div>
-      <div>S4: мечт - открыв - (ать)</div>
+      <div>S4: мечт - открыв - зн - дум - (ать)</div>
+      <div>S5: ви - (деть)</div>
+      <div>S6: прихо - (дить)</div>
+      <div>S7: ж - (ить)</div>
       <div>марин|овать</div>
     </div>
   </div>)

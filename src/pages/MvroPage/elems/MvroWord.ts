@@ -1,4 +1,5 @@
 import { MvroEnWordType } from './MvroEnWordType';
+import { MvroWordRus } from './MvroWordRus';
 
 export class MvroWord {
   id: string = ''
@@ -19,4 +20,6 @@ export class MvroWord {
    */
   wordFormVerbIrregular?: string
 
+  wordRus?: MvroWordRus
 }
+

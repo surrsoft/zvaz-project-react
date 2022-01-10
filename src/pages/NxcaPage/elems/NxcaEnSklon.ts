@@ -1,7 +1,7 @@
 export enum NxcaEnSklon {
-  /** люб/ить */
+  /** люб|ить */
   S1 = 's1',
-  /** дыш/ать */
+  /** дыш|ать */
   S2 = 's2',
   /**
    * Отличается от S1 только "я" в настоящем времени (добавляется не "лю" а "ю")
@@ -10,11 +10,12 @@ export enum NxcaEnSklon {
   S3 = 's3',
   /** мечт|ать . Отличается от S2 только склонением в настоящем времени */
   S4 = 's4',
+  /** ви|деть */
+  S5 = 's5',
+  /** прихо|дить */
+  S6 = 's6',
+  /** ж|ить */
+  S7 = 's7',
 }
 
-export const NxcaEnSklonAll = [
-  NxcaEnSklon.S1,
-  NxcaEnSklon.S3,
-  NxcaEnSklon.S2,
-  NxcaEnSklon.S4,
-]
+export const NxcaEnSklonAll: NxcaEnSklon[] = Object.values(NxcaEnSklon)

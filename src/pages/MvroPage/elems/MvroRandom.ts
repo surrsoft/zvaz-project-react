@@ -5,6 +5,9 @@ import { MvroEnVerbTense } from './MvroEnVerbTense';
 import { MvroWord } from './MvroWord';
 import { MvroEnVerbPerson } from './MvroEnVerbPerson';
 import { MvroEnWordType } from './MvroEnWordType';
+import { nxcaFrom } from '../../utilsAsau48';
+import { NXCA_NEGATE, NxcaDeclensionForm, NxcaResElem, NxcaTuSklon } from '../../NxcaPage/elems/NxcaTuSklon';
+import { NxcaEnSklon } from '../../NxcaPage/elems/NxcaEnSklon';
 
 export class MvroRandom {
   /**
@@ -15,8 +18,8 @@ export class MvroRandom {
     const declensionRand: MvroEnVerbDeclension = _.sample(MvroEnVerbDeclension) || MvroEnVerbDeclension.STATEMENT
     const tenseRand: MvroEnVerbTense = _.sample(MvroEnVerbTense) || MvroEnVerbTense.PRESENT
     const personRand: MvroEnVerbPerson = _.sample(MvroEnVerbPerson) || MvroEnVerbPerson.I
-    // ---
-    let ret = ''
+    // --- enForm
+    let enForm = ''
     switch (declensionRand) {
       case MvroEnVerbDeclension.STATEMENT:
         switch (tenseRand) {
@@ -27,11 +30,11 @@ export class MvroRandom {
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
               case MvroEnVerbPerson.IT:
-                ret = personRand + ' ' + wordObjRand.wordBaseForm
+                enForm = personRand + ' ' + wordObjRand.wordBaseForm
                 break;
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = personRand + ' ' + wordObjRand.wordBaseForm + 's'
+                enForm = personRand + ' ' + wordObjRand.wordBaseForm + 's'
                 break;
             }
             break;
@@ -45,10 +48,10 @@ export class MvroRandom {
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
                 if (wordObjRand.types.includes(MvroEnWordType.VERB_IRREGULAR)) {
-                  ret = personRand + ' ' + wordObjRand.wordFormVerbIrregular
+                  enForm = personRand + ' ' + wordObjRand.wordFormVerbIrregular
                 } else {
                   const nx = wordObjRand.wordBaseForm[wordObjRand.wordBaseForm.length - 1] === 'e' ? '' : 'e'
-                  ret = personRand + ' ' + wordObjRand.wordBaseForm + nx + 'd'
+                  enForm = personRand + ' ' + wordObjRand.wordBaseForm + nx + 'd'
                 }
                 break;
             }
@@ -62,7 +65,7 @@ export class MvroRandom {
               case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = personRand + ' will ' + wordObjRand.wordBaseForm
+                enForm = personRand + ' will ' + wordObjRand.wordBaseForm
                 break;
             }
             break;
@@ -77,11 +80,11 @@ export class MvroRandom {
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
               case MvroEnVerbPerson.IT:
-                ret = personRand + ' don\'t ' + wordObjRand.wordBaseForm
+                enForm = personRand + ' don\'t ' + wordObjRand.wordBaseForm
                 break;
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = personRand + ' doesn\'t ' + wordObjRand.wordBaseForm
+                enForm = personRand + ' doesn\'t ' + wordObjRand.wordBaseForm
                 break;
             }
             break;
@@ -94,7 +97,7 @@ export class MvroRandom {
               case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = personRand + ' didn\'t ' + wordObjRand.wordBaseForm
+                enForm = personRand + ' didn\'t ' + wordObjRand.wordBaseForm
                 break;
             }
             break;
@@ -107,7 +110,7 @@ export class MvroRandom {
               case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = personRand + ' will not ' + wordObjRand.wordBaseForm
+                enForm = personRand + ' will not ' + wordObjRand.wordBaseForm
                 break;
             }
             break;
@@ -122,11 +125,11 @@ export class MvroRandom {
               case MvroEnVerbPerson.WE:
               case MvroEnVerbPerson.THEY:
               case MvroEnVerbPerson.IT:
-                ret = `Do ${personRand} ${wordObjRand.wordBaseForm}?`
+                enForm = `Do ${personRand} ${wordObjRand.wordBaseForm}?`
                 break;
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = `Does ${personRand} ${wordObjRand.wordBaseForm}?`
+                enForm = `Does ${personRand} ${wordObjRand.wordBaseForm}?`
                 break;
             }
             break;
@@ -139,7 +142,7 @@ export class MvroRandom {
               case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = `Did ${personRand} ${wordObjRand.wordBaseForm}?`
+                enForm = `Did ${personRand} ${wordObjRand.wordBaseForm}?`
                 break;
             }
             break;
@@ -152,13 +155,38 @@ export class MvroRandom {
               case MvroEnVerbPerson.IT:
               case MvroEnVerbPerson.HE:
               case MvroEnVerbPerson.SHE:
-                ret = `Will ${personRand} ${wordObjRand.wordBaseForm}?`
+                enForm = `Will ${personRand} ${wordObjRand.wordBaseForm}?`
                 break;
             }
             break;
         }
         break;
     }
-    return ret;
+    // --- rusForm
+    const wordPart = wordObjRand.wordRus?.wordPart;
+    const enSklon: NxcaEnSklon | undefined = wordObjRand.wordRus?.enSklon;
+    let rusForm = ''
+    if (wordPart && enSklon) {
+      const sklons: NxcaResElem[] = NxcaTuSklon.sklon(wordPart, enSklon)
+      const decForm: NxcaDeclensionForm = nxcaFrom(personRand, tenseRand)
+      const sk: NxcaResElem | undefined = sklons.find(el => el.decForm === decForm)
+      if (sk) {
+        let rs = sk.res;
+        if (declensionRand !== MvroEnVerbDeclension.NEGATION) {
+          rs = rs.filter(el => el !== NXCA_NEGATE)
+        } else {
+          rs = rs.map(el => {
+            if (el === NXCA_NEGATE) return 'не'
+            return el
+          })
+        }
+        if(declensionRand === MvroEnVerbDeclension.QUESTION) {
+          rs.push('?')
+        }
+        rusForm = rs.join(' ')
+      }
+    }
+    // ---
+    return {enForm, rusForm};
   }
 }
