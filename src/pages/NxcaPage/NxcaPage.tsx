@@ -3,7 +3,7 @@ import './styles.scss';
 import { NXCA_NEGATE, NxcaResElem, NxcaResElemB, NxcaTuSklon } from './elems/NxcaTuSklon';
 import { NxcaEnSklonAll } from './elems/NxcaEnSklon';
 
-function InputCMP() {
+function InputAndResultCMP() {
   const refWordInput = useRef(null)
 
   const [result, resultSet] = useState<NxcaResElemB[]>([]);
@@ -19,8 +19,8 @@ function InputCMP() {
     resultSet(res00)
   }
 
-  const fn2 = (el: NxcaResElemB, ix: number) => {
-    return (<div className="cn3">
+  const fnCMP2 = (el: NxcaResElemB, ix: number) => {
+    return (<div className="card">
       <div>{el?.sklonEnum}</div>
       {
         el?.elems.map((el0) => {
@@ -38,9 +38,9 @@ function InputCMP() {
         <input className="cnButton" type="button" onClick={clickHandle} value="GO"/>
       </form>
 
-      <div className="cn2">
+      <div className="container1">
         {
-          result.map(fn2)
+          result.map(fnCMP2)
         }
       </div>
     </div>
@@ -51,18 +51,19 @@ const NxcaPage = (): JSX.Element => {
   console.log(`!!-!!-!! 1217- -> :::::::::::::: NxcaPage() {220109121749}:${Date.now()}`) // del+
   return (<div>
     <div>
-      <InputCMP/>
+      <InputAndResultCMP/>
     </div>
 
-    <div className="cn1">
+    <div className="container2">
       <div>S1: люб|дым|(ить),</div>
       <div>S3: вал|пар|бан|стел|мор|сверл|(ить)</div>
       <div>S2: дыш|крич|торч|(ать)</div>
       <div>S4: мечт - открыв - зн - дум - (ать)</div>
       <div>S5: ви - (деть)</div>
-      <div>S6: прихо - (дить)</div>
+      <div>S6: прихо - прохо - (дить)</div>
       <div>S7: ж - (ить)</div>
       <div>S8: начин - (ать)</div>
+      <div>S11: кру - (тить)</div>
       <div>марин|овать</div>
     </div>
   </div>)

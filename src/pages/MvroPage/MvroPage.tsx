@@ -12,7 +12,7 @@ enum EnQuestionLang {
 export function MvroPage() {
   const langInit = EnQuestionLang.RU
   const [phraseEn, phraseEnSet] = useState('');
-  const [phraseRus, phraseRusSet] = useState('');
+  const [phraseRu, phraseRuSet] = useState('');
   const [questionLang, questionLangSet] = useState(langInit);
   const [show, showSet] = useState(false);
 
@@ -24,7 +24,7 @@ export function MvroPage() {
       const phrase = MvroRandom.generate()
       showSet(false)
       phraseEnSet(phrase.enForm)
-      phraseRusSet(phrase.rusForm)
+      phraseRuSet(phrase.rusForm)
     }
   }
 
@@ -37,7 +37,7 @@ export function MvroPage() {
     return (<div>
       <input className="inputButton" type="button" value="show" onClick={clickHandle}/>
       <div className="phrase"
-           style={{display: !show ? 'none' : 'block'}}>{questionLang === EnQuestionLang.EN ? phraseRus : phraseEn}</div>
+           style={{display: !show ? 'none' : 'block'}}>{questionLang === EnQuestionLang.EN ? phraseRu : phraseEn}</div>
     </div>)
   }
 
@@ -50,7 +50,6 @@ export function MvroPage() {
       }}
       validateOnChange={true}
       validate={(values) => {
-        console.log('!!-!!-!! 1823- values {220110182350}\n', values) // del+
         questionLangSet(values.picked as EnQuestionLang)
       }}
     >
@@ -70,8 +69,8 @@ export function MvroPage() {
 
     <input className='inputButton' type="button" value="generate" onClick={genHandle}/>
 
-    {questionLang === EnQuestionLang.EN ? <div className="phrase">{phraseEn}</div> :
-      <div className="phrase">{phraseRus}</div>}
+    {questionLang === EnQuestionLang.EN
+      ? <div className="phrase">{phraseEn}</div> : <div className="phrase">{phraseRu}</div>}
     <BtnCMP/>
   </div>)
 }

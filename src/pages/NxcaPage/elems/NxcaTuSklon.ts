@@ -352,6 +352,30 @@ export class NxcaTuSklon {
         fn1(NxcaDeclensionForm.HE_F, 'овать', 'будет ')
         fn1(NxcaDeclensionForm.SHE_F, 'овать', 'будет ')
         break;
+      case NxcaEnSklon.S11:
+        fn1(NxcaDeclensionForm.BASE, 'тить')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_A, 'чу')
+        fn1(NxcaDeclensionForm.YOU_A, 'тишь')
+        fn1(NxcaDeclensionForm.WE_A, 'тим')
+        fn1(NxcaDeclensionForm.THEY_A, 'тят')
+        fn1(NxcaDeclensionForm.HE_A, 'тит')
+        fn1(NxcaDeclensionForm.SHE_A, 'тит')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_B, 'тил')
+        fn1(NxcaDeclensionForm.YOU_B, 'тил')
+        fn1(NxcaDeclensionForm.WE_B, 'тили')
+        fn1(NxcaDeclensionForm.THEY_B, 'тили')
+        fn1(NxcaDeclensionForm.HE_B, 'тил')
+        fn1(NxcaDeclensionForm.SHE_B, 'тила')
+        // ---
+        fn1(NxcaDeclensionForm.IFORM_F, 'тить', 'буду ')
+        fn1(NxcaDeclensionForm.YOU_F, 'тить', 'будешь ')
+        fn1(NxcaDeclensionForm.WE_F, 'тить', 'будем ')
+        fn1(NxcaDeclensionForm.THEY_F, 'тить', 'будут ')
+        fn1(NxcaDeclensionForm.HE_F, 'тить', 'будет ')
+        fn1(NxcaDeclensionForm.SHE_F, 'тить', 'будет ')
+        break;
     }
 
     return ret;

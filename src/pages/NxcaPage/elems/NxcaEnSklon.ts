@@ -22,6 +22,8 @@ export enum NxcaEnSklon {
   S9_GO = 's9-go',
   /** рис/овать */
   S10 = 's10',
+  /** кру/тить */
+  S11 = 's11',
 }
 
 export const NxcaEnSklonAll: NxcaEnSklon[] = Object.values(NxcaEnSklon)

@@ -3148,7 +3148,7 @@ aggregate-error@^3.0.0:
     clean-stack "^2.0.0"
     indent-string "^4.0.0"
 
-airtable@^0.11.0:
+airtable@^0.11.0, airtable@^0.11.1:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/airtable/-/airtable-0.11.1.tgz#2fda51da04f5e4be7092351ea7be3cfdcf308347"
   integrity sha512-33zBuUDhLl+FWWAFxFjS1a+vJr/b+UK//EV943nuiimChWph6YykQjYPmu/GucQ30g7mgaqq+98uPD4rfDHOgg==
@@ -6735,6 +6735,16 @@ hogg-lib@^1.1.0:
   dependencies:
     "@types/isomorphic-fetch" "^0.0.35"
     airtable "^0.11.0"
+    isomorphic-fetch "^3.0.0"
+    rsuv-lib "^1.2.0"
+
+hogg-lib@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.1.0.tgz#fb076091d290ec7022b9b5d377bb07734c8cccd3"
+  integrity sha512-d1nkizt3P4GTRd3daCZCeRCyTdYKPngONETjkciqGUSuQaGptk3vkB0qVjKAplUoHW86Ktux45hm9u0k51VpBg==
+  dependencies:
+    "@types/isomorphic-fetch" "^0.0.35"
+    airtable "^0.11.1"
     isomorphic-fetch "^3.0.0"
     rsuv-lib "^1.2.0"
 
