@@ -1,0 +1,88 @@
+.msscListBase {
+  .msscError {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    border: 1px solid red;
+    border-radius: 8px;
+    color: red;
+    padding: 8px 16px;
+    background-color: white;
+  }
+
+  .msscList {
+    border: 1px solid silver;
+    border-radius: 8px;
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+
+    .msscListInfoBlock {
+      border: 1px solid silver;
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      column-gap: 12px;
+    }
+
+    .msscListBlock {
+      display: flex;
+      flex-direction: column;
+      row-gap: 8px;
+
+      .msscListElemContainer {
+        border: 1px solid red;
+      }
+    }
+
+    .msscPaginatorBlock {
+      display: flex;
+      column-gap: 8px;
+      font-family: monospace;
+      align-items: center;
+
+      .msscPaginatorBlock_num {
+
+      }
+
+      .msscButton2 {
+        border: 1px solid silver;
+        border-radius: 6px;
+        font-family: monospace;
+        width: 36px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .msscButton {
+        border: 1px solid silver;
+        border-radius: 6px;
+        padding: 0 8px;
+        font-family: monospace;
+        width: 36px;
+        height: 24px;
+
+        &:disabled {
+          color: silver;
+        }
+
+        &.svgIcon {
+          background-position: center;
+          background-size: contain;
+          background-image: url(icon-2-shevron-to-left.svg);
+
+          &.iconRotate {
+            transform: rotate(180deg);
+          }
+        }
+
+      }
+    }
+  }
+
+}
+
+
+

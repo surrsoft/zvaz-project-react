@@ -6738,10 +6738,10 @@ hogg-lib@^1.1.0:
     isomorphic-fetch "^3.0.0"
     rsuv-lib "^1.2.0"
 
-hogg-lib@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.1.0.tgz#fb076091d290ec7022b9b5d377bb07734c8cccd3"
-  integrity sha512-d1nkizt3P4GTRd3daCZCeRCyTdYKPngONETjkciqGUSuQaGptk3vkB0qVjKAplUoHW86Ktux45hm9u0k51VpBg==
+hogg-lib@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.3.0.tgz#55ee0ec78000b4e767cd905195ba0223cbdd732e"
+  integrity sha512-iiOvO70ypVMYWRI0Spq4BIKL1/3foSiaX9NUWqLC7bgkOjCNb32qdTwNy245yjlrsy3WLn+FheQYUNArVZXSrA==
   dependencies:
     "@types/isomorphic-fetch" "^0.0.35"
     airtable "^0.11.1"

@@ -12,3 +12,6 @@ server_start:
 
 rsuv_lib_update:
 	yarn add rsuv-lib
+
+hogg-lib_update:
+	yarn add hogg-lib
