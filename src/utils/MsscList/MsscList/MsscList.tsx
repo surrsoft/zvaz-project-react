@@ -3,7 +3,15 @@ import './styles.scss';
 import { MsscSource } from '../MsscSource';
 import { RsuvPaginationGyth, RsuvTxNumIntAB, RsuvTxNumIntDiap } from 'rsuv-lib';
 import { MsscElem } from '../MsscElem';
-import SvgIconChevron from './SvgIconChevron/SvgIconChevron';
+import SvgIconChevron, { Colors } from './SvgIconChevron/SvgIconChevron';
+
+async function fnWait(duration: number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(true)
+    }, duration);
+  });
+}
 
 interface MsscListProps {
   source: MsscSource<any> | null
@@ -14,6 +22,7 @@ let isPageUp = false;
 
 const MsscList = ({source}: MsscListProps): JSX.Element => {
   // source = null; // del+
+
   const config = {
     // записей на странице
     elemsOnPage: 10
@@ -71,6 +80,7 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
   const requestTwo = async (source: MsscSource<any>) => {
     try {
       $loadingBSet(true)
+      await fnWait(3000)
       // --- pagination - ixStart, ixEnd
       const pagination = new RsuvPaginationGyth($elemsCountAll, config.elemsOnPage)
       const indexes = pagination.indexesByPageNum($pageNumCurrent)
@@ -128,14 +138,28 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
   }
 
   function PaginationFCC() {
+
     return (
       <div className="msscPaginatorBlock">
 
-        <button className="msscButton2"><SvgIconChevron svgProps={{width: "24px", height: "24px"}}/></button>
+        <button
+          className="msscButton2"
+          disabled={$loadingB}
+          onClick={paginationHandlers.down}
+        >
+          <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={180}/>
+        </button>
 
-        <button className="msscButton svgIcon" disabled={$loadingB} onClick={paginationHandlers.down}/>
         <div className="msscPaginatorBlock_num">{$pageNumCurrent} / {$pageCountAll}</div>
-        <button className="msscButton svgIcon iconRotate" disabled={$loadingB} onClick={paginationHandlers.up}/>
+
+        <button
+          className="msscButton2"
+          disabled={$loadingB}
+          onClick={paginationHandlers.up}
+        >
+          <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={0}/>
+        </button>
+
         {$loadingB ? <div>loading...</div> : null}
       </div>
     )

@@ -1,0 +1,7 @@
+/* // del+ mass */
+.nnn {
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: paused;
+}
