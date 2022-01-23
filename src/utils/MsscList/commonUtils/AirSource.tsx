@@ -1,20 +1,20 @@
-import { MsscSource } from '../MsscSource';
+import { MsscSource } from './MsscSource';
 import { HoggConnectorAirtable, HoggConnectorNT, HoggOffsetCount, HoggTupleNT, tupleToObject } from 'hogg-lib';
 import {
   RsuvEnResultCrudSet,
   RsuvResultBoolPknz,
-  RsuvResultTibo,
+  RsuvResultTibo, RsuvTuPromiseAllSettled,
   RsuvTxNumIntAB,
   RsuvTxNumIntDiap,
   RsuvTxSort,
   RsuvTxStringAB
 } from 'rsuv-lib';
-import { MsscFilter } from '../MsscFilter';
-import { MsscElem } from '../MsscElem';
+import { MsscFilter } from '../msscComponents/MsscFilter';
+import { MsscElem } from '../msscComponents/MsscElem';
 
 
 class Cls0040 {
-
+  id?: string
 }
 
 export class AirSourceParams {
@@ -94,8 +94,15 @@ export class AirSource implements MsscSource<Cls0040> {
     }
   }
 
-  elemsDelete(elems: Cls0040[]): Promise<Cls0040[]> {
-    return Promise.resolve([]);
+  async elemsDelete(elems: Cls0040[]): Promise<Cls0040[]> {
+    const promises = elems.map((el: Cls0040) => {
+      return this.connector.delete([el.id || ''])
+    })
+    const pResults = await Promise.allSettled(promises)
+    const rejectedList = RsuvTuPromiseAllSettled.rejected(pResults)
+    return rejectedList.map(el => {
+      return elems[el.ix]
+    })
   }
 
   elemsSet(elems: Cls0040[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {

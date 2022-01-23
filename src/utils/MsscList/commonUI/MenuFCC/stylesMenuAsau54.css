@@ -1,0 +1,42 @@
+.asau54_dropdown {
+    position: relative;
+    display: flex;
+}
+
+.asau54_btnDropdown {
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.asau54_btnDropdown:hover, .asau54_btnDropdown:focus {
+    background-color: #bed0dc;
+    border: 1px solid silver;
+    border-radius: 8px;
+}
+
+.asau54_dropdown-content {
+    position: absolute;
+    right: 0;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.asau54_dropdown-content button {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+}
+
+.asau54_dropdown-content button:hover {
+    background-color: #ddd
+}
+

@@ -6,8 +6,8 @@ import {
   RsuvTxNumIntDiap,
   RsuvTxSort, RsuvTxStringAB
 } from 'rsuv-lib';
-import { MsscElem } from './MsscElem';
-import { MsscFilter } from './MsscFilter';
+import { MsscElem } from '../msscComponents/MsscElem';
+import { MsscFilter } from '../msscComponents/MsscFilter';
 
 export interface MsscSource<TModel> {
 

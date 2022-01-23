@@ -1,8 +1,7 @@
 import React from 'react';
 import './style.scss';
-import MsscList from '../../utils/MsscList/MsscList/MsscList';
-import { AirSource } from '../../utils/MsscList/MsscList/AirSource';
-import SvgIconFlower from './SvgIconFlower/SvgIconFlower';
+import MsscList from '../../utils/MsscList/MsscList';
+import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 
 const airSource = new AirSource({
   dbKey: 'appXv6ry7Vn262nGR',
@@ -12,6 +11,7 @@ const airSource = new AirSource({
     return (
       <div className="zslistElem" key={elObj.tid}>
         <div>{elObj.title}</div>
+        <div><a className="cls1452" href={elObj.url} target="_blank">{elObj.url}</a></div>
       </div>
     )
   }

@@ -1,12 +1,20 @@
-import React, { ReactNode, useEffect, useState } from 'react';
-import './styles.scss';
-import { MsscSource } from '../MsscSource';
+import React, { useEffect, useState } from 'react';
+import './msscListStyles.scss';
+import { MsscSource } from './commonUtils/MsscSource';
 import { RsuvPaginationGyth, RsuvTxNumIntAB, RsuvTxNumIntDiap } from 'rsuv-lib';
-import { MsscElem } from '../MsscElem';
-import SvgIconChevron, { Colors } from './SvgIconChevron/SvgIconChevron';
+import { MsscElem } from './msscComponents/MsscElem';
+import SvgIconChevron from './commonIcons/SvgIconChevron/SvgIconChevron';
+import MenuAsau54FCC, { Asau54Item, Asau54Data, Asau54SelectResult } from './commonUI/MenuFCC/MenuAsau54FCC';
+import MsscDialogFCC from './MsscDialogFCC/MsscDialogFCC';
+
+export enum MsscMenuAction {
+  EDIT = 'edit',
+  SELECT = 'select',
+  DELETE = 'delete'
+}
 
 async function fnWait(duration: number) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(true)
     }, duration);
@@ -48,6 +56,9 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
   const [$needUpdate, $needUpdateSet] = useState(false);
   // для показа ошибки запроса данных
   const [$isError, $isErrorSet] = useState(false);
+  const [$dialogDeleteShowed, $dialogDeleteShowedSet] = useState(false);
+  const [$dialogTitle, $dialogTitleSet] = useState('');
+  const [$dialogBody, $dialogBodySet] = useState('');
 
   const fnError = () => {
     $isErrorSet(true)
@@ -147,7 +158,8 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
           disabled={$loadingB}
           onClick={paginationHandlers.down}
         >
-          <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={180}/>
+          <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={180}
+                          animate={{enabled: true, durationMillisec: 600}}/>
         </button>
 
         <div className="msscPaginatorBlock_num">{$pageNumCurrent} / {$pageCountAll}</div>
@@ -157,7 +169,8 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
           disabled={$loadingB}
           onClick={paginationHandlers.up}
         >
-          <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={0}/>
+          <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={0}
+                          animate={{enabled: true, durationMillisec: 600}}/>
         </button>
 
         {$loadingB ? <div>loading...</div> : null}
@@ -174,9 +187,50 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
     )
   }
 
+  const menuData = {
+    id: '',
+    items: [
+      {idAction: MsscMenuAction.EDIT, text: 'Изменить'} as Asau54Item,
+      {idAction: MsscMenuAction.SELECT, text: 'Выбрать'} as Asau54Item,
+      {idAction: MsscMenuAction.DELETE, text: 'Удалить'} as Asau54Item
+    ]
+  } as Asau54Data
+
+  function MsscListElemFCC({elem}: { elem: MsscElem }) {
+    const jsxElem: JSX.Element = elem.elem
+
+    const onSelected = async (obj: Asau54SelectResult) => {
+      console.log('!!-!!-!! obj {220122220339}\n', obj) // del+
+      switch (obj.idAction) {
+        case MsscMenuAction.DELETE:
+          $dialogDeleteShowedSet(true)
+          $dialogTitleSet('удаление')
+          $dialogBodySet('удалить элемент(ы) ?')
+          break;
+      }
+    }
+
+    return (
+      <div className="msscListElemContainer">
+        <div className="msscListElemCheckbox"><input type="checkbox"/></div>
+        <div className="msscListElemBody">{jsxElem}</div>
+        <div className="msscListElemMenu">
+          <MenuAsau54FCC data={Object.assign({}, menuData, {id: elem.id.val})} cbOnSelected={onSelected}/>
+        </div>
+      </div>
+    )
+  }
+
+  const dialogHanlers = {
+    cancel: () => {
+      $dialogDeleteShowedSet(false)
+    },
+    ok: () => {
+    }
+  }
+
   return (<div className="msscListBase">
     {$isError ? <div className="msscError">ошибка</div> : null}
-    <div>MsscList</div>
     <div className="msscList">
       {$loading ? <div>loading ...</div> : null}
       {!$loading && <>
@@ -189,16 +243,19 @@ const MsscList = ({source}: MsscListProps): JSX.Element => {
         <div className="msscListBlock">
           {
             $elems.map((elObj: MsscElem) => {
-              const jsxElem: JSX.Element = elObj.elem
-              return (<div className="msscListElemContainer">
-                {jsxElem}
-              </div>)
+              return (<MsscListElemFCC elem={elObj}/>)
             })
           }
         </div>
         <PaginationFCC/>
       </>}
     </div>
+    <MsscDialogFCC
+      show={$dialogDeleteShowed}
+      title={$dialogTitle}
+      body={$dialogBody}
+      cbCancel={dialogHanlers.cancel}
+      cbOk={dialogHanlers.ok}/>
   </div>)
 }
 

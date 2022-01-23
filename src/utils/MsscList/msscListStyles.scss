@@ -1,4 +1,8 @@
 .msscListBase {
+  --color1: white;
+
+  background-color: var(--color1);
+
   .msscError {
     position: absolute;
     top: 24px;
@@ -32,7 +36,21 @@
       row-gap: 8px;
 
       .msscListElemContainer {
-        border: 1px solid red;
+        //border: 1px solid red;
+        display: flex;
+        align-items: center;
+
+        .msscListElemCheckbox {
+          padding: 0 8px 0 8px;
+        }
+
+        .msscListElemBody {
+          flex-grow: 1;
+        }
+
+        .msscListElemMenu {
+          padding: 0 8px 0 8px;
+        }
       }
     }
 
@@ -67,16 +85,6 @@
 
         &:disabled {
           color: silver;
-        }
-
-        &.svgIcon {
-          background-position: center;
-          background-size: contain;
-          background-image: url(icon-2-shevron-to-left.svg);
-
-          &.iconRotate {
-            transform: rotate(180deg);
-          }
         }
 
       }

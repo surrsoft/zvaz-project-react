@@ -6,9 +6,9 @@ import {
   RsuvTxSort,
   RsuvTxStringAB
 } from 'rsuv-lib';
-import { MsscSource } from '../../utils/MsscList/MsscSource';
-import { MsscFilter } from '../../utils/MsscList/MsscFilter';
-import { MsscElem } from '../../utils/MsscList/MsscElem';
+import { MsscSource } from '../../utils/MsscList/commonUtils/MsscSource';
+import { MsscFilter } from '../../utils/MsscList/msscComponents/MsscFilter';
+import { MsscElem } from '../../utils/MsscList/msscComponents/MsscElem';
 
 export class MsscSourceImplJsonServer implements MsscSource<any> {
   dialogCreate(cbModel: Promise<any>): Promise<JSX.Element> {
