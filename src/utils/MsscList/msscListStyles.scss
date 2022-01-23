@@ -30,6 +30,16 @@
       column-gap: 12px;
     }
 
+    .mssc1454 {
+      display: flex;
+      column-gap: 32px;
+
+      .msscTopButtons {
+        display: flex;
+        column-gap: 16px;
+      }
+    }
+
     .msscListBlock {
       display: flex;
       flex-direction: column;

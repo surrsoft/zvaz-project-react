@@ -1,26 +1,9 @@
 import * as React from "react";
 import './svgIconChevron.css';
+import { ColorsAsau61 } from '../utils/ColorsAsau61';
 
 // [[asau53]]
 
-export class Asau53Colors {
-  /**
-   * цвет в нормальном состоянии
-   */
-  public normal: string = 'black'
-  /**
-   * цвет при наведении
-   */
-  public hover: string = 'red'
-  /**
-   * цвет в состоянии disabled родителя
-   */
-  public disable: string = 'silver'
-  /**
-   * цвет при нажатии
-   */
-  public click: string = 'silver'
-}
 
 export class Asau53Animate {
   /**
@@ -41,7 +24,7 @@ export interface Asau53SvgProps {
   /**
    * цвета для состояний
    */
-  colors?: Asau53Colors,
+  colors?: ColorsAsau61,
   /**
    * угол поворота: 180 - смотрит влево, 0 - вправо
    */
@@ -68,7 +51,7 @@ export interface Asau53SvgProps {
  */
 const SvgIconChevron = ({
                           svgProps,
-                          colors = new Asau53Colors(),
+                          colors = new ColorsAsau61(),
                           angle = 180,
                           animate,
                           identId = ''
@@ -171,13 +154,13 @@ const SvgIconChevron = ({
           
           *:active > .asau53_svg${identId} {
               fill: var(--colorClick);
-              stroke: var(--colorClick);
+              stroke: var(--colorClick); 
           }
           
           ${anim4}
         `}</style>
       </defs>
-      <polyline fill="none" stroke-width="2" points="9 6 15 12 9 18"
+      <polyline fill="none" strokeWidth="2" points="9 6 15 12 9 18"
                 transform={`rotate(${angle}, ${cfg.w / 2}, ${cfg.h / 2})`}/>
     </svg>
   );

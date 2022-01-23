@@ -78,6 +78,9 @@ function MenuAsau54FCC({data, cbOnSelected}: Asau54Props) {
   useEffect(() => {
     document.removeEventListener('click', eventClickHandle)
     document.addEventListener('click', eventClickHandle)
+    return () => {
+      document.removeEventListener('click', eventClickHandle)
+    }
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './msscDialogStyles.scss';
-import useScrollFix from '../commonUtils/useScrollFix';
+import useScrollFix from '../../commonUtils/useScrollFix';
 
 export class MsscDialogProps {
   show: boolean = false

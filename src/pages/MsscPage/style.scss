@@ -16,3 +16,53 @@
     color: black;
   }
 }
+
+.cls2326Form {
+  border: 1px solid silver;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+
+  .cls2326Title {
+    font-size: 16px;
+    font-family: "Courier New"; // Arial, Arial Black, Times New Roman, Helvetica, Courier New, Courier, Verdana, Georgia, Garamond, Palatino, Bookman, Trebuchet, Tahoma, Comic Sans MS, Impact
+    font-weight: 700;
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+
+  .cls2326ELem {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    input {
+      border: 1px solid silver;
+      border-radius: 4px;
+      padding: 0 8px;
+      font-family: "Courier"; // Arial, Arial Black, Times New Roman, Helvetica, Courier New, Courier, Verdana, Georgia, Garamond, Palatino, Bookman, Trebuchet, Tahoma, Comic Sans MS, Impact
+    }
+  }
+
+  .cls2326Buttons {
+    display: flex;
+    column-gap: 16px;
+    justify-content: end;
+
+    button {
+      border: 1px solid silver;
+      border-radius: 8px;
+      padding: 4px 18px;
+
+      &:hover {
+        border-color: red;
+      }
+    }
+  }
+}

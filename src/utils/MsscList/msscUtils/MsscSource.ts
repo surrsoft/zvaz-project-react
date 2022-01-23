@@ -6,8 +6,8 @@ import {
   RsuvTxNumIntDiap,
   RsuvTxSort, RsuvTxStringAB
 } from 'rsuv-lib';
-import { MsscElem } from '../msscComponents/MsscElem';
-import { MsscFilter } from '../msscComponents/MsscFilter';
+import { MsscElem } from './MsscElem';
+import { MsscFilter } from './MsscFilter';
 
 export interface MsscSource<TModel> {
 
@@ -41,11 +41,12 @@ export interface MsscSource<TModel> {
   elemsAdd(elems: TModel[]): Promise<Array<TModel | RsuvResultBoolPknz>>
 
   /**
-   * Удаляет записи соответствующие элементам из (1). Возвращает пустой массив если все элементы были успешно удалены,
+   * Удаляет записи соответствующие элементам из (1).
+   * Возвращает пустой массив если все элементы были успешно удалены,
    * или список тех элементов записи которых удалить не удалось.
-   * @param elems
+   * @param elems (1) -- любой объект обладающий полем `id`
    */
-  elemsDelete(elems: TModel[]): Promise<TModel[]>
+  elemsDelete(elems: MsscIdObject[]): Promise<TModel[]>
 
   /**
    * Выполняет set operation (см. [asau45]) для элементов из (1).
@@ -78,7 +79,7 @@ export interface MsscSource<TModel> {
    * с моделью данных
    * @param cbModel (1) --
    */
-  dialogCreate(cbModel: Promise<TModel>): Promise<JSX.Element>
+  dialogCreate(cbModel: (pr: TModel) => void): Promise<JSX.Element>
 
   /**
    * Возвращает диалог редактирования элемента (1). *С-компонент показывает его. Когда пользователь нажимает SAVE вызывается (2)
@@ -88,3 +89,8 @@ export interface MsscSource<TModel> {
    */
   dialogUpdate(id: RsuvTxStringAB, cbModel: Promise<TModel>): Promise<JSX.Element>
 }
+
+/**
+ * Любой объект обладающий полем `id`
+ */
+export type MsscIdObject = { id: string, [key: string]: any }

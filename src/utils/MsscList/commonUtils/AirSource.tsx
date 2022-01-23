@@ -1,4 +1,4 @@
-import { MsscSource } from './MsscSource';
+import { MsscIdObject, MsscSource } from '../msscUtils/MsscSource';
 import { HoggConnectorAirtable, HoggConnectorNT, HoggOffsetCount, HoggTupleNT, tupleToObject } from 'hogg-lib';
 import {
   RsuvEnResultCrudSet,
@@ -9,13 +9,11 @@ import {
   RsuvTxSort,
   RsuvTxStringAB
 } from 'rsuv-lib';
-import { MsscFilter } from '../msscComponents/MsscFilter';
-import { MsscElem } from '../msscComponents/MsscElem';
+import { MsscFilter } from '../msscUtils/MsscFilter';
+import { MsscElem } from '../msscUtils/MsscElem';
 
 
-class Cls0040 {
-  id?: string
-}
+export type Cls0040 = {id: string, [key: string]: any}
 
 export class AirSourceParams {
   dbKey: string = ''
@@ -27,6 +25,7 @@ export class AirSourceParams {
    * @param obj (1) -- модель данных для формирования JSX.Element
    */
   elemJsx?: (obj: object) => JSX.Element
+  dialogCreateJsx?: (cbModel: (pr: Cls0040) => void) => Promise<JSX.Element>
 }
 
 export class AirSource implements MsscSource<Cls0040> {
@@ -41,8 +40,11 @@ export class AirSource implements MsscSource<Cls0040> {
       .columns(params.columns)
   }
 
-  dialogCreate(cbModel: Promise<Cls0040>): Promise<JSX.Element> {
-    return Promise.reject(undefined);
+  dialogCreate(cbModel: (pr: Cls0040) => void): Promise<JSX.Element> {
+    if (this.params.dialogCreateJsx) {
+      return this.params.dialogCreateJsx(cbModel)
+    }
+    return Promise.resolve(<div>no realised</div>)
   }
 
   dialogUpdate(id: RsuvTxStringAB, cbModel: Promise<Cls0040>): Promise<JSX.Element> {
@@ -94,7 +96,7 @@ export class AirSource implements MsscSource<Cls0040> {
     }
   }
 
-  async elemsDelete(elems: Cls0040[]): Promise<Cls0040[]> {
+  async elemsDelete(elems: MsscIdObject[]): Promise<Cls0040[]> {
     const promises = elems.map((el: Cls0040) => {
       return this.connector.delete([el.id || ''])
     })
