@@ -2,8 +2,9 @@ import React from 'react';
 import './style.scss';
 import MsscListFCC from '../../utils/MsscList/MsscListFCC';
 import { AirSource, Cls0040 } from '../../utils/MsscList/commonUtils/AirSource';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
+import useScrollFix from '../../utils/useScrollFix';
 
 enum EnField {
   TITLE = 'title',
@@ -23,9 +24,25 @@ const airSource = new AirSource({
       </div>
     )
   },
-  dialogCreateJsx: async (cb: (newElemData: Cls0040) => void) => {
+  // ^^dialog create^^
+  /**
+   *
+   * @param cbOk (1) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии ОК
+   * @param cbCancel (2) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии Cancel
+   */
+  dialogCreateJsx: async (cbOk: (newElemData: Cls0040) => void, cbCancel: () => void) => {
+    const btnHandlers = {
+      cancel: () => {
+        cbCancel?.()
+      },
+      ok: async (model: any) => {
+        const obj = Object.assign({}, {id: ''}, model)
+        cbOk?.(obj)
+      }
+    }
+
     return (
-      <div>
+      <div className="cls2326FormContainer">
         <Formik
           initialValues={{
             [EnField.TITLE]: '',
@@ -35,15 +52,17 @@ const airSource = new AirSource({
           validationSchema={Yup.object({
             [EnField.TITLE]: Yup.string().required('обязательное поле')
           })}
-          onSubmit={() => {
-
+          onSubmit={async (values, {setSubmitting}) => {
+            console.log('!!-!!-!! values {220124124716}\n', values) // del+
+            return btnHandlers.ok(values)
           }}
         >
-          <Form className="cls2326Form">
+          {({errors}) => (<Form className="cls2326Form">
             <div className="cls2326Title">Создание элемента</div>
             <div className="cls2326ELem">
               <label>{EnField.TITLE}</label>
               <Field type="text" name={EnField.TITLE}/>
+              <ErrorMessage className="cls2326FieldError" name={EnField.TITLE} component="div"/>
             </div>
             <div className="cls2326ELem">
               <label>{EnField.COMM}</label>
@@ -54,10 +73,10 @@ const airSource = new AirSource({
               <Field type="text" name={EnField.URL}/>
             </div>
             <div className="cls2326Buttons">
-              <button>Отмена</button>
+              <button onClick={btnHandlers.cancel}>Отмена</button>
               <button type="submit">Создать</button>
             </div>
-          </Form>
+          </Form>)}
         </Formik>
       </div>
     )

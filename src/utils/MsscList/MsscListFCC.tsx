@@ -11,6 +11,7 @@ import SvgIconTrash from './commonIcons/SvgIconTrash/SvgIconTrash';
 import SvgIconPlus from './commonIcons/SvgIconPlus/SvgIconPlus';
 import SvgIconUnckecked from './commonIcons/SvgIconUnchecked/SvgIconUnckecked';
 import { ColorsAsau61 } from './commonIcons/utils/ColorsAsau61';
+import useScrollFix from '../useScrollFix';
 
 export enum MsscMenuAction {
   EDIT = 'edit',
@@ -68,11 +69,14 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   const [$dialogTitle, $dialogTitleSet] = useState('');
   const [$dialogBody, $dialogBodySet] = useState('');
   const [$dialogCreateJsx, $dialogCreateJsxSet] = useState<JSX.Element | null>(null);
+  const [$dialogCreateShowed, $dialogCreateShowedSet] = useState(false);
   // ---
   const [$listModel] = useState(() => {
     return new ListModelAsau59()
   });
   const [$refresh, $refreshSet] = useState(false);
+
+  const scrollFixFn = useScrollFix($dialogCreateShowed)
 
   const fnError = () => {
     $isErrorSet(true)
@@ -84,7 +88,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   const requestFirst = async (source: MsscSource<any>) => {
 
     try {
-      const jsx = await source?.dialogCreate(dialogCreateOkCb)
+      const jsx = await source?.dialogCreate(dialogCreateCallbacks.ok, dialogCreateCallbacks.cancel)
       $dialogCreateJsxSet(jsx)
       // ---
       $loadingSet(true)
@@ -332,6 +336,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       dialogDeleteShow()
     },
     create: () => {
+      $dialogCreateShowedSet(true)
     },
     deselectAll: () => {
       $listModel.selectElemsClear()
@@ -343,12 +348,23 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     $refreshSet(!$refresh)
   }
 
-  /**
-   * будет вызыван при нажатии ОК в диалоге создания нового элемента
-   * @param pr
-   */
-  const dialogCreateOkCb = async (pr: any) => {
-    console.log('!!-!!-!! pr {220123225610}\n', pr) // del+
+  const dialogCreateCallbacks = {
+    /**
+     * будет вызыван при нажатии ОК в диалоге создания нового элемента
+     * @param model
+     */
+    ok: async (model: MsscIdObject) => {
+      console.log('!!-!!-!! model {220123225610}\n', model) // del+
+      // source?.elemsAdd()
+
+    },
+    /**
+     * для вызова при нажатии Cancel в диалоге создания нового элемента
+     */
+    cancel: async () => {
+      $dialogCreateShowedSet(false)
+      scrollFixFn(false)
+    }
   }
 
   return (<div className="msscListBase">
@@ -398,7 +414,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       cbCancel={dialogHandlers.cancel}
       cbOk={dialogHandlers.ok}
     />
-    {$dialogCreateJsx}
+    {$dialogCreateShowed && $dialogCreateJsx}
   </div>)
 }
 

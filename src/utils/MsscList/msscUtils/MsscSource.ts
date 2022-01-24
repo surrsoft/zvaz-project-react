@@ -77,9 +77,10 @@ export interface MsscSource<TModel> {
   /**
    * Возвращает диалог создания элемента. *С-компонент показывает его. Когда пользователь нажимает ОК вызывается (1)
    * с моделью данных
-   * @param cbModel (1) --
+   * @param cbOk (1) -- колбэк, который *клиент должен вызвать по нажатию ОК
+   * @param cbCancel (2) -- колбэк, который *клиент должен вызвать по нажатию Cancel
    */
-  dialogCreate(cbModel: (pr: TModel) => void): Promise<JSX.Element>
+  dialogCreate(cbOk: (model: TModel) => void, cbCancel: () => void): Promise<JSX.Element>
 
   /**
    * Возвращает диалог редактирования элемента (1). *С-компонент показывает его. Когда пользователь нажимает SAVE вызывается (2)
