@@ -1,7 +1,7 @@
 import React from 'react';
 import './style.scss';
 import MsscListFCC from '../../utils/MsscList/MsscListFCC';
-import { AirSource, Cls0040 } from '../../utils/MsscList/commonUtils/AirSource';
+import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
 import useScrollFix from '../../utils/useScrollFix';
@@ -30,7 +30,7 @@ const airSource = new AirSource({
    * @param cbOk (1) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии ОК
    * @param cbCancel (2) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии Cancel
    */
-  dialogCreateJsx: async (cbOk: (newElemData: Cls0040) => void, cbCancel: () => void) => {
+  dialogCreateJsx: async (cbOk: (newElemData: any) => void, cbCancel: () => void) => {
     const btnHandlers = {
       cancel: () => {
         cbCancel?.()
@@ -52,7 +52,7 @@ const airSource = new AirSource({
           validationSchema={Yup.object({
             [EnField.TITLE]: Yup.string().required('обязательное поле')
           })}
-          onSubmit={async (values, {setSubmitting}) => {
+          onSubmit={async (values) => {
             console.log('!!-!!-!! values {220124124716}\n', values) // del+
             return btnHandlers.ok(values)
           }}

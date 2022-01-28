@@ -1,5 +1,12 @@
 import { MsscIdObject, MsscSource } from '../msscUtils/MsscSource';
-import { HoggConnectorAirtable, HoggConnectorNT, HoggOffsetCount, HoggTupleNT, tupleToObject } from 'hogg-lib';
+import {
+  HoggConnectorAirtable,
+  HoggConnectorNT,
+  HoggOffsetCount,
+  HoggTupleNT,
+  tupleFrom,
+  tupleToObject
+} from 'hogg-lib';
 import {
   RsuvEnResultCrudSet,
   RsuvResultBoolPknz,
@@ -11,11 +18,11 @@ import {
 } from 'rsuv-lib';
 import { MsscFilter } from '../msscUtils/MsscFilter';
 import { MsscElem } from '../msscUtils/MsscElem';
+import _ from 'lodash';
 
+type Ty2130 = { index: number, tuple: HoggTupleNT }
 
-export type Cls0040 = { id: string, [key: string]: any }
-
-export class AirSourceParams {
+export class AirSourceParams<T> {
   dbKey: string = ''
   tableName: string = ''
   columns: string[] = []
@@ -28,13 +35,13 @@ export class AirSourceParams {
   /**
    * Диалог создания элемента. Будет ретранслирован *клиенту
    */
-  dialogCreateJsx?: (cbOk: (model: Cls0040) => void, cbCancel: () => void) => Promise<JSX.Element>
+  dialogCreateJsx?: (cbOk: (model: T) => void, cbCancel: () => void) => Promise<JSX.Element>
 }
 
-export class AirSource implements MsscSource<Cls0040> {
+export class AirSource<T> implements MsscSource<T> {
   private connector: HoggConnectorNT;
 
-  constructor(public params: AirSourceParams) {
+  constructor(public params: AirSourceParams<T>) {
     const air = new HoggConnectorAirtable()
     air.init({apiKey: process.env.REACT_APP_AIRTABLE_KEY || ''})
     this.connector = air
@@ -43,14 +50,14 @@ export class AirSource implements MsscSource<Cls0040> {
       .columns(params.columns)
   }
 
-  dialogCreate(cbOk: (model: Cls0040) => void, cbCancel: () => void): Promise<JSX.Element> {
+  dialogCreate(cbOk: (model: T) => void, cbCancel: () => void): Promise<JSX.Element> {
     if (this.params.dialogCreateJsx) {
       return this.params.dialogCreateJsx(cbOk, cbCancel)
     }
     return Promise.resolve(<div>no realised</div>)
   }
 
-  dialogUpdate(id: RsuvTxStringAB, cbModel: Promise<Cls0040>): Promise<JSX.Element> {
+  dialogUpdate(id: RsuvTxStringAB, cbModel: Promise<T>): Promise<JSX.Element> {
     return Promise.reject(undefined);
   }
 
@@ -59,10 +66,10 @@ export class AirSource implements MsscSource<Cls0040> {
     // TODO br реализовать sorts
 
     if (filters.length > 0) {
-      throw 'ERR* filters - не реализовано'
+      throw new Error('ERR* filters - не реализовано')
     }
     if (sorts.length > 0) {
-      throw 'ERR* sorts - не реализовано'
+      throw new Error('ERR* sorts - не реализовано')
     }
 
     // ---
@@ -86,8 +93,38 @@ export class AirSource implements MsscSource<Cls0040> {
     return Promise.resolve([]);
   }
 
-  elemsAdd(elems: Cls0040[]): Promise<Array<RsuvResultBoolPknz | Cls0040>> {
-    return Promise.reject(undefined);
+  async elemsAdd(elems: T[]): Promise<Array<RsuvResultBoolPknz | T>> {
+    console.log('!!-!!-!! elems {220126210803}\n', elems) // del+
+    debugger; // del+
+    const elems0 = elems.map((el: any) => {
+      return _.omit(el, 'id')
+    })
+    const tuples: (HoggTupleNT | null)[] = elems0.map((el: any) => {
+      return tupleFrom(el)
+    })
+    // отбираем только те для которых успешно создался tuple
+    const validTuples = tuples.reduce<Ty2130[]>((acc: Ty2130[], tuple: HoggTupleNT | null, ix: number) => {
+      if (tuple) acc.push({index: ix, tuple: tuple})
+      return acc;
+    }, [])
+    const tuples0 = validTuples.map((el: any) => el.tuple)
+    const createResult = await this.connector.create(tuples0)
+    console.log('!!-!!-!! createResult {220126210418}\n', createResult) // del+
+    debugger; // del+
+    if (createResult.success && createResult.value) {
+      const ids: string[] | undefined = createResult.value
+      return elems.reduce((acc: any, el: any, ix: number) => {
+        const tix = validTuples.findIndex((el0: Ty2130) => el0.index === ix)
+        if (ix === tix) {
+          el.id = ids[ix]
+          acc.push(el)
+        } else {
+          new RsuvResultBoolPknz(false)
+        }
+        return acc
+      }, [])
+    }
+    return Promise.reject(new Error(createResult.errCode + ' : ' + createResult.errMessage));
   }
 
   async elemsCountByFilter(filters: MsscFilter[]): Promise<RsuvTxNumIntAB> {
@@ -99,8 +136,8 @@ export class AirSource implements MsscSource<Cls0040> {
     }
   }
 
-  async elemsDelete(elems: MsscIdObject[]): Promise<Cls0040[]> {
-    const promises = elems.map((el: Cls0040) => {
+  async elemsDelete(elems: MsscIdObject[]): Promise<MsscIdObject[]> {
+    const promises = elems.map((el: any) => {
       return this.connector.delete([el.id || ''])
     })
     const pResults = await Promise.allSettled(promises)
@@ -110,11 +147,11 @@ export class AirSource implements MsscSource<Cls0040> {
     })
   }
 
-  elemsSet(elems: Cls0040[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
+  elemsSet(elems: T[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
     return Promise.reject(undefined);
   }
 
-  elemsUpsert(elems: Cls0040[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
+  elemsUpsert(elems: T[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
     return Promise.reject(undefined);
   }
 

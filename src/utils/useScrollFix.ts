@@ -36,9 +36,7 @@ export default function useScrollFix(toFix: boolean) {
   }
 
   useEffect(() => {
-    if (toFix) {
-      scrollFix(true)
-    }
+    scrollFix(toFix)
   }, [toFix]);
 
   return scrollFix;

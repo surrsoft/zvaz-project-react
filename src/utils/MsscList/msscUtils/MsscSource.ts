@@ -43,10 +43,10 @@ export interface MsscSource<TModel> {
   /**
    * Удаляет записи соответствующие элементам из (1).
    * Возвращает пустой массив если все элементы были успешно удалены,
-   * или список тех элементов записи которых удалить не удалось.
+   * или список тех элементов (1) записи которых удалить не удалось.
    * @param elems (1) -- любой объект обладающий полем `id`
    */
-  elemsDelete(elems: MsscIdObject[]): Promise<TModel[]>
+  elemsDelete(elems: MsscIdObject[]): Promise<MsscIdObject[]>
 
   /**
    * Выполняет set operation (см. [asau45]) для элементов из (1).

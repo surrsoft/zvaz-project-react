@@ -12,6 +12,7 @@ import SvgIconPlus from './commonIcons/SvgIconPlus/SvgIconPlus';
 import SvgIconUnckecked from './commonIcons/SvgIconUnchecked/SvgIconUnckecked';
 import { ColorsAsau61 } from './commonIcons/utils/ColorsAsau61';
 import useScrollFix from '../useScrollFix';
+import BrSpinner from './commonUI/BrSpinner/BrSpinner';
 
 export enum MsscMenuAction {
   EDIT = 'edit',
@@ -56,6 +57,8 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   const [$loading, $loadingSet] = useState(false);
   // для показа спиннера при запросе данных страницы (пагинация страниц)
   const [$loadingB, $loadingBSet] = useState(false);
+  // показ спиннера для диалогов
+  const [$loadingAtDialog, $loadingAtDialogSet] = useState(false);
   // для того чтобы содержимое второго useEffect отрабатывало строго после содержимого первого
   const [$fdone, $fdoneSet] = useState(false);
   // для инициации полного перезапроса данных, например после удаления/добавления элемента(ов)
@@ -298,7 +301,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     $needUpdate1Set(!$needUpdate1)
   }
 
-  const dialogHandlers = {
+  /**
+   * [[220128215639]]
+   */
+  const dialogDeleteHandlers = {
     cancel: () => {
       $listModel.selectElemsClear()
       $dialogDeleteShowedSet(false)
@@ -308,6 +314,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       if ($listModel.selectElemsCount() > 0) {
         const ids: MsscIdObject[] = $listModel.selectElems().map(el => ({id: el}))
         try {
+          $loadingAtDialogSet(true)
           const noDeletedElems = await source?.elemsDelete(ids)
           if (noDeletedElems) {
             if (noDeletedElems.length === 0) {
@@ -320,7 +327,9 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
             }
           }
         } catch (err) {
-
+          console.log('!!-!!-!! err {220128215806}\n', err)
+        } finally {
+          $loadingAtDialogSet(false)
         }
       }
     }
@@ -350,12 +359,31 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
 
   const dialogCreateCallbacks = {
     /**
+     * [[220128213044]]
      * будет вызыван при нажатии ОК в диалоге создания нового элемента
      * @param model
      */
-    ok: async (model: MsscIdObject) => {
+    ok: async (model: any) => {
       console.log('!!-!!-!! model {220123225610}\n', model) // del+
-      // source?.elemsAdd()
+      let success = false;
+      try {
+        $loadingAtDialogSet(true)
+        const result = await source?.elemsAdd([model])
+        console.log('!!-!!-!! result {220126210714}\n', result) // del+
+        if (result && result.length === 1 && result[0]['id']) {
+          success = true;
+        }
+      } catch (err) {
+        console.log('!!-!!-!! err {220126221404}\n', err)
+      } finally {
+        $loadingAtDialogSet(false)
+        if (success) {
+          $dialogCreateShowedSet(false)
+          updateWhole()
+        } else {
+          fnError()
+        }
+      }
 
     },
     /**
@@ -367,55 +395,61 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     }
   }
 
-  return (<div className="msscListBase">
-    {$isError ? <div className="msscError">ошибка</div> : null}
-    <div className="msscList">
-      {$loading ? <div>loading ...</div> : null}
-      {!$loading && <>
-        <div className="msscListInfoBlock">
-          <ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
-          <ParamUiFCC str1="элементов всего по фильтру" str2={"-"}/>
-          <ParamUiFCC str1="элементов всего" str2={$elemsCountAll}/>
-          <ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
-        </div>
-        <div className="mssc1454">
-          <PaginationFCC/>
-          <div className="msscTopButtons">
-            {/* ^^delete-button^^ */}
-            <button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
-                    onClick={iconsHandlers.delete}>
-              <SvgIconTrash {...iconsConf}/>
-            </button>
-            <button title="создать новый элемент" onClick={iconsHandlers.create}>
-              <SvgIconPlus {...iconsConf}/>
-            </button>
-            <button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
-                    onClick={iconsHandlers.deselectAll}>
-              <SvgIconUnckecked {...iconsConf}/>
-            </button>
-          </div>
+  return (
+    <div className="msscListBase">
+      {$isError ? <div className="msscError">ошибка</div> : null}
+      <div className="msscList">
+        {$loading ? <div>loading ...</div> : null}
+        {!$loading && <>
+					<div className="msscListInfoBlock">
+						<ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
+						<ParamUiFCC str1="элементов всего по фильтру" str2={"-"}/>
+						<ParamUiFCC str1="элементов всего" str2={$elemsCountAll}/>
+						<ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
+					</div>
+					<div className="mssc1454">
+						<PaginationFCC/>
+						<div className="msscTopButtons">
+              {/* ^^delete-button^^ */}
+							<button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
+											onClick={iconsHandlers.delete}>
+								<SvgIconTrash {...iconsConf}/>
+							</button>
+							<button title="создать новый элемент" onClick={iconsHandlers.create}>
+								<SvgIconPlus {...iconsConf}/>
+							</button>
+							<button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
+											onClick={iconsHandlers.deselectAll}>
+								<SvgIconUnckecked {...iconsConf}/>
+							</button>
+						</div>
 
-        </div>
-        <div className="msscListBlock">
-          {
-            $elems.map((elObj: MsscElem) => {
-              return (<MsscListElemFCC key={elObj.id.val} elem={elObj}/>)
-            })
-          }
-        </div>
-        <PaginationFCC/>
-      </>}
+					</div>
+					<div className="msscListBlock" style={{position: 'relative'}}>
+						<BrSpinner show={$loadingB} fullscreen={false}/>
+            {
+              $elems.map((elObj: MsscElem) => {
+                return (<MsscListElemFCC key={elObj.id.val} elem={elObj}/>)
+              })
+            }
+					</div>
+					<PaginationFCC/>
+				</>}
+      </div>
+      {/* ^^dialog delete^^ */}
+      <MsscDialogFCC
+        show={$dialogDeleteShowed}
+        title={$dialogTitle}
+        body={$dialogBody}
+        cbCancel={dialogDeleteHandlers.cancel}
+        cbOk={dialogDeleteHandlers.ok}
+      />
+      {/* ^^dialog create^^ */}
+      {$dialogCreateShowed && $dialogCreateJsx}
+      {/* spinner */}
+      <BrSpinner show={$loading || $loadingAtDialog}/>
     </div>
-    {/* ^^dialog^^ */}
-    <MsscDialogFCC
-      show={$dialogDeleteShowed}
-      title={$dialogTitle}
-      body={$dialogBody}
-      cbCancel={dialogHandlers.cancel}
-      cbOk={dialogHandlers.ok}
-    />
-    {$dialogCreateShowed && $dialogCreateJsx}
-  </div>)
+  )
 }
 
 export default MsscListFCC;
