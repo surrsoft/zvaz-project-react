@@ -4,22 +4,62 @@
 ПОНЯТИЯ
 -- *id - идентификатор элемента
 -- *selList - список *id выбранных элементов
+-- *активный-элемент - элемент с которым в последний раз производились действия и т.п.
  */
 
 // *id
 export type Asau59Id = string
+export type Asau59IdB = string | null
 
+/**
+ * Предназначен для хранения текущего состояния какого-либо списка, например того какмие элементы "выбраны"
+ */
 export default class ListModelAsau59 {
   /**
    * список id выбранных элементов
    */
-  private selectedIds: Set<Asau59Id> = new Set()
+  private _selectedIds: Set<Asau59Id> = new Set()
+
+  /**
+   * id *активного-элемента
+   * @private
+   */
+  private _activeId: Asau59Id | null = null
+
+  activeIdSet(id: Asau59Id) {
+    this._activeId = id
+  }
+
+  activeId(): Asau59IdB {
+    return this._activeId
+  }
+
+  activeIdReset() {
+    this._activeId = null
+  }
+
+  /**
+   * возвращает TRUE если id (1) соответствует *активному-элементу
+   * @param id
+   */
+  activeIdIs(id: Asau59Id): boolean {
+    return !!id && this._activeId === id
+  }
+
+  /**
+   * Возвращает (2) (обычно это имя класса) если id (1) соответствует *активному-элементу, иначе возвращает пустую строку
+   * @param id (1) --
+   * @param str (2) --
+   */
+  activeIdIsB(id: Asau59Id, str: string): string {
+    return this.activeIdIs(id) ? str : ''
+  }
 
   /**
    * Возвращает количество выбранных элементов
    */
   selectElemsCount(): number {
-    return this.selectedIds.size
+    return this._selectedIds.size
   }
 
   /**
@@ -30,7 +70,7 @@ export default class ListModelAsau59 {
     ids
       .filter(id => !!id)
       .forEach((id: Asau59Id) => {
-        this.selectedIds.add(id)
+        this._selectedIds.add(id)
       })
   }
 
@@ -42,7 +82,7 @@ export default class ListModelAsau59 {
     ids
       .filter(el => !!el)
       .forEach(el => {
-        this.selectedIds.delete(el)
+        this._selectedIds.delete(el)
       })
   }
 
@@ -51,22 +91,22 @@ export default class ListModelAsau59 {
    * @param id (1) --
    */
   selectElemIs(id: Asau59Id): boolean {
-    return this.selectedIds.has(id)
+    return this._selectedIds.has(id)
   }
 
   /**
    * Очищает список выбранных элементов
    */
   selectElemsClear() {
-    this.selectedIds.clear()
+    this._selectedIds.clear()
   }
 
   /**
    * Возвращает один ID из выбранных. Если ни одного нет, то возвращает null
    */
-  selectElemOne(): Asau59Id | null {
+  selectElemOne(): Asau59IdB {
     if (this.selectElemsCount() > 0) {
-      return this.selectedIds.values().next().value
+      return this._selectedIds.values().next().value
     }
     return null
   }
@@ -75,6 +115,6 @@ export default class ListModelAsau59 {
    * выбранные идентификаторы
    */
   selectElems(): Asau59Id[] {
-    return Array.from(this.selectedIds)
+    return Array.from(this._selectedIds)
   }
 }

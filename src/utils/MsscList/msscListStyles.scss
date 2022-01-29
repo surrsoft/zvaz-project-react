@@ -40,25 +40,31 @@
       }
     }
 
-    .msscListBlock {
+    .mssc-list-block {
       display: flex;
       flex-direction: column;
       row-gap: 8px;
 
-      .msscListElemContainer {
-        //border: 1px solid red;
+      .mssc-list-elem {
+        border: 1px solid transparent;
+        border-radius: 8px;
         display: flex;
         align-items: center;
 
-        .msscListElemCheckbox {
+        &_active {
+          border-color: rgba(255, 0, 0, 0.63);
+          border-style: dashed;
+        }
+
+        .mssc-list-elem__checkbox {
           padding: 0 8px 0 8px;
         }
 
-        .msscListElemBody {
+        .mssc-list-elem__body {
           flex-grow: 1;
         }
 
-        .msscListElemMenu {
+        .mssc-list-elem__menu {
           padding: 0 8px 0 8px;
         }
       }

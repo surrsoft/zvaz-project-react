@@ -1,9 +1,9 @@
-.asau54_dropdown {
+.asau54-dropdown {
     position: relative;
     display: flex;
 }
 
-.asau54_btnDropdown {
+.asau54-dropdown__btn {
     color: white;
     font-size: 16px;
     border: none;
@@ -11,12 +11,12 @@
     padding: 8px;
 }
 
-.asau54_btnDropdown:hover, .asau54_btnDropdown:focus {
+.asau54-dropdown__btn:hover, .asau54-dropdown__btn:focus {
     background-color: #bed0dc;
     border-radius: 8px;
 }
 
-.asau54_dropdown-content {
+.asau54-dropdown__content {
     position: absolute;
     right: 0;
     background-color: #f1f1f1;
@@ -28,14 +28,14 @@
 
 }
 
-.asau54_dropdown-content button {
+.asau54-dropdown__content button {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: flex;
 }
 
-.asau54_dropdown-content button:hover {
+.asau54-dropdown__content button:hover {
     background-color: #ddd
 }
 

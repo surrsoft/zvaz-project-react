@@ -251,6 +251,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
             // чистим если что-то уже выбрано
             $listModel.selectElemsClear()
             $listModel.selectElemsAdd([obj.idElem])
+            $listModel.activeIdSet(obj.idElem)
             refresh()
           }
           dialogDeleteShow()
@@ -258,6 +259,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
         case MsscMenuAction.SELECT:
           if (obj.idElem) {
             $listModel.selectElemsAdd([obj.idElem])
+            $listModel.activeIdSet(obj.idElem)
             refresh()
           }
           break;
@@ -265,6 +267,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
           if (obj.idElem) {
             const elem = $elems.find(el => el.id.val === obj.idElem)
             if (elem) {
+              $listModel.activeIdSet(elem.id.val)
               const jsxEdit = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel, elem.elemModel)
               $dialogCreateEditJsxSet(jsxEdit || null)
               if (jsxEdit) {
@@ -276,29 +279,35 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       }
     }
 
+    /**
+     * [[220129135526]]
+     * @param id
+     */
     const checkboxOnChange = (id: string) => (ev: any) => {
       const checked = ev.target.checked
       console.log('!!-!!-!! id {220123141622}\n', id) // del+
       if (checked) {
         $listModel.selectElemsAdd([id])
+        $listModel.activeIdSet(id)
       } else {
         $listModel.selectElemsDelete([id])
+        $listModel.activeIdSet(id)
       }
       refresh()
       console.log('!!-!!-!! $listModel {220123141622}\n', $listModel) // del+
     }
 
     return (
-      <div className="msscListElemContainer">
-        <div className="msscListElemCheckbox">
+      <div className={`mssc-list-elem ${$listModel.activeIdIsB(elem.id.val, 'mssc-list-elem_active')}`}>
+        <div className="mssc-list-elem__checkbox">
           <input
             type="checkbox"
             checked={$listModel.selectElemIs(elem.id.val)}
             onChange={checkboxOnChange(elem.id.val)}
           />
         </div>
-        <div className="msscListElemBody">{jsxElem}</div>
-        <div className="msscListElemMenu">
+        <div className="mssc-list-elem__body">{jsxElem}</div>
+        <div className="mssc-list-elem__menu">
           <MenuAsau54FCC
             data={Object.assign({}, menuData, {id: elem.id.val})}
             cbOnSelected={menuElemOnSelected}
@@ -384,7 +393,6 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
      */
     ok: async (model: any) => {
       console.log('!!-!!-!! model {220123225610}\n', model) // del+
-      debugger; // del+
       let success = false;
       try {
         $loadingAtDialogSet(true)
@@ -394,6 +402,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
           console.log('!!-!!-!! result {220126210714}\n', result) // del+
           if (result && result.length === 1 && result[0]['id']) {
             success = true;
+            $listModel.activeIdSet(result[0]['id'])
           }
         } else {
           // ^ обновление элемента
@@ -466,7 +475,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
 						</div>
 
 					</div>
-					<div className="msscListBlock" style={{position: 'relative'}}>
+					<div className="mssc-list-block" style={{position: 'relative'}}>
 						<BrSpinner show={$loadingB} fullscreen={false}/>
             {
               $elems.map((elObj: MsscElem) => {

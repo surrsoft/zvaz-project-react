@@ -87,17 +87,25 @@ function MenuAsau54FCC({data, cbOnSelected}: Asau54Props) {
   }, []);
 
   return (
-    <div className="asau54_dropdown">
+    <div className="asau54-dropdown">
       <button
         ref={refBtnDropdown}
         onClick={onClickHandler}
-        className="asau54_btnDropdown"
+        className="asau54-dropdown__btn"
       >
         <SvgIconMenu width="24px" height="24px"/>
       </button>
-      {!$isListShowed ? null : <div className="asau54_dropdown-content">
+      {!$isListShowed ? null : <div className="asau54-dropdown__content">
         {data?.items.map((el) => {
-          return (<button key={el.idAction} onClick={btnOnClick(el.idAction, data.id)}>{el.text}</button>)
+          return (
+            <button
+              className="asau54-dropdown__elbutton"
+              key={el.idAction}
+              onClick={btnOnClick(el.idAction, data.id)}
+            >
+              {el.text}
+            </button>
+          )
         })}
       </div>}
     </div>
