@@ -89,7 +89,7 @@ export interface MsscSource<TModel> {
    * @param cbCancel (2) -- колбэк, который *клиент должен вызвать по нажатию Cancel
    * @param initialValues (3) --
    */
-  dialogCreate(cbOk: (model: TModel) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element>
+  dialogCreateOrEdit(cbOk: (model: TModel) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element>
 
   /**
    * *С-компонент вызывает эту функцию чтобы подготовить объект (1) к передаче в диалог создания/редактирования
@@ -97,14 +97,6 @@ export interface MsscSource<TModel> {
    * @param obj (1) --
    */
   dialogMiddleware(obj?: TModel): object | TModel | null;
-
-  /**
-   * Возвращает диалог редактирования элемента (1). *С-компонент показывает его. Когда пользователь нажимает SAVE вызывается (2)
-   * с обновлённой моделью данных
-   * @param id (1) --
-   * @param cbModel (2) --
-   */
-  dialogUpdate(id: RsuvTxStringAB, cbModel: Promise<TModel>): Promise<JSX.Element>
 }
 
 /**

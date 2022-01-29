@@ -71,15 +71,15 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   const [$dialogDeleteShowed, $dialogDeleteShowedSet] = useState(false);
   const [$dialogTitle, $dialogTitleSet] = useState('');
   const [$dialogBody, $dialogBodySet] = useState('');
-  const [$dialogCreateJsx, $dialogCreateJsxSet] = useState<JSX.Element | null>(null);
-  const [$dialogCreateShowed, $dialogCreateShowedSet] = useState(false);
+  const [$dialogCreateEditJsx, $dialogCreateEditJsxSet] = useState<JSX.Element | null>(null);
+  const [$dialogCreateEditShowed, $dialogCreateEditShowedSet] = useState(false);
   // ---
   const [$listModel] = useState(() => {
     return new ListModelAsau59()
   });
   const [$refresh, $refreshSet] = useState(false);
 
-  const scrollFixFn = useScrollFix($dialogCreateShowed)
+  const scrollFixFn = useScrollFix($dialogCreateEditShowed)
 
   const fnError = () => {
     $isErrorSet(true)
@@ -265,10 +265,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
           if (obj.idElem) {
             const elem = $elems.find(el => el.id.val === obj.idElem)
             if (elem) {
-              const jsxCreate = await source?.dialogCreate(dialogCreateCallbacks.ok, dialogCreateCallbacks.cancel, elem.elemModel)
-              $dialogCreateJsxSet(jsxCreate || null)
-              if (jsxCreate) {
-                $dialogCreateShowedSet(true)
+              const jsxEdit = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel, elem.elemModel)
+              $dialogCreateEditJsxSet(jsxEdit || null)
+              if (jsxEdit) {
+                $dialogCreateEditShowedSet(true)
               }
             }
           }
@@ -359,10 +359,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       dialogDeleteShow()
     },
     create: async () => {
-      const jsxCreate = await source?.dialogCreate(dialogCreateCallbacks.ok, dialogCreateCallbacks.cancel)
-      $dialogCreateJsxSet(jsxCreate || null)
+      const jsxCreate = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel)
+      $dialogCreateEditJsxSet(jsxCreate || null)
       if (jsxCreate) {
-        $dialogCreateShowedSet(true)
+        $dialogCreateEditShowedSet(true)
       }
     },
     deselectAll: () => {
@@ -375,7 +375,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     $refreshSet(!$refresh)
   }
 
-  const dialogCreateCallbacks = {
+  const dialogCreateEditCallbacks = {
     /**
      * [[220128213044]]
      * Будет вызыван при нажатии ОК в диалоге создания/редактировании элемента. Если у (1) не пустое (truthy) поле `id` то
@@ -419,7 +419,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       } finally {
         $loadingAtDialogSet(false)
         if (success) {
-          $dialogCreateShowedSet(false)
+          $dialogCreateEditShowedSet(false)
           updateWhole()
         } else {
           fnError()
@@ -428,10 +428,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
 
     },
     /**
-     * для вызова при нажатии Cancel в диалоге создания нового элемента
+     * для вызова при нажатии Cancel в диалоге создания/редатирования нового элемента
      */
     cancel: async () => {
-      $dialogCreateShowedSet(false)
+      $dialogCreateEditShowedSet(false)
       scrollFixFn(false)
     }
   }
@@ -485,8 +485,8 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
         cbCancel={dialogDeleteHandlers.cancel}
         cbOk={dialogDeleteHandlers.ok}
       />
-      {/* ^^dialog create^^ */}
-      {$dialogCreateShowed && $dialogCreateJsx}
+      {/* ^^dialog create/edit ^^ */}
+      {$dialogCreateEditShowed && $dialogCreateEditJsx}
       {/* spinner */}
       <BrSpinner show={$loading || $loadingAtDialog}/>
     </div>

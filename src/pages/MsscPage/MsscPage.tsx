@@ -24,16 +24,15 @@ const airSource = new AirSource({
       </div>
     )
   },
-  // ^^dialog create^^
+  // ^^dialog create/edit ^^
   /**
    * [[220129101243]]
+   * Диалог создания/редактирования элемента
    * @param cbOk (1) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии ОК
    * @param cbCancel (2) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии Cancel
    * @param initialValues (3) --
    */
-  dialogCreateJsx: async (cbOk: (newElemData: any) => void, cbCancel: () => void, initialValues) => {
-    debugger; // del+
-
+  dialogCreateEditJsx: async (cbOk: (newElemData: any) => void, cbCancel: () => void, initialValues) => {
     const isEditMode = !!initialValues
     const isCreateMode = !isEditMode
 

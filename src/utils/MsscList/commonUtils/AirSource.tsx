@@ -35,7 +35,7 @@ export class AirSourceParams<T> {
   /**
    * Диалог создания/редактирования элемента. Будет ретранслирован *клиенту
    */
-  dialogCreateJsx?: (cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object) => Promise<JSX.Element>
+  dialogCreateEditJsx?: (cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object) => Promise<JSX.Element>
   /**
    * см. [220129122002]
    * если указан, будет исползован вместо прописанного в текущем классе дефолтного
@@ -60,16 +60,12 @@ export class AirSource<T> implements MsscSource<T> {
     return Promise.resolve([]);
   }
 
-  dialogCreate(cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element> {
-    if (this.params.dialogCreateJsx) {
+  dialogCreateOrEdit(cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element> {
+    if (this.params.dialogCreateEditJsx) {
       const initialValues0 = this.dialogMiddleware(initialValues as any)
-      return this.params.dialogCreateJsx(cbOk, cbCancel, initialValues0 as any)
+      return this.params.dialogCreateEditJsx(cbOk, cbCancel, initialValues0 as any)
     }
     return Promise.resolve(<div>no realised</div>)
-  }
-
-  dialogUpdate(id: RsuvTxStringAB, cbModel: Promise<T>): Promise<JSX.Element> {
-    return Promise.reject(undefined);
   }
 
   async elems(indexDiap: RsuvTxNumIntDiap, filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<MsscElem[]> {
