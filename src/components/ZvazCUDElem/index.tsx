@@ -73,8 +73,6 @@ const CardForm: React.FC<any> = () => {
 }
 
 const ZvazCUDElem = () => {
-  console.log(`!!-!!-!! 1317- -> :::::::::::::: ZvazCUDElem() {210927131725}:${Date.now()}`); // del+
-
   // --- cardId
   const match = useRouteMatch()
   const cardId = _.get(match, 'params.cardId', null)
@@ -84,7 +82,6 @@ const ZvazCUDElem = () => {
     const cards = _.get(state, 'cards.cards', null)
     return _.find(cards, el => el.id === _.toInteger(cardId))
   })
-  console.log('!!-!!-!! card {210926214706}\n', card); // del+
 
   // ---
   return (<div className={"zvaz-cudelem-container"}>

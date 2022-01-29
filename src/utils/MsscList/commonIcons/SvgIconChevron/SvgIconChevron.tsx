@@ -1,5 +1,4 @@
 import * as React from "react";
-import './svgIconChevron.css';
 import { ColorsAsau61 } from '../utils/ColorsAsau61';
 
 // [[asau53]]

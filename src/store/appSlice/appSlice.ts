@@ -13,7 +13,6 @@ export const appSlice = createSlice({
     },
     debugPanelUpdate(state, action) {
       const payload = action.payload;
-      console.log('!!-!!-!! 1957- payload {211230195540}\n', payload) // del+
       state.debugPanel = payload;
     }
   },

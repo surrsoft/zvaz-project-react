@@ -90,7 +90,6 @@ export class AirSource<T> implements MsscSource<T> {
     const indexEnd = indexDiap.indexEnd.val;
     const hoggOffset = new HoggOffsetCount(false, indexStart, indexEnd - indexStart + 1);
     this.connector.sort(sortObj)
-    debugger; // del+
     const queryResult: HoggTupleNT[] = await this.connector.query(hoggOffset) // <=== QUERY
     if (queryResult && queryResult.length > 0) {
       const objs = queryResult.map((elTuple: HoggTupleNT) => {
@@ -109,7 +108,6 @@ export class AirSource<T> implements MsscSource<T> {
   }
 
   async elemsAdd(elems: T[]): Promise<Array<RsuvResultBoolPknz | T>> {
-    console.log('!!-!!-!! elems {220126210803}\n', elems) // del+
     const elems0 = elems.map((el: any) => {
       return _.omit(el, 'id')
     })
@@ -123,7 +121,6 @@ export class AirSource<T> implements MsscSource<T> {
     }, [])
     const tuples0 = validTuples.map((el: any) => el.tuple)
     const createResult = await this.connector.create(tuples0)
-    console.log('!!-!!-!! createResult {220126210418}\n', createResult) // del+
     if (createResult.success && createResult.value) {
       const ids: string[] | undefined = createResult.value
       return elems.reduce((acc: any, el: any, ix: number) => {

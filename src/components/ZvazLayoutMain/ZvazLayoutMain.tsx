@@ -15,7 +15,6 @@ function fnPath(pageName: string) {
 
 function ZvazLayoutMain() {
   const history = useHistory()
-  console.log('!!-!!-!! history {210924205713}\n', history); // del+
 
   return (
     <div className="main">

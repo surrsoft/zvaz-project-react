@@ -15,7 +15,6 @@ function InputAndResultCMP() {
       const res = NxcaTuSklon.sklon(val, elSclonEnum)
       return new NxcaResElemB(elSclonEnum, res)
     })
-    console.log('!!-!!-!! res {220109113848}\n', res00) // del+
     resultSet(res00)
   }
 
@@ -48,7 +47,6 @@ function InputAndResultCMP() {
 }
 
 const NxcaPage = (): JSX.Element => {
-  console.log(`!!-!!-!! 1217- -> :::::::::::::: NxcaPage() {220109121749}:${Date.now()}`) // del+
   return (<div>
     <div>
       <InputAndResultCMP/>

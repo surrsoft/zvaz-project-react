@@ -121,10 +121,8 @@ function DeleteModalFCM({disabled, handler}: any) {
 
 const TElemConstructorFCM: React.FC<any> = ({selFields: belems}) => {
   const telemCurrent = useSelector((state) => {
-    console.log(state, '!!-!!-!! state {1636226302-1}') // del+
     return _.get(state, 'app.telemCurrent', {})
   })
-  console.log('!!-!!-!! TElemConstructor: telemCurrent {1636226302-2}\n', telemCurrent) // del+
 
   const dispatch = useDispatch()
 
@@ -132,7 +130,6 @@ const TElemConstructorFCM: React.FC<any> = ({selFields: belems}) => {
   const dis2 = !telemCurrent.id
 
   const createHandle = () => {
-    console.log(`!!-!!-!! -> :::::::::::::: createHandle() {211023132847}:${Date.now()}`) // del+
     dispatch(telemsTelemCreateThunk({...telemCurrent}))
   }
 
@@ -149,8 +146,6 @@ const TElemConstructorFCM: React.FC<any> = ({selFields: belems}) => {
   }
 
   function inputChangeHandler(ev: any) {
-    console.log('!!-!!-!! 0944- ev {211024094422}\n', ev.target.value) // del+
-    console.log('!!-!!-!! telemCurrent {211024094930}\n', telemCurrent) // del+
     const title = ev?.target?.value
     const telemCurrentNew = {...telemCurrent, title}
     dispatch(telemCurrentUpdate(telemCurrentNew))
@@ -292,17 +287,12 @@ export function Learn02() {
   })
 
   useEffect(() => {
-    console.log(`!!-!!-!! L02 -> :::::::::::::: dispatch () {210928200024}:${Date.now()}`) // del+
     dispatch(telemsReceiveThunk())
     dispatch(metaReceiveThunk())
   }, [dispatch])
 
   const onDragEndHandler = (result: any) => {
-    console.log(`!!-!!-!! -> :::::::::::::: onDragEnd() {210423113201}:${Date.now()}`) // del+
     const {destination, source, draggableId} = result
-    console.log('!!-!!-!! 1212-10 destination {210423121200}\n', destination) // del+
-    console.log('!!-!!-!! 1212-20 source {210423121214}\n', source) // del+
-    console.log('!!-!!-!! 1212-30 draggableId {210423121227}\n', draggableId) // del+
 
     if (!destination) {
       return

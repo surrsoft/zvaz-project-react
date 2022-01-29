@@ -15,11 +15,9 @@ const cardsThunk = (dispatch: Function) => {
   server
     .elemsGetAll()
     .then((cards) => {
-      console.log('!!-!!-!! cards {210904092257}\n', cards); // del+
       dispatch(cardsSlice.actions.cardsAllReceived(cards))
     })
     .catch((err) => {
-      console.log('!!-!!-!! err {210904100021}\n', err); // del+
       dispatch(cardsSlice.actions.cardsAllNotReceived(err))
     })
 }
@@ -28,7 +26,6 @@ export const cardUpdateThunk = async (dispatch: Function, getState: Function) =>
   const cardCurrent = _.get(getState(), 'cards.cardCurrent')
   if (cardCurrent) {
     const res = await server.elemUpdate(cardCurrent)
-    console.log('!!-!!-!! 1518- res {210927151932}\n', res); // del+
     if (res.success) {
       dispatch(cardsSlice.actions.cardUpdated(cardCurrent))
     } else {
@@ -42,7 +39,6 @@ export const cardCreateThunk = (history: any) => {
     const cardCurrent = _.get(getState(), 'cards.cardCurrent')
     if (cardCurrent) {
       const res = await server.elemCreateB(_.omit(cardCurrent, 'id'))
-      console.log('!!-!!-!! 1611- res {210927161148}\n', res); // del+
       if (res.success) {
         const cardNewId = _.toInteger(res.value)
         const cardNew = {...cardCurrent, id: cardNewId};
@@ -78,7 +74,6 @@ export const Learn01 = () => {
   const binds = useSelector(state => state.binds.binds)
 
   const fnCards = (cards0: any) => {
-    console.log('!!-!!-!! cards0 {210911165701}\n', cards0); // del+
     if (cards0) {
       return cards0.length
     }

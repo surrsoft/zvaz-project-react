@@ -12,7 +12,6 @@ export const cardsSlice = createSlice({
     cardsAllNotReceived: (state, action) => {
     },
     cardCurrentSet: (state, action) => {
-      console.log('!!-!!-!! 1146- action {210927114610}\n', action); // del+
       state.cardCurrent = action.payload
     },
     cardUpdated: (state, action) => {
@@ -30,10 +29,8 @@ export const cardsSlice = createSlice({
       const id = action.payload
       const idNum = _.toInteger(id)
       const index = state.cards.findIndex((el: any) => el.id === idNum)
-      console.log('!!-!!-!! 1721- index {210927172149}\n', index); // del+
       if (index !== -1) {
         const cardsNew = state.cards.filter((el: any) => el.id !== idNum);
-        console.log('!!-!!-!! 1721- cardsNew {210927172108}\n', cardsNew); // del+
         state.cards = cardsNew
       }
     },

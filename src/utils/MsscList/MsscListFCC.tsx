@@ -83,17 +83,8 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   });
   const [$refresh, $refreshSet] = useState(false);
   // ---
-  let rsuvTxSort0 = null
-  let item: BrSelectItem<string> | undefined;
-  if (sortData) {
-    item = sortData.items.find(el => el.idElem === sortData.selectedId);
-    if (item) {
-      rsuvTxSort0 = fnRsuvTxSort(item)
-    }
-  }
-  const [$rsuvTxSort, $rsuvTxSortSet] = useState<RsuvTxSort | null>(rsuvTxSort0);
   // id выбранной в настояще время сортировки
-  const [$sortIdCurr, $sortIdCurrSet] = useState<BrSelectId | undefined>(item?.idElem);
+  const [$sortIdCurr, $sortIdCurrSet] = useState<BrSelectId | undefined>(sortData?.selectedId);
   // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
 
@@ -138,15 +129,24 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       const indexes = pagination.indexesByPageNum($pageNumCurrent)
       const ixStart = indexes.indexStart
       const ixEnd = indexes.indexLast
-      // --- получение элементов из source
-      const sorts = $rsuvTxSort ? [$rsuvTxSort] : []
-      debugger; // del+
+      // --- --- получение элементов из source
+      // --- сортировка
+      let rsuvTxSort0 = null
+      let item: BrSelectItem<string> | undefined;
+      if ($sortIdCurr) {
+        item = sortData?.items.find(el => el.idElem === $sortIdCurr);
+        if (item) {
+          rsuvTxSort0 = fnRsuvTxSort(item)
+        }
+      }
+      const sorts = rsuvTxSort0 ? [rsuvTxSort0] : []
+      // ---
       const elemsResult: MsscElem[] = await source.elems(
         new RsuvTxNumIntDiap(new RsuvTxNumIntAB(ixStart), new RsuvTxNumIntAB(ixEnd)),
         [],
         sorts
       )
-      // ---
+      // --- ---
       $elemsOnCurrPageSet(elemsResult.length)
       // ---
       $elemsSet(elemsResult)
@@ -171,7 +171,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   }, [$needUpdate1]);
 
   useEffect(() => {
-    console.log('!!-!!-!! 1323- $fdone {220119132235}\n', $fdone) // del+
     if (source && $fdone) {
       (async () => {
         await requestTwo(source)
@@ -266,7 +265,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
      * @param obj
      */
     const menuElemOnSelected = async (obj: Asau54SelectResult) => {
-      console.log('!!-!!-!! obj {220122220339}\n', obj) // del+
       switch (obj.idAction) {
         case MsscMenuAction.DELETE:
           if (obj.idElem) {
@@ -307,7 +305,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
      */
     const checkboxOnChange = (id: string) => (ev: any) => {
       const checked = ev.target.checked
-      console.log('!!-!!-!! id {220123141622}\n', id) // del+
       if (checked) {
         $listModel.selectElemsAdd([id])
         $listModel.activeIdSet(id)
@@ -316,7 +313,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
         $listModel.activeIdSet(id)
       }
       refresh()
-      console.log('!!-!!-!! $listModel {220123141622}\n', $listModel) // del+
     }
 
     return (
@@ -357,7 +353,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       $dialogDeleteShowedSet(false)
     },
     ok: async () => {
-      console.log(`!!-!!-!! 2025- -> :::::::::::::: ok() {220123202554}:${Date.now()}`) // del+
       if ($listModel.selectElemsCount() > 0) {
         const ids: MsscIdObject[] = $listModel.selectElems().map(el => ({id: el}))
         try {
@@ -421,14 +416,12 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
      * @param model
      */
     ok: async (model: any) => {
-      console.log('!!-!!-!! model {220123225610}\n', model) // del+
       let success = false;
       try {
         $loadingAtDialogSet(true)
         if (!model.id) {
           // ^ создание нового элемента
           const result = await source?.elemsAdd([model])
-          console.log('!!-!!-!! result {220126210714}\n', result) // del+
           if (result && result.length === 1 && result[0]['id']) {
             success = true;
             $listModel.activeIdSet(result[0]['id'])
@@ -436,7 +429,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
         } else {
           // ^ обновление элемента
           const result = await source?.elemsSet([model])
-          console.log('!!-!!-!! result {220129123228}\n', result) // del+
           if (result && result.length === 1) {
             const rr = result[0];
             if (rr.success) {
@@ -488,11 +480,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
    * @param sortItem
    */
   const sortHandler = (sortItem: BrSelectItem<MsscColumnName>) => {
-    console.log('!!-!!-!! sortItem {220129152315}\n', sortItem) // del+
-    debugger; // del+
-    const rsuvTxSort = fnRsuvTxSort(sortItem);
     $sortIdCurrSet(sortItem.idElem)
-    $rsuvTxSortSet(rsuvTxSort)
     refreshWhole()
   }
 

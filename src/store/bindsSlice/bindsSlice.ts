@@ -9,7 +9,6 @@ export const bindsSlice = createSlice({
   reducers: {
     allGetted(state, action) {
       const binds = action.payload
-      console.log('!!-!!-!! binds {210912202956}\n', binds); // del+
       state.binds = binds
     }
   }
@@ -20,10 +19,9 @@ export const bindsAllThunk = (dispatch: Function) => {
   server
     .elemsGetAll()
     .then((binds) => {
-      console.log('!!-!!-!! binds {210912202101}\n', binds); // del+
       dispatch(bindsSlice.actions.allGetted(binds))
     })
     .catch((err) => {
-      console.log('!!-!!-!! err {210912202100}\n', err); // del+
+      console.log('!!-!!-!! err {210912202100}\n', err);
     })
 }

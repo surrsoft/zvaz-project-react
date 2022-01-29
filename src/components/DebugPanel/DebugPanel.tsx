@@ -24,7 +24,6 @@ const DebugPanel: React.FC<DebugPanelProps> = () => {
   })
 
   useEffect(() => {
-    console.log(`!!-!!-!! -> :::::::::::::: 1011- () {211231101113}:${Date.now()}`) // del+
     clearTimeout($timerId)
     $displayClassSet('display-on')
     const timerId = setTimeout(() => {

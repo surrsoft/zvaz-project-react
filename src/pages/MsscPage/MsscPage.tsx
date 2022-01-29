@@ -4,7 +4,6 @@ import MsscListFCC from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
-import useScrollFix from '../../utils/useScrollFix';
 import { RsuvEnSort } from 'rsuv-lib';
 import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
 import { MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
@@ -13,18 +12,39 @@ enum EnField {
   TITLE = 'title',
   COMM = 'comm',
   URL = 'url',
-  DATE_CREATED = 'time_created'
+  TIME_CREATED = 'time_created',
+  TIME_LAST_MODIFIED = 'time_last_modified'
 }
 
 const airSource = new AirSource({
   dbKey: 'appskGCKvIZEdVBTO',
   tableName: 'main',
-  columns: ['id', 'url', 'title', 'comm', 'body', 'trans_count', 'trans_date_last', 'show_date_last'],
+  columns: [
+    'id',
+    EnField.URL,
+    EnField.TITLE,
+    EnField.COMM,
+    'body',
+    'trans_count',
+    'trans_date_last',
+    'show_date_last',
+    EnField.TIME_CREATED,
+    EnField.TIME_LAST_MODIFIED
+  ],
   elemJsx: (elObj: any) => {
     return (
-      <div className="zslistElem" key={elObj.tid}>
-        <div>{elObj.title}</div>
-        <div><a className="cls1452" href={elObj.url} target="_blank">{elObj.url}</a></div>
+      <div className="list-elem" key={elObj.tid}>
+        <div className="list-elem__title">{elObj.title}</div>
+        <div><a className="list-elem__url" href={elObj.url} target="_blank">{elObj.url}</a></div>
+        <div className="list-elem__comm">{elObj[EnField.COMM] || ''}</div>
+        <div className="list-elem__times">
+          <div className="list-elem__time-lastmodif">
+            <span className="list-elem__name">last modif:</span> {elObj[EnField.TIME_LAST_MODIFIED] || ''}
+          </div>
+          <div className="list-elem__time-created">
+            <span className="list-elem__name">created:</span> {elObj[EnField.TIME_CREATED] || ''}
+          </div>
+        </div>
       </div>
     )
   },
@@ -67,7 +87,6 @@ const airSource = new AirSource({
             [EnField.TITLE]: Yup.string().required('обязательное поле')
           })}
           onSubmit={async (values) => {
-            console.log('!!-!!-!! values {220124124716}\n', values) // del+
             return btnHandlers.ok(values)
           }}
         >
@@ -107,16 +126,28 @@ export function MsscPage() {
         idElem: 'date-create_asc',
         direction: RsuvEnSort.ASC,
         text: 'дата создания (от старых к свежим)',
-        payload: EnField.DATE_CREATED
+        payload: EnField.TIME_CREATED
       },
       {
         idElem: 'date-create_desc',
         direction: RsuvEnSort.DESC,
         text: 'дата создания (от свежих к старым)',
-        payload: EnField.DATE_CREATED
+        payload: EnField.TIME_CREATED
       },
       {idElem: 'title_asc', direction: RsuvEnSort.ASC, text: 'заголовок (по возрастанию)', payload: EnField.TITLE},
       {idElem: 'title_desc', direction: RsuvEnSort.DESC, text: 'заголовок (по убыванию)', payload: EnField.TITLE},
+      {
+        idElem: 'time-last-modif_asc',
+        direction: RsuvEnSort.ASC,
+        text: 'дата последнего изменения (от старых правок к свежим)',
+        payload: EnField.TIME_LAST_MODIFIED
+      },
+      {
+        idElem: 'time-last-modif_desc',
+        direction: RsuvEnSort.DESC,
+        text: 'дата последнего изменения (от свежих правок к старым)',
+        payload: EnField.TIME_LAST_MODIFIED
+      },
     ]
   } as BrSelectSortData<MsscColumnName>
 

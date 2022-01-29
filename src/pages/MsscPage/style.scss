@@ -2,19 +2,44 @@
   color: red;
 }
 
-.zslistElem {
+.list-elem {
   border: 1px solid silver;
   border-radius: 8px;
   padding: 4px 10px;
-}
 
-.cls1452 {
-  color: blue;
-  font-size: 12px;
+  .list-elem__title {
 
-  &:hover {
-    color: black;
   }
+
+  .list-elem__url {
+    color: blue;
+    font-size: 12px;
+
+    &:hover {
+      color: black;
+    }
+  }
+
+  .list-elem__comm {
+    color: #7a7979;
+    font-size: 12px;
+  }
+
+  .list-elem__times {
+    display: flex;
+    column-gap: 8px;
+    margin-top: 4px;
+
+    .list-elem__time-lastmodif, .list-elem__time-created {
+      font-size: 10px;
+      color: #122031;
+    }
+
+    .list-elem__name {
+      font-weight: 700;
+    }
+  }
+
 }
 
 .cls2326FormContainer {

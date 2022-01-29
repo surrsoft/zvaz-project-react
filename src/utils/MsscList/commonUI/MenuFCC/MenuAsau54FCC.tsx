@@ -58,8 +58,6 @@ function MenuAsau54FCC({data, cbOnSelected}: Asau54Props) {
 
   const btnOnClick = (idAction: Asau54IdAction, idElem: string) => (ev: any) => {
     ev.stopPropagation()
-    console.log('!!-!!-!! idAction {220122201452}\n', idAction) // del+
-    console.log('!!-!!-!! idElem {220122201452}\n', idElem) // del+
     $isListShowedSet(false)
     if (cbOnSelected) {
       cbOnSelected({idAction, idElem})
