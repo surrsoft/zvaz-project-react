@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './msscListStyles.scss';
 import { MsscIdObject, MsscSource } from './msscUtils/MsscSource';
-import { RsuvPaginationGyth, RsuvTxNumIntAB, RsuvTxNumIntDiap } from 'rsuv-lib';
+import { RsuvEnResultCrudSet, RsuvPaginationGyth, RsuvTxNumIntAB, RsuvTxNumIntDiap } from 'rsuv-lib';
 import { MsscElem } from './msscUtils/MsscElem';
 import SvgIconChevron from './commonIcons/SvgIconChevron/SvgIconChevron';
-import MenuAsau54FCC, { Asau54Item, Asau54Data, Asau54SelectResult } from './commonUI/MenuFCC/MenuAsau54FCC';
+import MenuAsau54FCC, { Asau54Data, Asau54Item, Asau54SelectResult } from './commonUI/MenuFCC/MenuAsau54FCC';
 import MsscDialogFCC from './msscComponents/MsscDialogFCC/MsscDialogFCC';
 import ListModelAsau59 from './commonUtils/ListModelAsau59';
 import SvgIconTrash from './commonIcons/SvgIconTrash/SvgIconTrash';
@@ -91,8 +91,6 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   const requestFirst = async (source: MsscSource<any>) => {
 
     try {
-      const jsx = await source?.dialogCreate(dialogCreateCallbacks.ok, dialogCreateCallbacks.cancel)
-      $dialogCreateJsxSet(jsx)
       // ---
       $loadingSet(true)
       // --- получение общего количества элементов
@@ -241,6 +239,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   function MsscListElemFCC({elem}: { elem: MsscElem }) {
     const jsxElem: JSX.Element = elem.elem
 
+    /**
+     * [[220129111758]]
+     * @param obj
+     */
     const menuElemOnSelected = async (obj: Asau54SelectResult) => {
       console.log('!!-!!-!! obj {220122220339}\n', obj) // del+
       switch (obj.idAction) {
@@ -257,6 +259,18 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
           if (obj.idElem) {
             $listModel.selectElemsAdd([obj.idElem])
             refresh()
+          }
+          break;
+        case MsscMenuAction.EDIT:
+          if (obj.idElem) {
+            const elem = $elems.find(el => el.id.val === obj.idElem)
+            if (elem) {
+              const jsxCreate = await source?.dialogCreate(dialogCreateCallbacks.ok, dialogCreateCallbacks.cancel, elem.elemModel)
+              $dialogCreateJsxSet(jsxCreate || null)
+              if (jsxCreate) {
+                $dialogCreateShowedSet(true)
+              }
+            }
           }
           break;
       }
@@ -344,8 +358,12 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     delete: () => {
       dialogDeleteShow()
     },
-    create: () => {
-      $dialogCreateShowedSet(true)
+    create: async () => {
+      const jsxCreate = await source?.dialogCreate(dialogCreateCallbacks.ok, dialogCreateCallbacks.cancel)
+      $dialogCreateJsxSet(jsxCreate || null)
+      if (jsxCreate) {
+        $dialogCreateShowedSet(true)
+      }
     },
     deselectAll: () => {
       $listModel.selectElemsClear()
@@ -360,18 +378,41 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
   const dialogCreateCallbacks = {
     /**
      * [[220128213044]]
-     * будет вызыван при нажатии ОК в диалоге создания нового элемента
+     * Будет вызыван при нажатии ОК в диалоге создания/редактировании элемента. Если у (1) не пустое (truthy) поле `id` то
+     * значит нужно обновить элемент, иначе - создать элемент
      * @param model
      */
     ok: async (model: any) => {
       console.log('!!-!!-!! model {220123225610}\n', model) // del+
+      debugger; // del+
       let success = false;
       try {
         $loadingAtDialogSet(true)
-        const result = await source?.elemsAdd([model])
-        console.log('!!-!!-!! result {220126210714}\n', result) // del+
-        if (result && result.length === 1 && result[0]['id']) {
-          success = true;
+        if (!model.id) {
+          // ^ создание нового элемента
+          const result = await source?.elemsAdd([model])
+          console.log('!!-!!-!! result {220126210714}\n', result) // del+
+          if (result && result.length === 1 && result[0]['id']) {
+            success = true;
+          }
+        } else {
+          // ^ обновление элемента
+          const result = await source?.elemsSet([model])
+          console.log('!!-!!-!! result {220129123228}\n', result) // del+
+          debugger; // del+
+          if (result && result.length === 1) {
+            const rr = result[0];
+            if (rr.success) {
+              const enCrudResult: RsuvEnResultCrudSet | undefined = rr.value
+              if (!enCrudResult) throw new Error('[[220129123729]]')
+              if (enCrudResult === RsuvEnResultCrudSet.ERROR) throw new Error('[[220129123837]]')
+              success = true;
+            } else {
+              throw new Error('[[220129123902]]')
+            }
+          } else {
+            throw new Error('[[220129123916]]')
+          }
         }
       } catch (err) {
         console.log('!!-!!-!! err {220126221404}\n', err)

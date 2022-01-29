@@ -34,7 +34,7 @@ export default function BrSpinner({show = false, bgColor, fullscreen = true, css
         display: show ? 'flex' : 'none',
         position: fullscreen ? 'fixed' : 'absolute',
         width: fullscreen ? '100vw' : '100%',
-        height: fullscreen ? '100vw' : '100%',
+        height: fullscreen ? '100vh' : '100%',
         ...css
       }}
     >

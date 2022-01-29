@@ -29,6 +29,13 @@ export interface MsscSource<TModel> {
   elems(indexDiap: RsuvTxNumIntDiap, filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<MsscElem[]>
 
   /**
+   * Возвращает элементы соответствующие id (1). Для не найденных элементов в ячейке итогового массива будет
+   * значение null
+   * @param ids
+   */
+  elemByIds(ids: MsscIdObject[]): Promise<(TModel | null)[]>
+
+  /**
    * Создаёт записи для элементов из (1).
    *
    * Возвращает список той же длины что (1), с теми же элементами, но в месте
@@ -75,12 +82,21 @@ export interface MsscSource<TModel> {
   elemsUpsert(elems: TModel[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>>
 
   /**
-   * Возвращает диалог создания элемента. *С-компонент показывает его. Когда пользователь нажимает ОК вызывается (1)
-   * с моделью данных
+   * Возвращает диалог создания элемента если (3) is truthy, иначе возвращает диалог редактирования элемента.
+   * *С-компонент показывает его. Когда пользователь нажимает ОК вызывается (1)
+   * с моделью данных в аргументе
    * @param cbOk (1) -- колбэк, который *клиент должен вызвать по нажатию ОК
    * @param cbCancel (2) -- колбэк, который *клиент должен вызвать по нажатию Cancel
+   * @param initialValues (3) --
    */
-  dialogCreate(cbOk: (model: TModel) => void, cbCancel: () => void): Promise<JSX.Element>
+  dialogCreate(cbOk: (model: TModel) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element>
+
+  /**
+   * *С-компонент вызывает эту функцию чтобы подготовить объект (1) к передаче в диалог создания/редактирования
+   * ID [[220129122002]]
+   * @param obj (1) --
+   */
+  dialogMiddleware(obj?: TModel): object | TModel | null;
 
   /**
    * Возвращает диалог редактирования элемента (1). *С-компонент показывает его. Когда пользователь нажимает SAVE вызывается (2)

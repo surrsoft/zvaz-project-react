@@ -33,12 +33,18 @@ export class AirSourceParams<T> {
    */
   elemJsx?: (obj: object) => JSX.Element
   /**
-   * Диалог создания элемента. Будет ретранслирован *клиенту
+   * Диалог создания/редактирования элемента. Будет ретранслирован *клиенту
    */
-  dialogCreateJsx?: (cbOk: (model: T) => void, cbCancel: () => void) => Promise<JSX.Element>
+  dialogCreateJsx?: (cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object) => Promise<JSX.Element>
+  /**
+   * см. [220129122002]
+   * если указан, будет исползован вместо прописанного в текущем классе дефолтного
+   */
+  dialogMiddleware?: (obj: T) => object | T | null
 }
 
 export class AirSource<T> implements MsscSource<T> {
+
   private connector: HoggConnectorNT;
 
   constructor(public params: AirSourceParams<T>) {
@@ -50,9 +56,14 @@ export class AirSource<T> implements MsscSource<T> {
       .columns(params.columns)
   }
 
-  dialogCreate(cbOk: (model: T) => void, cbCancel: () => void): Promise<JSX.Element> {
+  elemByIds(ids: MsscIdObject[]): Promise<(T | null)[]> {
+    return Promise.resolve([]);
+  }
+
+  dialogCreate(cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element> {
     if (this.params.dialogCreateJsx) {
-      return this.params.dialogCreateJsx(cbOk, cbCancel)
+      const initialValues0 = this.dialogMiddleware(initialValues as any)
+      return this.params.dialogCreateJsx(cbOk, cbCancel, initialValues0 as any)
     }
     return Promise.resolve(<div>no realised</div>)
   }
@@ -85,7 +96,8 @@ export class AirSource<T> implements MsscSource<T> {
       const ret = objs.map((elObj: any) => {
         return {
           id: new RsuvTxStringAB(elObj.tid),
-          elem: this.params.elemJsx ? this.params.elemJsx(elObj) : (<div>elObj.id</div>)
+          elem: this.params.elemJsx ? this.params.elemJsx(elObj) : (<div>elObj.id</div>),
+          elemModel: elObj
         } as MsscElem
       });
       return ret;
@@ -95,7 +107,6 @@ export class AirSource<T> implements MsscSource<T> {
 
   async elemsAdd(elems: T[]): Promise<Array<RsuvResultBoolPknz | T>> {
     console.log('!!-!!-!! elems {220126210803}\n', elems) // del+
-    debugger; // del+
     const elems0 = elems.map((el: any) => {
       return _.omit(el, 'id')
     })
@@ -110,7 +121,6 @@ export class AirSource<T> implements MsscSource<T> {
     const tuples0 = validTuples.map((el: any) => el.tuple)
     const createResult = await this.connector.create(tuples0)
     console.log('!!-!!-!! createResult {220126210418}\n', createResult) // del+
-    debugger; // del+
     if (createResult.success && createResult.value) {
       const ids: string[] | undefined = createResult.value
       return elems.reduce((acc: any, el: any, ix: number) => {
@@ -147,12 +157,51 @@ export class AirSource<T> implements MsscSource<T> {
     })
   }
 
-  elemsSet(elems: T[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
-    return Promise.reject(undefined);
+  async elemsSet(elems: T[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
+    debugger; // del+
+    const elems0 = elems.map((el: any) => {
+      const ell = _.cloneDeep(el)
+      ell.tid = ell.id
+      delete ell.id
+      return ell
+    })
+    const tuples: (HoggTupleNT | null)[] = elems0.map((el: any) => {
+      return tupleFrom(el)
+    })
+    // отбираем только те для которых успешно создался tuple
+    const validTuples = tuples.reduce<Ty2130[]>((acc: Ty2130[], tuple: HoggTupleNT | null, ix: number) => {
+      if (tuple) acc.push({index: ix, tuple: tuple})
+      return acc;
+    }, [])
+    const tuples0 = validTuples.map((el: any) => el.tuple)
+    const result = await this.connector.update(tuples0)
+    if (result.value) {
+      return elems0.map((el, ix) => {
+        const rr = validTuples.find(el0 => el0.index === ix)
+        if (rr) {
+          return new RsuvResultTibo({success: true, value: RsuvEnResultCrudSet.UPDATED})
+        } else {
+          return new RsuvResultTibo({success: false, errCode: '[[220129125638]]'})
+        }
+      })
+    }
+    throw new Error('[[220129125711]]')
   }
 
   elemsUpsert(elems: T[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
     return Promise.reject(undefined);
+  }
+
+  dialogMiddleware(obj?: T): object | T | null {
+    if (obj) {
+      if (this.params.dialogMiddleware) {
+        return this.params.dialogMiddleware(obj)
+      }
+      const obj0: any = _.cloneDeep(obj)
+      obj0.id = obj0.tid;
+      return obj0;
+    }
+    return null;
   }
 
 }

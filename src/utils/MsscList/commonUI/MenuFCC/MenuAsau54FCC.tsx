@@ -20,6 +20,9 @@ export type Asau54IdAction = string
  */
 export type Asau54ActionText = string
 
+/**
+ * представляет элемент меню
+ */
 export class Asau54Item {
   idAction: Asau54IdAction = ''
   text: Asau54ActionText = ''

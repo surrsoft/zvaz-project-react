@@ -26,29 +26,40 @@ const airSource = new AirSource({
   },
   // ^^dialog create^^
   /**
-   *
+   * [[220129101243]]
    * @param cbOk (1) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии ОК
    * @param cbCancel (2) -- сюда *с-компонент подставляет колбэк который нужно вызвать при нажатии Cancel
+   * @param initialValues (3) --
    */
-  dialogCreateJsx: async (cbOk: (newElemData: any) => void, cbCancel: () => void) => {
+  dialogCreateJsx: async (cbOk: (newElemData: any) => void, cbCancel: () => void, initialValues) => {
+    debugger; // del+
+
+    const isEditMode = !!initialValues
+    const isCreateMode = !isEditMode
+
     const btnHandlers = {
       cancel: () => {
         cbCancel?.()
       },
       ok: async (model: any) => {
         const obj = Object.assign({}, {id: ''}, model)
+        if (isEditMode) {
+          obj.id = (initialValues as any).id
+        }
         cbOk?.(obj)
       }
     }
 
+    const fieldNames = Object.values(EnField)
+    const initialValues0 = fieldNames.reduce((acc: any, elFieldName) => {
+      acc[elFieldName] = initialValues ? ((initialValues as any)[elFieldName] || '') : '';
+      return acc;
+    }, {})
+
     return (
       <div className="cls2326FormContainer">
         <Formik
-          initialValues={{
-            [EnField.TITLE]: '',
-            [EnField.COMM]: '',
-            [EnField.URL]: ''
-          }}
+          initialValues={initialValues0}
           validationSchema={Yup.object({
             [EnField.TITLE]: Yup.string().required('обязательное поле')
           })}
@@ -58,7 +69,7 @@ const airSource = new AirSource({
           }}
         >
           {({errors}) => (<Form className="cls2326Form">
-            <div className="cls2326Title">Создание элемента</div>
+            <div className="cls2326Title">{isCreateMode ? 'Создание' : 'Редактирование'} элемента</div>
             <div className="cls2326ELem">
               <label>{EnField.TITLE}</label>
               <Field type="text" name={EnField.TITLE}/>
@@ -74,7 +85,7 @@ const airSource = new AirSource({
             </div>
             <div className="cls2326Buttons">
               <button onClick={btnHandlers.cancel}>Отмена</button>
-              <button type="submit">Создать</button>
+              <button type="submit">OK</button>
             </div>
           </Form>)}
         </Formik>
