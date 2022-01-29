@@ -34,7 +34,7 @@
       display: flex;
       column-gap: 32px;
 
-      .msscTopButtons {
+      .mssc-top-buttons {
         display: flex;
         column-gap: 16px;
       }
@@ -50,6 +50,7 @@
         border-radius: 8px;
         display: flex;
         align-items: center;
+        min-height: 48px;
 
         &_active {
           border-color: rgba(255, 0, 0, 0.63);

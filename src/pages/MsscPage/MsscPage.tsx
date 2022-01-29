@@ -5,11 +5,15 @@ import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
 import useScrollFix from '../../utils/useScrollFix';
+import { RsuvEnSort } from 'rsuv-lib';
+import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
+import { MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
 
 enum EnField {
   TITLE = 'title',
   COMM = 'comm',
-  URL = 'url'
+  URL = 'url',
+  DATE_CREATED = 'time_created'
 }
 
 const airSource = new AirSource({
@@ -49,7 +53,7 @@ const airSource = new AirSource({
       }
     }
 
-    const fieldNames = Object.values(EnField)
+    const fieldNames = [EnField.TITLE, EnField.COMM, EnField.URL]
     const initialValues0 = fieldNames.reduce((acc: any, elFieldName) => {
       acc[elFieldName] = initialValues ? ((initialValues as any)[elFieldName] || '') : '';
       return acc;
@@ -95,8 +99,29 @@ const airSource = new AirSource({
 
 export function MsscPage() {
 
+  const sortDataSTA = {
+    selectedId: 'date-create_desc',
+    items: [
+      {idElem: 'default', direction: RsuvEnSort.ASC, text: 'по умолчанию', payload: ''},
+      {
+        idElem: 'date-create_asc',
+        direction: RsuvEnSort.ASC,
+        text: 'дата создания (от старых к свежим)',
+        payload: EnField.DATE_CREATED
+      },
+      {
+        idElem: 'date-create_desc',
+        direction: RsuvEnSort.DESC,
+        text: 'дата создания (от свежих к старым)',
+        payload: EnField.DATE_CREATED
+      },
+      {idElem: 'title_asc', direction: RsuvEnSort.ASC, text: 'заголовок (по возрастанию)', payload: EnField.TITLE},
+      {idElem: 'title_desc', direction: RsuvEnSort.DESC, text: 'заголовок (по убыванию)', payload: EnField.TITLE},
+    ]
+  } as BrSelectSortData<MsscColumnName>
+
   return (<div>
     <div className="title">MsscPage</div>
-    <MsscListFCC source={airSource}/>
+    <MsscListFCC source={airSource} sortData={sortDataSTA}/>
   </div>)
 }

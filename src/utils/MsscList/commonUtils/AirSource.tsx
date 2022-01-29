@@ -22,6 +22,8 @@ import _ from 'lodash';
 
 type Ty2130 = { index: number, tuple: HoggTupleNT }
 
+type Ty2214 = { field: string; direction: "desc" | "asc" }
+
 export class AirSourceParams<T> {
   dbKey: string = ''
   tableName: string = ''
@@ -75,20 +77,25 @@ export class AirSource<T> implements MsscSource<T> {
     if (filters.length > 0) {
       throw new Error('ERR* filters - не реализовано')
     }
+    let sortObj: Array<Ty2214> = []
     if (sorts.length > 0) {
-      throw new Error('ERR* sorts - не реализовано')
+      sortObj = sorts.map(el => ({
+        field: el.id.val,
+        direction: el.sortDirect
+      } as Ty2214))
     }
 
     // ---
     const indexStart = indexDiap.indexStart.val;
     const indexEnd = indexDiap.indexEnd.val;
     const hoggOffset = new HoggOffsetCount(false, indexStart, indexEnd - indexStart + 1);
+    this.connector.sort(sortObj)
+    debugger; // del+
     const queryResult: HoggTupleNT[] = await this.connector.query(hoggOffset) // <=== QUERY
     if (queryResult && queryResult.length > 0) {
       const objs = queryResult.map((elTuple: HoggTupleNT) => {
         return tupleToObject(elTuple)
       }).filter(elObj => elObj !== null)
-      // console.log('!!-!!-!! objs {220119092801}\n', JSON.stringify(objs, null, 2))
       const ret = objs.map((elObj: any) => {
         return {
           id: new RsuvTxStringAB(elObj.tid),
@@ -154,7 +161,6 @@ export class AirSource<T> implements MsscSource<T> {
   }
 
   async elemsSet(elems: T[]): Promise<Array<RsuvResultTibo<RsuvEnResultCrudSet>>> {
-    debugger; // del+
     const elems0 = elems.map((el: any) => {
       const ell = _.cloneDeep(el)
       ell.tid = ell.id

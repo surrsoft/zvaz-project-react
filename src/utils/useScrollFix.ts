@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
  * ID [[220123125256]] rev 1 1.0.0 2022-01-23
  * GROUP [ueur]-copy-library
  * @param toFix (1) -- TRUE - скролл отключает, FALSE - скролл возвращает обратно
- * @return -- функция которой можно напрямую всключать/выключать скролл
+ * @return -- функция которой можно напрямую всключать/выключать скролл - TRUE чтобы вкючить, FALSE чтобы выключить
  */
 export default function useScrollFix(toFix: boolean) {
   const [$overflow, $overflowSet] = useState('');

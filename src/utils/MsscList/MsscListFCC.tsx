@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './msscListStyles.scss';
 import { MsscIdObject, MsscSource } from './msscUtils/MsscSource';
-import { RsuvEnResultCrudSet, RsuvPaginationGyth, RsuvTxNumIntAB, RsuvTxNumIntDiap } from 'rsuv-lib';
+import {
+  RsuvEnResultCrudSet,
+  RsuvEnSort,
+  RsuvPaginationGyth,
+  RsuvTxNumIntAB,
+  RsuvTxNumIntDiap,
+  RsuvTxSort,
+  RsuvTxStringAC
+} from 'rsuv-lib';
 import { MsscElem } from './msscUtils/MsscElem';
 import SvgIconChevron from './commonIcons/SvgIconChevron/SvgIconChevron';
 import MenuAsau54FCC, { Asau54Data, Asau54Item, Asau54SelectResult } from './commonUI/MenuFCC/MenuAsau54FCC';
@@ -13,6 +21,9 @@ import SvgIconUnckecked from './commonIcons/SvgIconUnchecked/SvgIconUnckecked';
 import { ColorsAsau61 } from './commonIcons/utils/ColorsAsau61';
 import useScrollFix from '../useScrollFix';
 import BrSpinner from './commonUI/BrSpinner/BrSpinner';
+import { BrSelectId, BrSelectItem, BrSelectSortData } from './commonUI/BrSelect/brSelectUtils';
+import BrSelect from './commonUI/BrSelect/BrSelect';
+import { MsscColumnName } from './msscUtils/msscUtils';
 
 export enum MsscMenuAction {
   EDIT = 'edit',
@@ -20,22 +31,15 @@ export enum MsscMenuAction {
   DELETE = 'delete'
 }
 
-async function fnWait(duration: number) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true)
-    }, duration);
-  });
-}
-
 interface MsscListProps {
   source: MsscSource<any> | null
+  sortData?: BrSelectSortData<MsscColumnName>
 }
 
 // для возврата номера страницы если не удалось получить данные
 let isPageUp = false;
 
-const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
+const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   // source = null; // del+
 
   const config = {
@@ -78,7 +82,19 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     return new ListModelAsau59()
   });
   const [$refresh, $refreshSet] = useState(false);
-
+  // ---
+  let rsuvTxSort0 = null
+  let item: BrSelectItem<string> | undefined;
+  if (sortData) {
+    item = sortData.items.find(el => el.idElem === sortData.selectedId);
+    if (item) {
+      rsuvTxSort0 = fnRsuvTxSort(item)
+    }
+  }
+  const [$rsuvTxSort, $rsuvTxSortSet] = useState<RsuvTxSort | null>(rsuvTxSort0);
+  // id выбранной в настояще время сортировки
+  const [$sortIdCurr, $sortIdCurrSet] = useState<BrSelectId | undefined>(item?.idElem);
+  // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
 
   const fnError = () => {
@@ -123,7 +139,13 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       const ixStart = indexes.indexStart
       const ixEnd = indexes.indexLast
       // --- получение элементов из source
-      const elemsResult: MsscElem[] = await source.elems(new RsuvTxNumIntDiap(new RsuvTxNumIntAB(ixStart), new RsuvTxNumIntAB(ixEnd)), [], [])
+      const sorts = $rsuvTxSort ? [$rsuvTxSort] : []
+      debugger; // del+
+      const elemsResult: MsscElem[] = await source.elems(
+        new RsuvTxNumIntDiap(new RsuvTxNumIntAB(ixStart), new RsuvTxNumIntAB(ixEnd)),
+        [],
+        sorts
+      )
       // ---
       $elemsOnCurrPageSet(elemsResult.length)
       // ---
@@ -221,7 +243,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     )
   }
 
-  const menuData = {
+  const menuDataSTA = {
     id: '',
     items: [
       {idAction: MsscMenuAction.EDIT, text: 'Изменить'} as Asau54Item,
@@ -309,7 +331,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
         <div className="mssc-list-elem__body">{jsxElem}</div>
         <div className="mssc-list-elem__menu">
           <MenuAsau54FCC
-            data={Object.assign({}, menuData, {id: elem.id.val})}
+            data={Object.assign({}, menuDataSTA, {id: elem.id.val})}
             cbOnSelected={menuElemOnSelected}
           />
         </div>
@@ -319,8 +341,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
 
   /**
    * Выполнение полного перезапроса всех данных
+   *
+   * СМ, ТАКЖЕ {@link refresh}
    */
-  function updateWhole() {
+  function refreshWhole() {
     $needUpdate1Set(!$needUpdate1)
   }
 
@@ -343,7 +367,7 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
             if (noDeletedElems.length === 0) {
               $listModel.selectElemsClear()
               $dialogDeleteShowedSet(false)
-              updateWhole()
+              refreshWhole()
             } else {
               console.warn(`[${noDeletedElems.length}] elems not deleted`)
               fnError()
@@ -380,6 +404,11 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
     },
   }
 
+  /**
+   * Перезапрос данных страницы только.
+   *
+   * СМ. ТАКЖЕ {@link refreshWhole}
+   */
   const refresh = () => {
     $refreshSet(!$refresh)
   }
@@ -408,7 +437,6 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
           // ^ обновление элемента
           const result = await source?.elemsSet([model])
           console.log('!!-!!-!! result {220129123228}\n', result) // del+
-          debugger; // del+
           if (result && result.length === 1) {
             const rr = result[0];
             if (rr.success) {
@@ -427,9 +455,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
         console.log('!!-!!-!! err {220126221404}\n', err)
       } finally {
         $loadingAtDialogSet(false)
+        scrollFixFn(false)
         if (success) {
           $dialogCreateEditShowedSet(false)
-          updateWhole()
+          refreshWhole()
         } else {
           fnError()
         }
@@ -443,6 +472,28 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
       $dialogCreateEditShowedSet(false)
       scrollFixFn(false)
     }
+  }
+
+  function fnRsuvTxSort(sortItem: BrSelectItem<string>) {
+    if (!sortItem.payload) {
+      return null;
+    } else {
+      const columnName = new RsuvTxStringAC(sortItem.payload);
+      return new RsuvTxSort(columnName, sortItem.direction as RsuvEnSort);
+    }
+  }
+
+  /**
+   * [[220129163836]]
+   * @param sortItem
+   */
+  const sortHandler = (sortItem: BrSelectItem<MsscColumnName>) => {
+    console.log('!!-!!-!! sortItem {220129152315}\n', sortItem) // del+
+    debugger; // del+
+    const rsuvTxSort = fnRsuvTxSort(sortItem);
+    $sortIdCurrSet(sortItem.idElem)
+    $rsuvTxSortSet(rsuvTxSort)
+    refreshWhole()
   }
 
   return (
@@ -459,7 +510,8 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
 					</div>
 					<div className="mssc1454">
 						<PaginationFCC/>
-						<div className="msscTopButtons">
+            {/* [[220129145117]] */}
+						<div className="mssc-top-buttons">
               {/* ^^delete-button^^ */}
 							<button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
 											onClick={iconsHandlers.delete}>
@@ -473,7 +525,10 @@ const MsscListFCC = ({source}: MsscListProps): JSX.Element => {
 								<SvgIconUnckecked {...iconsConf}/>
 							</button>
 						</div>
-
+            {sortData && <div className="mssc-sort-block">
+              {/* [[220129214739]] */}
+							<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
+						</div>}
 					</div>
 					<div className="mssc-list-block" style={{position: 'relative'}}>
 						<BrSpinner show={$loadingB} fullscreen={false}/>
