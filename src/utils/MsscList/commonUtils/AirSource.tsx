@@ -46,17 +46,19 @@ export class AirSourceParams<T> {
   /**
    * на базе (1) нужно сформировать MsscFilter
    */
-  cbSearchTextToMsscFilter?: (searchText: string) => MsscFilter | null
+  cbSearchTextToMsscFilter?: (searchText: string) => MsscFilter[] | null
 }
 
 function msscFiltersToVuscFilter(filters: MsscFilter[]) {
   if (filters && filters.length > 0) {
-    const filter = filters[0]
-    if (filter && filter.paramId?.val && filter.filterValue) {
-      return `FIND("${filter.filterValue}",{${filter.paramId.val}})`
-    }
+    return `SUM(${filters.reduce<string[]>((acc, elFilter) => {
+      if (elFilter?.paramId?.val && elFilter?.filterValue) {
+        acc.push(`(FIND(LOWER("${elFilter.filterValue}"),LOWER({${elFilter.paramId.val}})))`)
+      }
+      return acc
+    }, []).join(',')})`
   }
-  return null
+  return ''
 }
 
 export class AirSource<T> implements MsscSource<T> {
@@ -85,13 +87,8 @@ export class AirSource<T> implements MsscSource<T> {
   }
 
   async elems(indexDiap: RsuvTxNumIntDiap, filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<MsscElem[]> {
-    let filterVusc = ''
-    if (filters.length > 0) {
-      const filter = filters[0]
-      if (filter?.paramId?.val && filter?.filterValue) {
-        filterVusc = `FIND("${filter?.filterValue}",{${filter.paramId.val}})`
-      }
-    }
+    debugger; // del+
+    const filterVusc = msscFiltersToVuscFilter(filters)
     let sortArrObj: Array<Ty2214> = []
     if (sorts.length > 0) {
       sortArrObj = sorts.map(el => ({
@@ -160,7 +157,7 @@ export class AirSource<T> implements MsscSource<T> {
     let vuscFilter: string = '';
     if (filters.length > 0) {
       // throw new Error('ERR* filters не реализовано')
-      vuscFilter = msscFiltersToVuscFilter(filters) || '';
+      vuscFilter = msscFiltersToVuscFilter(filters);
     }
     let count;
     count = await this.connector.filterVusc(vuscFilter).countAll()
@@ -224,7 +221,7 @@ export class AirSource<T> implements MsscSource<T> {
     return null;
   }
 
-  searchTextToMsscFilter(searchText: string): MsscFilter | null {
+  searchTextToMsscFilter(searchText: string): MsscFilter[] | null {
     if (searchText) {
       return this.params.cbSearchTextToMsscFilter?.(searchText) || null
     }

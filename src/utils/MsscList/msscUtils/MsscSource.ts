@@ -102,7 +102,7 @@ export interface MsscSource<TModel> {
    * *С-компонент вызывает эту функцию чтобы *клиент на базе (1) подготовил {@link MsscFilter}
    * @param searchText
    */
-  searchTextToMsscFilter(searchText: string): MsscFilter | null
+  searchTextToMsscFilter(searchText: string): MsscFilter[] | null
 
 }
 

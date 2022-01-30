@@ -103,15 +103,15 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   }
 
   function fnFiltersCreate(source: MsscSource<any>): MsscFilter[] {
+    // [[220130145735]]
     const filter = source?.searchTextToMsscFilter($searchText)
-    return filter ? [filter] : [];
+    return filter || [];
   }
 
   const requestFirst = async (source: MsscSource<any>) => {
 
     try {
       // --- общее кол-во элементов без учета фильтра
-      debugger; // del+
       $elemsCounAllSet(-1)
       source?.elemsCountByFilter([]).then((result) => {
         $elemsCounAllSet(result.val)
@@ -557,7 +557,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
               {/* [[220129214739]] */}
 							<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
               {/* [[220130103738]] */}
-							<BrInput icon={BrInputEnIcon.SEARCH} cbOnChange={searchHandler} initialValue={$searchText}/>
+							<BrInput icon={BrInputEnIcon.SEARCH} cbOnChange={searchHandler} initialValue={$searchText} autoFocus={true}/>
 						</div>}
 					</div>
 					<div className="mssc-list-block" style={{position: 'relative'}}>

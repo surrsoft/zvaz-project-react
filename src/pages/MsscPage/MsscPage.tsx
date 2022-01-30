@@ -2,7 +2,7 @@ import React from 'react';
 import './style.scss';
 import MsscListFCC from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
 import { RsuvEnSort, RsuvTxStringAC } from 'rsuv-lib';
 import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
@@ -46,6 +46,7 @@ const airSource = new AirSource({
             <span className="list-elem__name">created:</span> {elObj[EnField.TIME_CREATED] || ''}
           </div>
         </div>
+        <div className="list-elem__id">{elObj.tid}</div>
       </div>
     )
   },
@@ -115,11 +116,16 @@ const airSource = new AirSource({
       </div>
     )
   },
-  cbSearchTextToMsscFilter: (searchText: string): MsscFilter | null => {
+  cbSearchTextToMsscFilter: (searchText: string): MsscFilter[] | null => {
     if (searchText) {
-      const fieldName = new RsuvTxStringAC(EnField.TITLE)
-      const filter = {paramId: fieldName, filterValue: searchText} as MsscFilter
-      return filter;
+      const fieldNameTitle = new RsuvTxStringAC(EnField.TITLE)
+      const fieldNameComm = new RsuvTxStringAC(EnField.COMM)
+      const fieldNameUrl = new RsuvTxStringAC(EnField.URL)
+      return [
+        {paramId: fieldNameTitle, filterValue: searchText} as MsscFilter,
+        {paramId: fieldNameComm, filterValue: searchText} as MsscFilter,
+        {paramId: fieldNameUrl, filterValue: searchText} as MsscFilter,
+      ];
     }
     return null
   }
@@ -159,7 +165,7 @@ export function MsscPage() {
       },
       {
         idElem: MSSC_LIST_SORT_RANDOM,
-        text: 'random'
+        text: 'random (beta)'
       },
     ]
   } as BrSelectSortData<MsscColumnName>

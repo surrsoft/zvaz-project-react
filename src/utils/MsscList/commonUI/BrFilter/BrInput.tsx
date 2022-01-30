@@ -22,6 +22,10 @@ interface BrInputProps {
    * начальное содержимое поля ввода
    */
   initialValue?: string
+  /**
+   * если TRUE то input будет автоматически получать фокус
+   */
+  autoFocus?: boolean
 }
 
 const config = {
@@ -56,11 +60,12 @@ const iconBy = (enIcon: BrInputEnIcon) => {
 let debounce: any = null
 
 export default function BrInput({
-                                   icon = BrInputEnIcon.FILTER,
-                                   cbOnChange,
-                                   debounceMillisec = 700,
-                                   initialValue = ''
-                                 }: BrInputProps) {
+                                  icon = BrInputEnIcon.FILTER,
+                                  cbOnChange,
+                                  debounceMillisec = 700,
+                                  initialValue = '',
+                                  autoFocus = false
+                                }: BrInputProps) {
   const [$inputValue, $inputValueSet] = useState(initialValue);
 
   function inputHandler(ev: any) {
@@ -85,7 +90,7 @@ export default function BrInput({
   return (
     <div className="br-filter">
       {iconBy(icon)}
-      <input className="br-filter__input" type="text" value={$inputValue} onChange={inputHandler}/>
+      <input className="br-filter__input" type="text" value={$inputValue} onChange={inputHandler} autoFocus={autoFocus}/>
       <button onClick={btnHandle}>
         <style>{`.cls1:hover { stroke: red; fill: red; }`}</style>
         <svg className="cls1" width="20px" height="20px" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
