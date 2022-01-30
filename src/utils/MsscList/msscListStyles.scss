@@ -1,9 +1,9 @@
-.msscListBase {
+.mssc-base {
   --color1: white;
 
   background-color: var(--color1);
 
-  .msscError {
+  .mssc-base__error {
     position: absolute;
     top: 24px;
     right: 24px;
@@ -14,7 +14,7 @@
     background-color: white;
   }
 
-  .msscList {
+  .mssc-base__list {
     border: 1px solid silver;
     border-radius: 8px;
     padding: 4px 8px;
@@ -22,7 +22,7 @@
     flex-direction: column;
     row-gap: 8px;
 
-    .msscListInfoBlock {
+    .mssc-base__info-block {
       border: 1px solid silver;
       border-radius: 8px;
       padding: 8px;
@@ -30,13 +30,18 @@
       column-gap: 12px;
     }
 
-    .mssc1454 {
+    .mssc-base__body {
       display: flex;
       column-gap: 32px;
 
-      .mssc-top-buttons {
+      .mssc-body__buttons {
         display: flex;
         column-gap: 16px;
+      }
+
+      .mssc-body__sort-filter-container {
+        display: flex;
+        column-gap: 8px;
       }
     }
 

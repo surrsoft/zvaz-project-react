@@ -4,9 +4,10 @@ import MsscListFCC from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup'
-import { RsuvEnSort } from 'rsuv-lib';
+import { RsuvEnSort, RsuvTxStringAC } from 'rsuv-lib';
 import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
-import { MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
+import { MSSC_LIST_SORT_RANDOM, MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
+import { MsscFilter } from '../../utils/MsscList/msscUtils/MsscFilter';
 
 enum EnField {
   TITLE = 'title',
@@ -113,6 +114,14 @@ const airSource = new AirSource({
         </Formik>
       </div>
     )
+  },
+  cbSearchTextToMsscFilter: (searchText: string): MsscFilter | null => {
+    if (searchText) {
+      const fieldName = new RsuvTxStringAC(EnField.TITLE)
+      const filter = {paramId: fieldName, filterValue: searchText} as MsscFilter
+      return filter;
+    }
+    return null
   }
 })
 
@@ -147,6 +156,10 @@ export function MsscPage() {
         direction: RsuvEnSort.DESC,
         text: 'дата последнего изменения (от свежих правок к старым)',
         payload: EnField.TIME_LAST_MODIFIED
+      },
+      {
+        idElem: MSSC_LIST_SORT_RANDOM,
+        text: 'random'
       },
     ]
   } as BrSelectSortData<MsscColumnName>

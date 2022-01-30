@@ -1,0 +1,17 @@
+.br-filter {
+  border: 1px solid silver;
+  border-radius: 8px;
+  padding: 0 8px;
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+
+  .br-filter__input {
+    width: 140px;
+
+    &:focus-visible {
+      outline: unset;
+    }
+
+  }
+}

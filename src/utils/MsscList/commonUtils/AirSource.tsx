@@ -43,6 +43,20 @@ export class AirSourceParams<T> {
    * если указан, будет исползован вместо прописанного в текущем классе дефолтного
    */
   dialogMiddleware?: (obj: T) => object | T | null
+  /**
+   * на базе (1) нужно сформировать MsscFilter
+   */
+  cbSearchTextToMsscFilter?: (searchText: string) => MsscFilter | null
+}
+
+function msscFiltersToVuscFilter(filters: MsscFilter[]) {
+  if (filters && filters.length > 0) {
+    const filter = filters[0]
+    if (filter && filter.paramId?.val && filter.filterValue) {
+      return `FIND("${filter.filterValue}",{${filter.paramId.val}})`
+    }
+  }
+  return null
 }
 
 export class AirSource<T> implements MsscSource<T> {
@@ -71,15 +85,16 @@ export class AirSource<T> implements MsscSource<T> {
   }
 
   async elems(indexDiap: RsuvTxNumIntDiap, filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<MsscElem[]> {
-    // TODO br реализовать filters
-    // TODO br реализовать sorts
-
+    let filterVusc = ''
     if (filters.length > 0) {
-      throw new Error('ERR* filters - не реализовано')
+      const filter = filters[0]
+      if (filter?.paramId?.val && filter?.filterValue) {
+        filterVusc = `FIND("${filter?.filterValue}",{${filter.paramId.val}})`
+      }
     }
-    let sortObj: Array<Ty2214> = []
+    let sortArrObj: Array<Ty2214> = []
     if (sorts.length > 0) {
-      sortObj = sorts.map(el => ({
+      sortArrObj = sorts.map(el => ({
         field: el.id.val,
         direction: el.sortDirect
       } as Ty2214))
@@ -89,8 +104,12 @@ export class AirSource<T> implements MsscSource<T> {
     const indexStart = indexDiap.indexStart.val;
     const indexEnd = indexDiap.indexEnd.val;
     const hoggOffset = new HoggOffsetCount(false, indexStart, indexEnd - indexStart + 1);
-    this.connector.sort(sortObj)
-    const queryResult: HoggTupleNT[] = await this.connector.query(hoggOffset) // <=== QUERY
+    this.connector.sort(sortArrObj)
+    // --- QUERY
+    const queryResult: HoggTupleNT[] = await this.connector
+      .filterVusc(filterVusc)
+      .query(hoggOffset) // <=== QUERY
+    // ---
     if (queryResult && queryResult.length > 0) {
       const objs = queryResult.map((elTuple: HoggTupleNT) => {
         return tupleToObject(elTuple)
@@ -138,12 +157,14 @@ export class AirSource<T> implements MsscSource<T> {
   }
 
   async elemsCountByFilter(filters: MsscFilter[]): Promise<RsuvTxNumIntAB> {
+    let vuscFilter: string = '';
     if (filters.length > 0) {
-      throw new Error('ERR* filters не реализовано')
-    } else {
-      const count = await this.connector.countAll()
-      return new RsuvTxNumIntAB(count)
+      // throw new Error('ERR* filters не реализовано')
+      vuscFilter = msscFiltersToVuscFilter(filters) || '';
     }
+    let count;
+    count = await this.connector.filterVusc(vuscFilter).countAll()
+    return new RsuvTxNumIntAB(count)
   }
 
   async elemsDelete(elems: MsscIdObject[]): Promise<MsscIdObject[]> {
@@ -201,6 +222,13 @@ export class AirSource<T> implements MsscSource<T> {
       return obj0;
     }
     return null;
+  }
+
+  searchTextToMsscFilter(searchText: string): MsscFilter | null {
+    if (searchText) {
+      return this.params.cbSearchTextToMsscFilter?.(searchText) || null
+    }
+    return null
   }
 
 }

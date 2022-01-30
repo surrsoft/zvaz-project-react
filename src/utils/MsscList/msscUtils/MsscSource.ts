@@ -97,6 +97,13 @@ export interface MsscSource<TModel> {
    * @param obj (1) --
    */
   dialogMiddleware(obj?: TModel): object | TModel | null;
+
+  /**
+   * *С-компонент вызывает эту функцию чтобы *клиент на базе (1) подготовил {@link MsscFilter}
+   * @param searchText
+   */
+  searchTextToMsscFilter(searchText: string): MsscFilter | null
+
 }
 
 /**

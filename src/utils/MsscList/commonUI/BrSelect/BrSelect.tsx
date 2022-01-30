@@ -1,5 +1,6 @@
 import { BrSelectId, BrSelectItem, BrSelectSortData } from './brSelectUtils';
 import { useState } from 'react';
+import './brSelect.scss';
 
 export interface BrSelectProps<T> {
   data: BrSelectSortData<T>
@@ -40,7 +41,13 @@ export default function BrSelect<T>({data, cbSelect, selectedId}: BrSelectProps<
     }
   }
 
-  return (<div className="br-select-block">
+  return (<div className="br-select">
+    <svg width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <g>
+        <path fill="none" d="M0 0H24V24H0z"/>
+        <path d="M19 3l4 5h-3v12h-2V8h-3l4-5zm-5 15v2H3v-2h11zm0-7v2H3v-2h11zm-2-7v2H3V4h9z"/>
+      </g>
+    </svg>
     <select
       className="br-select-block__select"
       defaultValue={$selectedId}

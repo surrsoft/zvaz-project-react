@@ -23,7 +23,10 @@ import useScrollFix from '../useScrollFix';
 import BrSpinner from './commonUI/BrSpinner/BrSpinner';
 import { BrSelectId, BrSelectItem, BrSelectSortData } from './commonUI/BrSelect/brSelectUtils';
 import BrSelect from './commonUI/BrSelect/BrSelect';
-import { MsscColumnName } from './msscUtils/msscUtils';
+import { MSSC_LIST_SORT_RANDOM, MsscColumnName } from './msscUtils/msscUtils';
+import BrInput, { BrInputEnIcon } from './commonUI/BrFilter/BrInput';
+import { MsscFilter } from './msscUtils/MsscFilter';
+import _ from 'lodash';
 
 export enum MsscMenuAction {
   EDIT = 'edit',
@@ -53,8 +56,10 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   const [$pageCountAll, $pageCountAllSet] = useState(0);
   // текущие элементы для отображения
   const [$elems, $elemsSet] = useState<MsscElem[]>([]);
-  // общее количество элементов хранилища
-  const [$elemsCountAll, $elemsCountAllSet] = useState(0);
+  // общее количество элементов хранилища (без учёта каких-либо фильтров)
+  const [$elemsCounAll, $elemsCounAllSet] = useState(-1);
+  // общее количество элементов хранилища по фильтру
+  const [$elemsCountByFilter, $elemsCountByFilterSet] = useState(0);
   // сколько отображается элементов сейчас на текущей странице
   const [$elemsOnCurrPage, $elemsOnCurrPageSet] = useState(0);
   // для показа спиннера при первоначальной загрузке
@@ -83,8 +88,10 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   });
   const [$refresh, $refreshSet] = useState(false);
   // ---
-  // id выбранной в настояще время сортировки
+  // id выбранной в настоящее время сортировки
   const [$sortIdCurr, $sortIdCurrSet] = useState<BrSelectId | undefined>(sortData?.selectedId);
+  const [$searchText, $searchTextSet] = useState('');
+
   // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
 
@@ -95,19 +102,33 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     }, 2000);
   }
 
+  function fnFiltersCreate(source: MsscSource<any>): MsscFilter[] {
+    const filter = source?.searchTextToMsscFilter($searchText)
+    return filter ? [filter] : [];
+  }
+
   const requestFirst = async (source: MsscSource<any>) => {
 
     try {
+      // --- общее кол-во элементов без учета фильтра
+      debugger; // del+
+      $elemsCounAllSet(-1)
+      source?.elemsCountByFilter([]).then((result) => {
+        $elemsCounAllSet(result.val)
+      }).catch((err) => {
+        console.log('!!-!!-!! err {220130133850}\n', err)
+      })
       // ---
       $loadingSet(true)
-      // --- получение общего количества элементов
-      const elemsCountResult: RsuvTxNumIntAB = await source.elemsCountByFilter([])
+      // --- получение общего количества элементов с учетом фильтра
+      const filter0 = fnFiltersCreate(source);
+      const elemsCountResult: RsuvTxNumIntAB = await source.elemsCountByFilter(filter0)
       const elemsCountAll = elemsCountResult.val
       // --- pagination - pageCountAll
       const pagination = new RsuvPaginationGyth(elemsCountAll, config.elemsOnPage)
       // ---
       $pageCountAllSet(pagination.pageCount)
-      $elemsCountAllSet(elemsCountAll)
+      $elemsCountByFilterSet(elemsCountAll)
     } catch (err) {
       console.log('!!-!!-!! err {220119120755}\n', err)
       fnError()
@@ -121,7 +142,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       $loadingBSet(true)
       // await fnWait(3000) // del+
       // --- pagination - ixStart, ixEnd
-      const pagination = new RsuvPaginationGyth($elemsCountAll, config.elemsOnPage)
+      const pagination = new RsuvPaginationGyth($elemsCountByFilter, config.elemsOnPage)
       if ($pageNumCurrent > pagination.pageCount) {
         // если в результате удаления элементов, страниц стало меньше чем было раньше
         $pageNumCurrentSet(pagination.pageCount)
@@ -136,16 +157,24 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       if ($sortIdCurr) {
         item = sortData?.items.find(el => el.idElem === $sortIdCurr);
         if (item) {
-          rsuvTxSort0 = fnRsuvTxSort(item)
+          if (item.idElem !== MSSC_LIST_SORT_RANDOM) {
+            rsuvTxSort0 = fnRsuvTxSort(item)
+          }
         }
       }
       const sorts = rsuvTxSort0 ? [rsuvTxSort0] : []
+      // --- filters
+      const filter0 = fnFiltersCreate(source);
       // ---
-      const elemsResult: MsscElem[] = await source.elems(
+      let elemsResult: MsscElem[] = await source.elems(
         new RsuvTxNumIntDiap(new RsuvTxNumIntAB(ixStart), new RsuvTxNumIntAB(ixEnd)),
-        [],
+        filter0 || [],
         sorts
       )
+      // ---
+      if (item?.idElem === MSSC_LIST_SORT_RANDOM) {
+        elemsResult = _.shuffle(elemsResult)
+      }
       // --- ---
       $elemsOnCurrPageSet(elemsResult.length)
       // ---
@@ -361,6 +390,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
           if (noDeletedElems) {
             if (noDeletedElems.length === 0) {
               $listModel.selectElemsClear()
+              scrollFixFn(false)
               $dialogDeleteShowedSet(false)
               refreshWhole()
             } else {
@@ -425,6 +455,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
           if (result && result.length === 1 && result[0]['id']) {
             success = true;
             $listModel.activeIdSet(result[0]['id'])
+            $searchTextSet('')
           }
         } else {
           // ^ обновление элемента
@@ -484,22 +515,31 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     refreshWhole()
   }
 
+  /**
+   * [[220130110028]]
+   */
+  function searchHandler(value: string) {
+    console.log('!!-!!-!! value {220130110055}\n', value) // del+
+    $searchTextSet(value)
+    refreshWhole()
+  }
+
   return (
-    <div className="msscListBase">
-      {$isError ? <div className="msscError">ошибка</div> : null}
-      <div className="msscList">
+    <div className="mssc-base">
+      {$isError ? <div className="mssc-base__error">ошибка</div> : null}
+      <div className="mssc-base__list">
         {$loading ? <div>loading ...</div> : null}
         {!$loading && <>
-					<div className="msscListInfoBlock">
+					<div className="mssc-base__info-block">
 						<ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
-						<ParamUiFCC str1="элементов всего по фильтру" str2={"-"}/>
-						<ParamUiFCC str1="элементов всего" str2={$elemsCountAll}/>
+						<ParamUiFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
+						<ParamUiFCC str1="элементов всего" str2={$elemsCounAll === -1 ? '-' : $elemsCounAll}/>
 						<ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
 					</div>
-					<div className="mssc1454">
+					<div className="mssc-base__body">
 						<PaginationFCC/>
             {/* [[220129145117]] */}
-						<div className="mssc-top-buttons">
+						<div className="mssc-body__buttons">
               {/* ^^delete-button^^ */}
 							<button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
 											onClick={iconsHandlers.delete}>
@@ -513,9 +553,11 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
 								<SvgIconUnckecked {...iconsConf}/>
 							</button>
 						</div>
-            {sortData && <div className="mssc-sort-block">
+            {sortData && <div className="mssc-body__sort-filter-container">
               {/* [[220129214739]] */}
 							<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
+              {/* [[220130103738]] */}
+							<BrInput icon={BrInputEnIcon.SEARCH} cbOnChange={searchHandler} initialValue={$searchText}/>
 						</div>}
 					</div>
 					<div className="mssc-list-block" style={{position: 'relative'}}>
