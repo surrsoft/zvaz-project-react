@@ -6,7 +6,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
 import { RsuvEnSort, RsuvTxStringAC } from 'rsuv-lib';
 import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
-import { MSSC_LIST_SORT_RANDOM, MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
+import { MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
 import { MsscFilter } from '../../utils/MsscList/msscUtils/MsscFilter';
 
 enum EnField {
@@ -163,15 +163,10 @@ export function MsscPage() {
         text: 'дата последнего изменения (от свежих правок к старым)',
         payload: EnField.TIME_LAST_MODIFIED
       },
-      {
-        idElem: MSSC_LIST_SORT_RANDOM,
-        text: 'random (beta)'
-      },
     ]
   } as BrSelectSortData<MsscColumnName>
 
   return (<div>
-    <div className="title">MsscPage</div>
     <MsscListFCC source={airSource} sortData={sortDataSTA}/>
   </div>)
 }

@@ -10,7 +10,8 @@ import {
 import {
   RsuvEnResultCrudSet,
   RsuvResultBoolPknz,
-  RsuvResultTibo, RsuvTuPromiseAllSettled,
+  RsuvResultTibo,
+  RsuvTuPromiseAllSettled,
   RsuvTxNumIntAB,
   RsuvTxNumIntDiap,
   RsuvTxSort,
@@ -19,6 +20,7 @@ import {
 import { MsscFilter } from '../msscUtils/MsscFilter';
 import { MsscElem } from '../msscUtils/MsscElem';
 import _ from 'lodash';
+import { PElemAsau66, RsuvAsau67 } from 'rsuv-lib/dist/RsuvTuPromiseAllSettled';
 
 type Ty2130 = { index: number, tuple: HoggTupleNT }
 
@@ -74,10 +76,6 @@ export class AirSource<T> implements MsscSource<T> {
       .columns(params.columns)
   }
 
-  elemByIds(ids: MsscIdObject[]): Promise<(T | null)[]> {
-    return Promise.resolve([]);
-  }
-
   dialogCreateOrEdit(cbOk: (model: T) => void, cbCancel: () => void, initialValues?: object): Promise<JSX.Element> {
     if (this.params.dialogCreateEditJsx) {
       const initialValues0 = this.dialogMiddleware(initialValues as any)
@@ -86,8 +84,7 @@ export class AirSource<T> implements MsscSource<T> {
     return Promise.resolve(<div>no realised</div>)
   }
 
-  async elems(indexDiap: RsuvTxNumIntDiap, filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<MsscElem[]> {
-    debugger; // del+
+  private fnFilterSort(filters: MsscFilter[], sorts: RsuvTxSort[]) {
     const filterVusc = msscFiltersToVuscFilter(filters)
     let sortArrObj: Array<Ty2214> = []
     if (sorts.length > 0) {
@@ -96,11 +93,14 @@ export class AirSource<T> implements MsscSource<T> {
         direction: el.sortDirect
       } as Ty2214))
     }
+    return {filterVusc, sortArrObj};
+  }
 
+  async idsAll(filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<string[]> {
     // ---
-    const indexStart = indexDiap.indexStart.val;
-    const indexEnd = indexDiap.indexEnd.val;
-    const hoggOffset = new HoggOffsetCount(false, indexStart, indexEnd - indexStart + 1);
+    let {filterVusc, sortArrObj} = this.fnFilterSort(filters, sorts);
+    // ---
+    const hoggOffset = new HoggOffsetCount(true);
     this.connector.sort(sortArrObj)
     // --- QUERY
     const queryResult: HoggTupleNT[] = await this.connector
@@ -112,15 +112,61 @@ export class AirSource<T> implements MsscSource<T> {
         return tupleToObject(elTuple)
       }).filter(elObj => elObj !== null)
       const ret = objs.map((elObj: any) => {
-        return {
-          id: new RsuvTxStringAB(elObj.tid),
-          elem: this.params.elemJsx ? this.params.elemJsx(elObj) : (<div>elObj.id</div>),
-          elemModel: elObj
-        } as MsscElem
+        return elObj.tid
       });
       return ret;
     }
     return Promise.resolve([]);
+  }
+
+  async elemsById(ids: MsscIdObject[]): Promise<MsscElem[]> {
+    const promises = ids.map(elId => {
+      return this.connector.queryOneById(elId.id)
+    })
+    const rr = await Promise.allSettled(promises)
+    if (!RsuvTuPromiseAllSettled.isAllSuccess(rr as PElemAsau66[])) {
+      throw new Error('[[220130215035]] not all successed')
+    }
+    const results: Array<RsuvAsau67> = RsuvTuPromiseAllSettled.fulfilled(rr as PElemAsau66[])
+    debugger; // del+
+    if (results && results.length > 0) {
+      const tuples: HoggTupleNT[] = results.map((el: RsuvAsau67) => el.value as HoggTupleNT)
+      debugger; // del+
+      return this.toMsscElems(tuples);
+    }
+    return Promise.resolve([]);
+  }
+
+  async elems(indexDiap: RsuvTxNumIntDiap, filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<MsscElem[]> {
+    let {filterVusc, sortArrObj} = this.fnFilterSort(filters, sorts);
+    // ---
+    const indexStart = indexDiap.indexStart.val;
+    const indexEnd = indexDiap.indexEnd.val;
+    const hoggOffset = new HoggOffsetCount(false, indexStart, indexEnd - indexStart + 1);
+    this.connector.sort(sortArrObj)
+    // --- QUERY
+    const queryResult: HoggTupleNT[] = await this.connector
+      .filterVusc(filterVusc)
+      .query(hoggOffset) // <=== QUERY
+    // ---
+    if (queryResult && queryResult.length > 0) {
+      return this.toMsscElems(queryResult);
+    }
+    return Promise.resolve([]);
+  }
+
+  private toMsscElems(queryResult: HoggTupleNT[]) {
+    const objs = queryResult.map((elTuple: HoggTupleNT) => {
+      return tupleToObject(elTuple)
+    }).filter(elObj => elObj !== null)
+    const ret = objs.map((elObj: any) => {
+      return {
+        id: new RsuvTxStringAB(elObj.tid),
+        elem: this.params.elemJsx ? this.params.elemJsx(elObj) : (<div>elObj.id</div>),
+        elemModel: elObj
+      } as MsscElem
+    });
+    return ret;
   }
 
   async elemsAdd(elems: T[]): Promise<Array<RsuvResultBoolPknz | T>> {
@@ -156,7 +202,6 @@ export class AirSource<T> implements MsscSource<T> {
   async elemsCountByFilter(filters: MsscFilter[]): Promise<RsuvTxNumIntAB> {
     let vuscFilter: string = '';
     if (filters.length > 0) {
-      // throw new Error('ERR* filters не реализовано')
       vuscFilter = msscFiltersToVuscFilter(filters);
     }
     let count;
@@ -169,7 +214,7 @@ export class AirSource<T> implements MsscSource<T> {
       return this.connector.delete([el.id || ''])
     })
     const pResults = await Promise.allSettled(promises)
-    const rejectedList = RsuvTuPromiseAllSettled.rejected(pResults)
+    const rejectedList = RsuvTuPromiseAllSettled.rejected(pResults as PElemAsau66[])
     return rejectedList.map(el => {
       return elems[el.ix]
     })
@@ -227,5 +272,6 @@ export class AirSource<T> implements MsscSource<T> {
     }
     return null
   }
+
 
 }

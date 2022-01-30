@@ -23,9 +23,10 @@ import useScrollFix from '../useScrollFix';
 import BrSpinner from './commonUI/BrSpinner/BrSpinner';
 import { BrSelectId, BrSelectItem, BrSelectSortData } from './commonUI/BrSelect/brSelectUtils';
 import BrSelect from './commonUI/BrSelect/BrSelect';
-import { MSSC_LIST_SORT_RANDOM, MsscColumnName } from './msscUtils/msscUtils';
+import { MsscColumnName } from './msscUtils/msscUtils';
 import BrInput, { BrInputEnIcon } from './commonUI/BrFilter/BrInput';
 import { MsscFilter } from './msscUtils/MsscFilter';
+import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
 import _ from 'lodash';
 
 export enum MsscMenuAction {
@@ -57,7 +58,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   // текущие элементы для отображения
   const [$elems, $elemsSet] = useState<MsscElem[]>([]);
   // общее количество элементов хранилища (без учёта каких-либо фильтров)
-  const [$elemsCounAll, $elemsCounAllSet] = useState(-1);
+  const [$elemsCountAll, $elemsCountAllSet] = useState(-1);
   // общее количество элементов хранилища по фильтру
   const [$elemsCountByFilter, $elemsCountByFilterSet] = useState(0);
   // сколько отображается элементов сейчас на текущей странице
@@ -91,9 +92,47 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   // id выбранной в настоящее время сортировки
   const [$sortIdCurr, $sortIdCurrSet] = useState<BrSelectId | undefined>(sortData?.selectedId);
   const [$searchText, $searchTextSet] = useState('');
+  const [$randomEnabled, $randomEnabledSet] = useState(false);
+  const [$idsShuffled, $idsShuffledSet] = useState<string[]>([]);
 
   // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
+
+  const shuffleUtils = {
+    /**
+     * Получить ids из {@link $idsShuffled} начиная с (1) включительно по (2) исключительно
+     * @param ixStart (1) -- индекс
+     * @param ixEnd (2) -- индекс
+     */
+    elems(ixStart: number, ixEnd: number): MsscIdObject[] {
+      return $idsShuffled.slice(ixStart, ixEnd + 1).map((el) => ({id: el}))
+    },
+    // /**
+    //  * вставляет id из (1) случаным образом в {@link $idsShuffled}
+    //  * @param ids
+    //  */
+    // elemsAdd(ids: string[]) {
+    //   ids.forEach(elId => {
+    //     const ixPut = _.random($idsShuffled.length)
+    //     $idsShuffled.splice(ixPut, 0, elId)
+    //   })
+    // },
+    // /**
+    //  * удаляет из {@link $idsShuffled} id присутствующие в (1)
+    //  * @param ids
+    //  */
+    // elemsDelete(ids: string[]) {
+    //   const filtered = $idsShuffled.filter(elId => ids.includes(elId))
+    //   $idsShuffledSet(filtered)
+    // }
+  }
+
+  const fnColorsForRandom = () => {
+    if (!$randomEnabled) {
+      return new ColorsAsau61()
+    }
+    return new ColorsAsau61().buNormal('#71fc22').buHover('#71fc22')
+  }
 
   const fnError = () => {
     $isErrorSet(true)
@@ -108,27 +147,52 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     return filter || [];
   }
 
+  function fnSorts() {
+    let rsuvTxSort0 = null
+    let item: BrSelectItem<string> | undefined;
+    if ($sortIdCurr) {
+      item = sortData?.items.find(el => el.idElem === $sortIdCurr);
+      if (item) {
+        rsuvTxSort0 = fnRsuvTxSort(item)
+      }
+    }
+    return rsuvTxSort0 ? [rsuvTxSort0] : [];
+  }
+
   const requestFirst = async (source: MsscSource<any>) => {
 
     try {
       // --- общее кол-во элементов без учета фильтра
-      $elemsCounAllSet(-1)
+      $elemsCountAllSet(-1)
       source?.elemsCountByFilter([]).then((result) => {
-        $elemsCounAllSet(result.val)
+        $elemsCountAllSet(result.val)
       }).catch((err) => {
         console.log('!!-!!-!! err {220130133850}\n', err)
       })
       // ---
       $loadingSet(true)
       // --- получение общего количества элементов с учетом фильтра
-      const filter0 = fnFiltersCreate(source);
-      const elemsCountResult: RsuvTxNumIntAB = await source.elemsCountByFilter(filter0)
-      const elemsCountAll = elemsCountResult.val
+      const filters: MsscFilter[] = fnFiltersCreate(source);
+      let elemsCountByFilter: number = 0;
+      if ($randomEnabled) {
+        const sorts = fnSorts()
+        const ids = await source?.idsAll(filters, sorts)
+        if (ids) {
+          elemsCountByFilter = ids.length
+          const idsShuffled = _.shuffle(ids)
+          $idsShuffledSet(idsShuffled)
+        }
+      } else {
+        const rr: RsuvTxNumIntAB = await source?.elemsCountByFilter(filters)
+        if (rr) {
+          elemsCountByFilter = rr.val;
+        }
+      }
       // --- pagination - pageCountAll
-      const pagination = new RsuvPaginationGyth(elemsCountAll, config.elemsOnPage)
+      const pagination = new RsuvPaginationGyth(elemsCountByFilter, config.elemsOnPage)
       // ---
       $pageCountAllSet(pagination.pageCount)
-      $elemsCountByFilterSet(elemsCountAll)
+      $elemsCountByFilterSet(elemsCountByFilter)
     } catch (err) {
       console.log('!!-!!-!! err {220119120755}\n', err)
       fnError()
@@ -152,28 +216,20 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       const ixEnd = indexes.indexLast
       // --- --- получение элементов из source
       // --- сортировка
-      let rsuvTxSort0 = null
-      let item: BrSelectItem<string> | undefined;
-      if ($sortIdCurr) {
-        item = sortData?.items.find(el => el.idElem === $sortIdCurr);
-        if (item) {
-          if (item.idElem !== MSSC_LIST_SORT_RANDOM) {
-            rsuvTxSort0 = fnRsuvTxSort(item)
-          }
-        }
-      }
-      const sorts = rsuvTxSort0 ? [rsuvTxSort0] : []
+      const sorts = fnSorts();
       // --- filters
       const filter0 = fnFiltersCreate(source);
       // ---
-      let elemsResult: MsscElem[] = await source.elems(
-        new RsuvTxNumIntDiap(new RsuvTxNumIntAB(ixStart), new RsuvTxNumIntAB(ixEnd)),
-        filter0 || [],
-        sorts
-      )
-      // ---
-      if (item?.idElem === MSSC_LIST_SORT_RANDOM) {
-        elemsResult = _.shuffle(elemsResult)
+      let elemsResult: MsscElem[] = []
+      if (!$randomEnabled) {
+        elemsResult = await source.elems(
+          new RsuvTxNumIntDiap(new RsuvTxNumIntAB(ixStart), new RsuvTxNumIntAB(ixEnd)),
+          filter0 || [],
+          sorts
+        )
+      } else {
+        const idObjs = shuffleUtils.elems(ixStart, ixEnd)
+        elemsResult = (await source?.elemsById(idObjs)) || []
       }
       // --- ---
       $elemsOnCurrPageSet(elemsResult.length)
@@ -524,6 +580,14 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     refreshWhole()
   }
 
+  /**
+   * [[220130202338]]
+   */
+  function diceHandler() {
+    $randomEnabledSet(!$randomEnabled)
+    refreshWhole()
+  }
+
   return (
     <div className="mssc-base">
       {$isError ? <div className="mssc-base__error">ошибка</div> : null}
@@ -533,7 +597,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
 					<div className="mssc-base__info-block">
 						<ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
 						<ParamUiFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
-						<ParamUiFCC str1="элементов всего" str2={$elemsCounAll === -1 ? '-' : $elemsCounAll}/>
+						<ParamUiFCC str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
 						<ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
 					</div>
 					<div className="mssc-base__body">
@@ -552,12 +616,17 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
 											onClick={iconsHandlers.deselectAll}>
 								<SvgIconUnckecked {...iconsConf}/>
 							</button>
+              {/* [[220130202258]] random button */}
+							<button onClick={diceHandler} title="random">
+								<SvgIconDice svgProps={{width: '20px', height: '20px'}} colors={fnColorsForRandom()}/>
+							</button>
 						</div>
             {sortData && <div className="mssc-body__sort-filter-container">
               {/* [[220129214739]] */}
 							<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
               {/* [[220130103738]] */}
-							<BrInput icon={BrInputEnIcon.SEARCH} cbOnChange={searchHandler} initialValue={$searchText} autoFocus={true}/>
+							<BrInput icon={BrInputEnIcon.SEARCH} cbOnChange={searchHandler} initialValue={$searchText}
+											 autoFocus={true}/>
 						</div>}
 					</div>
 					<div className="mssc-list-block" style={{position: 'relative'}}>

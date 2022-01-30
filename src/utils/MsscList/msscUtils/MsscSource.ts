@@ -33,7 +33,7 @@ export interface MsscSource<TModel> {
    * значение null
    * @param ids
    */
-  elemByIds(ids: MsscIdObject[]): Promise<(TModel | null)[]>
+  elemsById(ids: MsscIdObject[]): Promise<MsscElem[]>
 
   /**
    * Создаёт записи для элементов из (1).
@@ -104,6 +104,12 @@ export interface MsscSource<TModel> {
    */
   searchTextToMsscFilter(searchText: string): MsscFilter[] | null
 
+  /**
+   * получение ID всех элементов хранилища удовлетворяющих (1) и (2)
+   * @param filters (1) -- пустой или не пустой массив
+   * @param sorts (2) --пустой или не пустой массив
+   */
+  idsAll(filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<string[]>
 }
 
 /**
