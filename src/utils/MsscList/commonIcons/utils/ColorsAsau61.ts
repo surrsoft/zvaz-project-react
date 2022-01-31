@@ -2,6 +2,8 @@
  * Представляет 4 цвета для кнопок и т.п.
  * id [[asau61]]
  */
+import { Asau53Animate } from './Asau53Animate';
+
 export class ColorsAsau61 {
   /**
    * цвет в нормальном состоянии
@@ -68,4 +70,77 @@ export class ColorsAsau61 {
       }
     `
   }
+
+  static cssCreateB(cn = 'CN', uniqueId: string = '', colors: ColorsAsau61 = new ColorsAsau61(), animate?: Asau53Animate) {
+    return `
+          .${cn}_svg${uniqueId} {
+              --colorNormal: ${colors?.normal};
+              --colorHover: ${colors?.hover};
+              --colorDisable: ${colors?.disable};
+              --colorClick: ${colors?.click};
+          }
+          
+          .${cn}_svg${uniqueId} {
+              fill: var(--colorNormal);
+              stroke: var(--colorNormal);
+              ${!animate?.enabled ? '' : `
+                animation-name: ${cn}_anim_disable${uniqueId};
+                animation-duration: ${animate.durationMillisec || 500}ms;
+                animation-timing-function: ease;
+                animation-iteration-count: infinite;
+                animation-direction: alternate;
+                animation-play-state: paused;
+              `}
+          }
+          
+          *:hover:not(:disabled) > .${cn}_svg${uniqueId} {
+              fill: var(--colorHover);
+              stroke: var(--colorHover);
+              ${!animate?.enabled ? '' : `
+                animation-name: ${cn}_anim_hover${uniqueId};
+                animation-duration: 100ms;
+                animation-timing-function: linear;
+                animation-fill-mode: forwards;
+                animation-iteration-count: 1;
+                animation-play-state: running;
+              `}
+          }
+          
+          *:disabled > .${cn}_svg${uniqueId} {
+              fill: var(--colorDiasable);
+              stroke: var(--colorDisable);
+              ${!animate?.enabled ? '' : 'animation-play-state: running;'}
+          }
+          
+          *:active > .${cn}_svg${uniqueId} {
+              fill: var(--colorClick);
+              stroke: var(--colorClick); 
+          }
+          
+          ${!animate?.enabled ? '' : `
+            @keyframes ${cn}_anim_disable${uniqueId} {
+              0% {
+                  fill: var(--colorNormal);
+                  stroke: var(--colorNormal);
+              }
+              100% {
+                  fill: var(--colorDisable);
+                  stroke: var(--colorDisable);
+              }
+            }
+            
+            @keyframes ${cn}_anim_hover${uniqueId} {
+              0% {
+                fill: var(--colorNormal);
+                stroke: var(--colorNormal);
+              }
+              100% {
+                fill: var(--colorHover);
+                stroke: var(--colorHover);
+              }
+            }
+          `}
+        `;
+  }
+
 }

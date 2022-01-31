@@ -128,10 +128,8 @@ export class AirSource<T> implements MsscSource<T> {
       throw new Error('[[220130215035]] not all successed')
     }
     const results: Array<RsuvAsau67> = RsuvTuPromiseAllSettled.fulfilled(rr as PElemAsau66[])
-    debugger; // del+
     if (results && results.length > 0) {
       const tuples: HoggTupleNT[] = results.map((el: RsuvAsau67) => el.value as HoggTupleNT)
-      debugger; // del+
       return this.toMsscElems(tuples);
     }
     return Promise.resolve([]);
