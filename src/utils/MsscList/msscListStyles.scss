@@ -22,6 +22,12 @@
     flex-direction: column;
     row-gap: 8px;
 
+    .mssc-list-paginator {
+      display: flex;
+      justify-content: center;
+      padding: 8px;
+    }
+
     .mssc-base__info-block {
       border: 1px solid silver;
       border-radius: 8px;
@@ -76,17 +82,28 @@
       }
     }
 
-    .msscPaginatorBlock {
+    .mssc-paginator {
       display: flex;
+      width: max-content;
       column-gap: 8px;
       font-family: monospace;
       align-items: center;
 
-      .msscPaginatorBlock_num {
+      .mssc-paginator__text {
 
       }
 
-      .msscButton2 {
+      .mssc-paginator__btn-m-step {
+        border: 1px solid silver;
+        border-radius: 6px;
+        width: 36px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .mssc-paginator__btn-one-step {
         border: 1px solid silver;
         border-radius: 6px;
         font-family: monospace;
@@ -97,19 +114,6 @@
         align-items: center;
       }
 
-      .msscButton {
-        border: 1px solid silver;
-        border-radius: 6px;
-        padding: 0 8px;
-        font-family: monospace;
-        width: 36px;
-        height: 24px;
-
-        &:disabled {
-          color: silver;
-        }
-
-      }
     }
   }
 

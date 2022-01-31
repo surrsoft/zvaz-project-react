@@ -28,6 +28,7 @@ import BrInput, { BrInputEnIcon } from './commonUI/BrFilter/BrInput';
 import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
 import _ from 'lodash';
+import SvgIconChevronDouble from './commonIcons/SvgIconChevronDouble/SvgIconChevronDouble';
 
 export enum MsscMenuAction {
   EDIT = 'edit',
@@ -263,22 +264,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     }
   }, [$fdone, $needUpdate2]);
 
-  const paginationHandlers = {
-    up: () => {
-      if ($pageNumCurrent < $pageCountAll) {
-        isPageUp = true
-        $pageNumCurrentSet($pageNumCurrent + 1)
-        needUpdate()
-      }
-    },
-    down: () => {
-      if ($pageNumCurrent > 1) {
-        isPageUp = false
-        $pageNumCurrentSet($pageNumCurrent - 1)
-        needUpdate()
-      }
-    },
-  }
 
   function needUpdate() {
     $needUpdate2Set(!$needUpdate2)
@@ -286,30 +271,73 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
 
   function PaginationFCC() {
 
+    const paginationHandlers = {
+      up: (toEnd = false) => () => {
+        if ($pageNumCurrent < $pageCountAll) {
+          isPageUp = true
+          if (toEnd) {
+            $pageNumCurrentSet($pageCountAll)
+          } else {
+            $pageNumCurrentSet($pageNumCurrent + 1)
+          }
+          needUpdate()
+        }
+      },
+      down: (toStart = false) => () => {
+        if ($pageNumCurrent > 1) {
+          isPageUp = false
+          if (toStart) {
+            $pageNumCurrentSet(1)
+          } else {
+            $pageNumCurrentSet($pageNumCurrent - 1)
+          }
+          needUpdate()
+        }
+      },
+    }
+
+
     return (
-      <div className="msscPaginatorBlock">
+      <div className="mssc-paginator">
 
         <button
-          className="msscButton2"
+          className="mssc-paginator__btn-m-step"
           disabled={$loadingB}
-          onClick={paginationHandlers.down}
+          onClick={paginationHandlers.down(true)}
+        >
+          <SvgIconChevronDouble svgProps={{width: "14px", height: "14px"}} angle={180}
+                                animate={{enabled: true, durationMillisec: 600}}/>
+        </button>
+
+        <button
+          className="mssc-paginator__btn-one-step"
+          disabled={$loadingB}
+          onClick={paginationHandlers.down(false)}
         >
           <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={180}
                           animate={{enabled: true, durationMillisec: 600}}/>
         </button>
 
-        <div className="msscPaginatorBlock_num">{$pageNumCurrent} / {$pageCountAll}</div>
+        <div className="mssc-paginator__text">{$pageNumCurrent} / {$pageCountAll}</div>
 
         <button
-          className="msscButton2"
+          className="mssc-paginator__btn-one-step"
           disabled={$loadingB}
-          onClick={paginationHandlers.up}
+          onClick={paginationHandlers.up(false)}
         >
           <SvgIconChevron svgProps={{width: "20px", height: "20px"}} angle={0}
                           animate={{enabled: true, durationMillisec: 600}}/>
         </button>
 
-        {$loadingB ? <div>loading...</div> : null}
+        <button
+          className="mssc-paginator__btn-m-step"
+          disabled={$loadingB}
+          onClick={paginationHandlers.up(true)}
+        >
+          <SvgIconChevronDouble svgProps={{width: "14px", height: "14px"}} angle={0}
+                                animate={{enabled: true, durationMillisec: 600}}/>
+        </button>
+
       </div>
     )
   }
@@ -601,7 +629,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
 						<ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
 					</div>
 					<div className="mssc-base__body">
-						<PaginationFCC/>
             {/* [[220129145117]] */}
 						<div className="mssc-body__buttons">
               {/* ^^delete-button^^ */}
@@ -629,6 +656,11 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
 											 autoFocus={true}/>
 						</div>}
 					</div>
+          {/**/}
+					<div className="mssc-list-paginator">
+						<PaginationFCC/>
+					</div>
+          {/**/}
 					<div className="mssc-list-block" style={{position: 'relative'}}>
 						<BrSpinner show={$loadingB} fullscreen={false}/>
             {
@@ -637,7 +669,9 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
               })
             }
 					</div>
-					<PaginationFCC/>
+					<div className="mssc-list-paginator">
+						<PaginationFCC/>
+					</div>
 				</>}
       </div>
       {/* ^^dialog delete^^ */}
