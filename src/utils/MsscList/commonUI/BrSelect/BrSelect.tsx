@@ -50,7 +50,6 @@ export default function BrSelect<T>({data, cbSelect, selectedId}: BrSelectProps<
     </svg>
     <select
       className="br-select-block__select"
-      defaultValue={$selectedId}
       onChange={changeHandler}
       value={$selectedId}
     >
