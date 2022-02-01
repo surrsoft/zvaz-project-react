@@ -1,4 +1,7 @@
-export class Asau53Animate {
+/**
+ * ID [[asau71]]
+ */
+export class AnimateAsau71 {
   /**
    * если true то будет проигрываться анимация (см. [xx1])
    */

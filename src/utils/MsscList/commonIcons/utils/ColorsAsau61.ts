@@ -2,7 +2,7 @@
  * Представляет 4 цвета для кнопок и т.п.
  * id [[asau61]]
  */
-import { Asau53Animate } from './Asau53Animate';
+import { AnimateAsau71 } from './AnimateAsau71';
 
 export class ColorsAsau61 {
   /**
@@ -71,7 +71,7 @@ export class ColorsAsau61 {
     `
   }
 
-  static cssCreateB(cn = 'CN', uniqueId: string = '', colors: ColorsAsau61 = new ColorsAsau61(), animate?: Asau53Animate) {
+  static cssCreateB(cn = 'CN', uniqueId: string = '', colors: ColorsAsau61 = new ColorsAsau61(), animate?: AnimateAsau71) {
     return `
           .${cn}_svg${uniqueId} {
               --colorNormal: ${colors?.normal};

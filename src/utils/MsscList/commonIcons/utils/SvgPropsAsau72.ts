@@ -1,7 +1,10 @@
 import { ColorsAsau61 } from './ColorsAsau61';
-import { Asau53Animate } from './Asau53Animate';
+import { AnimateAsau71 } from './AnimateAsau71';
 
-export interface Asau53SvgProps {
+/**
+ * ID [[asau72]]
+ */
+export interface SvgPropsAsau72 {
   /**
    * указнные здесь пропсы будут переопределять/добавляться к корневому svg
    */
@@ -18,7 +21,7 @@ export interface Asau53SvgProps {
    * [[xx1]] если {enabled: true, ...} то в состоянии 'disabled' будет проигрываться анимация меняющая цвет с normal к
    * disable и обратно
    */
-  animate?: Asau53Animate,
+  animate?: AnimateAsau71,
   /**
    * Текст который будет добавлен к идентификаторам CSS; может быть полезно для идентификации отдельных экземпляров.
    * Вообще лучше всега прописывать уникальный идентификатор здесь, т.к. иначе могут быть проблемы с анимациями -
