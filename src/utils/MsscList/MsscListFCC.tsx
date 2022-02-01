@@ -583,8 +583,13 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
               {/* [[220129214739]] */}
 							<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
               {/* [[220130103738]] */}
-							<BrInput icon={BrInputEnIcon.SEARCH} cbOnChange={searchHandler} initialValue={$searchText}
-											 autoFocus={true}/>
+							<BrInput
+								icon={BrInputEnIcon.SEARCH}
+								cbOnChange={searchHandler}
+								initialValue={$searchText}
+								autoFocus={true}
+							/>
+              {/*  */}
 						</div>}
 					</div>
           {/**/}

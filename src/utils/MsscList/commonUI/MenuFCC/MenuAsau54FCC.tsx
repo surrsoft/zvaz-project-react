@@ -14,22 +14,22 @@ export class Asau54Data {
 /**
  * идентификатор действия которое пункт меню представляет
  */
-export type Asau54IdAction = string
+export type Asau54IdActionPMT = string
 /**
  * текст для отображения на пункте меню
  */
-export type Asau54ActionText = string
+export type Asau54ActionTextPMT = string
 
 /**
  * представляет элемент меню
  */
 export class Asau54Item {
-  idAction: Asau54IdAction = ''
-  text: Asau54ActionText = ''
+  idAction: Asau54IdActionPMT = ''
+  text: Asau54ActionTextPMT = ''
 }
 
 export class Asau54SelectResult {
-  idAction?: Asau54IdAction
+  idAction?: Asau54IdActionPMT
   idElem?: string
 }
 
@@ -56,7 +56,7 @@ function MenuAsau54FCC({data, cbOnSelected}: Asau54Props) {
     })
   };
 
-  const btnOnClick = (idAction: Asau54IdAction, idElem: string) => (ev: any) => {
+  const btnOnClick = (idAction: Asau54IdActionPMT, idElem: string) => (ev: any) => {
     ev.stopPropagation()
     $isListShowedSet(false)
     if (cbOnSelected) {
