@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import _ from 'lodash';
 import './msscListStyles.scss';
 import { MsscIdObject, MsscSource } from './msscUtils/MsscSource';
 import {
@@ -11,7 +12,7 @@ import {
   RsuvTxStringAC
 } from 'rsuv-lib';
 import { MsscElem } from './msscUtils/MsscElem';
-import MenuAsau54FCC, { Asau54Data, Asau54Item, Asau54SelectResult } from './commonUI/MenuFCC/MenuAsau54FCC';
+import MenuAsau54FCC, { DataAsau54, ItemAsau54, SelectResultAsau54 } from './commonUI/MenuFCC/MenuAsau54FCC';
 import MsscDialogFCC from './msscComponents/MsscDialogFCC/MsscDialogFCC';
 import ListModelAsau59 from './commonUtils/ListModelAsau59';
 import SvgIconTrash from './commonIcons/SvgIconTrash/SvgIconTrash';
@@ -26,10 +27,9 @@ import { MsscColumnName } from './msscUtils/msscUtils';
 import BrInput, { BrInputEnIcon } from './commonUI/BrFilter/BrInput';
 import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
-import _ from 'lodash';
 import MsscPaginatorFCC from './msscComponents/MsscPaginatorFCC/MsscPaginatorFCC';
 
-export enum MsscMenuAction {
+export enum EnMsscMenuAction {
   EDIT = 'edit',
   SELECT = 'select',
   DELETE = 'delete'
@@ -47,6 +47,15 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     // записей на странице
     elemsOnPage: 10
   }
+
+  const menuDataSTA = {
+    id: '',
+    items: [
+      {idAction: EnMsscMenuAction.EDIT, text: 'Изменить'} as ItemAsau54,
+      {idAction: EnMsscMenuAction.SELECT, text: 'Выбрать'} as ItemAsau54,
+      {idAction: EnMsscMenuAction.DELETE, text: 'Удалить'} as ItemAsau54
+    ]
+  } as DataAsau54
 
   // номер текущей страницы (пагинация)
   const [$pageNumCurrent, $pageNumCurrentSet] = useState(1);
@@ -126,13 +135,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     // }
   }
 
-  const fnColorsForRandom = () => {
-    if (!$randomEnabled) {
-      return new ColorsAsau61()
-    }
-    return new ColorsAsau61().buNormal('#71fc22').buHover('#71fc22')
-  }
-
   const fnError = () => {
     $isErrorSet(true)
     setTimeout(() => {
@@ -147,6 +149,15 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   }
 
   function fnSorts() {
+    function fnRsuvTxSort(sortItem: BrSelectItem<string>) {
+      if (!sortItem.payload) {
+        return null;
+      } else {
+        const columnName = new RsuvTxStringAC(sortItem.payload);
+        return new RsuvTxSort(columnName, sortItem.direction as RsuvEnSort);
+      }
+    }
+
     let rsuvTxSort0 = null
     let item: BrSelectItem<string> | undefined;
     if ($sortIdCurr) {
@@ -262,115 +273,8 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     }
   }, [$fdone, $needUpdate2]);
 
-
   function refreshPageData() {
     $needUpdate2Set(!$needUpdate2)
-  }
-
-  function ParamUiFCC({str1, str2}: { str1: string, str2?: any }) {
-    return (
-      <div style={{display: 'flex', alignItems: 'center', columnGap: 6, fontFamily: 'monospace'}}>
-        <div style={{color: 'blue'}}>{str1}</div>
-        <div style={{
-          border: '1px solid silver',
-          borderRadius: 4,
-          padding: '0 8px 0 8px'
-        }}>{(str2 || str2 === 0) ? str2 : '-'}</div>
-      </div>
-    )
-  }
-
-  const menuDataSTA = {
-    id: '',
-    items: [
-      {idAction: MsscMenuAction.EDIT, text: 'Изменить'} as Asau54Item,
-      {idAction: MsscMenuAction.SELECT, text: 'Выбрать'} as Asau54Item,
-      {idAction: MsscMenuAction.DELETE, text: 'Удалить'} as Asau54Item
-    ]
-  } as Asau54Data
-
-  const dialogDeleteShow = () => {
-    $dialogTitleSet('удаление')
-    $dialogBodySet(`удалить элемент(ы) ? ${$listModel.selectElemsCount()} шт.`)
-    $dialogDeleteShowedSet(true)
-  }
-
-  function MsscListElemFCC({elem}: { elem: MsscElem }) {
-    const jsxElem: JSX.Element = elem.elem
-
-    /**
-     * [[220129111758]]
-     * @param obj
-     */
-    const menuElemOnSelected = async (obj: Asau54SelectResult) => {
-      switch (obj.idAction) {
-        case MsscMenuAction.DELETE:
-          if (obj.idElem) {
-            // чистим если что-то уже выбрано
-            $listModel.selectElemsClear()
-            $listModel.selectElemsAdd([obj.idElem])
-            $listModel.activeIdSet(obj.idElem)
-            refresh()
-          }
-          dialogDeleteShow()
-          break;
-        case MsscMenuAction.SELECT:
-          if (obj.idElem) {
-            $listModel.selectElemsAdd([obj.idElem])
-            $listModel.activeIdSet(obj.idElem)
-            refresh()
-          }
-          break;
-        case MsscMenuAction.EDIT:
-          if (obj.idElem) {
-            const elem = $elems.find(el => el.id.val === obj.idElem)
-            if (elem) {
-              $listModel.activeIdSet(elem.id.val)
-              const jsxEdit = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel, elem.elemModel)
-              $dialogCreateEditJsxSet(jsxEdit || null)
-              if (jsxEdit) {
-                $dialogCreateEditShowedSet(true)
-              }
-            }
-          }
-          break;
-      }
-    }
-
-    /**
-     * [[220129135526]]
-     * @param id
-     */
-    const checkboxOnChange = (id: string) => (ev: any) => {
-      const checked = ev.target.checked
-      if (checked) {
-        $listModel.selectElemsAdd([id])
-        $listModel.activeIdSet(id)
-      } else {
-        $listModel.selectElemsDelete([id])
-        $listModel.activeIdSet(id)
-      }
-      refresh()
-    }
-
-    return (
-      <div className={`mssc-list-elem ${$listModel.activeIdIsB(elem.id.val, 'mssc-list-elem_active')}`}>
-        <div className="mssc-list-elem__checkbox">
-          <input
-            type="checkbox"
-            checked={$listModel.selectElemIs(elem.id.val)}
-            onChange={checkboxOnChange(elem.id.val)}
-          />
-        </div>
-        <div className="mssc-list-elem__body">{jsxElem}</div>
-        <div className="mssc-list-elem__menu">
-          <MenuAsau54FCC
-            data={Object.assign({}, menuDataSTA, {id: elem.id.val})}
-            cbOnSelected={menuElemOnSelected}
-          />
-        </div>
-      </div>
-    )
   }
 
   /**
@@ -383,68 +287,18 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   }
 
   /**
-   * [[220128215639]]
-   */
-  const dialogDeleteHandlers = {
-    cancel: () => {
-      $listModel.selectElemsClear()
-      $dialogDeleteShowedSet(false)
-    },
-    ok: async () => {
-      if ($listModel.selectElemsCount() > 0) {
-        const ids: MsscIdObject[] = $listModel.selectElems().map(el => ({id: el}))
-        try {
-          $loadingAtDialogSet(true)
-          const noDeletedElems = await source?.elemsDelete(ids)
-          if (noDeletedElems) {
-            if (noDeletedElems.length === 0) {
-              $listModel.selectElemsClear()
-              scrollFixFn(false)
-              $dialogDeleteShowedSet(false)
-              refreshWhole()
-            } else {
-              console.warn(`[${noDeletedElems.length}] elems not deleted`)
-              fnError()
-            }
-          }
-        } catch (err) {
-          console.log('!!-!!-!! err {220128215806}\n', err)
-        } finally {
-          $loadingAtDialogSet(false)
-        }
-      }
-    }
-  }
-
-  const iconsConf = {
-    svgProps: {width: '20px', height: '20px'},
-    colors: new ColorsAsau61().buNormal('#474747')
-  }
-
-  const iconsHandlers = {
-    delete: () => {
-      dialogDeleteShow()
-    },
-    create: async () => {
-      const jsxCreate = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel)
-      $dialogCreateEditJsxSet(jsxCreate || null)
-      if (jsxCreate) {
-        $dialogCreateEditShowedSet(true)
-      }
-    },
-    deselectAll: () => {
-      $listModel.selectElemsClear()
-      refresh()
-    },
-  }
-
-  /**
    * Перезапрос данных страницы только.
    *
    * СМ. ТАКЖЕ {@link refreshWhole}
    */
   const refresh = () => {
     $refreshSet(!$refresh)
+  }
+
+  const dialogDeleteShow = () => {
+    $dialogTitleSet('удаление')
+    $dialogBodySet(`удалить элемент(ы) ? ${$listModel.selectElemsCount()} шт.`)
+    $dialogDeleteShowedSet(true)
   }
 
   const dialogCreateEditCallbacks = {
@@ -506,121 +360,251 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     }
   }
 
-  function fnRsuvTxSort(sortItem: BrSelectItem<string>) {
-    if (!sortItem.payload) {
-      return null;
-    } else {
-      const columnName = new RsuvTxStringAC(sortItem.payload);
-      return new RsuvTxSort(columnName, sortItem.direction as RsuvEnSort);
-    }
-  }
-
-  /**
-   * [[220129163836]]
-   * @param sortItem
-   */
-  const sortHandler = (sortItem: BrSelectItem<MsscColumnName>) => {
-    $sortIdCurrSet(sortItem.idElem)
-    refreshWhole()
-  }
-
-  /**
-   * [[220130110028]]
-   */
-  function searchHandler(value: string) {
-    console.log('!!-!!-!! value {220130110055}\n', value) // del+
-    $searchTextSet(value)
-    refreshWhole()
-  }
-
-  /**
-   * [[220130202338]]
-   */
-  function diceHandler() {
-    $randomEnabledSet(!$randomEnabled)
-    refreshWhole()
-  }
-
-  async function fnPaginationHandle(nextPage: number) {
-    $pageNumBeforChangeSet($pageNumCurrent)
-    $pageNumCurrentSet(nextPage)
-    refreshPageData()
-  }
-
-  return (
-    <div className="mssc-base">
-      {$isError ? <div className="mssc-base__error">ошибка</div> : null}
-      <div className="mssc-base__list">
-        {$loading ? <div>loading ...</div> : null}
-        {!$loading && <>
-					<div className="mssc-base__info-block">
-						<ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
-						<ParamUiFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
-						<ParamUiFCC str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
-						<ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
-					</div>
-					<div className="mssc-base__body">
-            {/* [[220129145117]] */}
-						<div className="mssc-body__buttons">
-              {/* ^^delete-button^^ */}
-							<button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
-											onClick={iconsHandlers.delete}>
-								<SvgIconTrash {...iconsConf}/>
-							</button>
-							<button title="создать новый элемент" onClick={iconsHandlers.create}>
-								<SvgIconPlus {...iconsConf}/>
-							</button>
-							<button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
-											onClick={iconsHandlers.deselectAll}>
-								<SvgIconUnckecked {...iconsConf}/>
-							</button>
-              {/* [[220130202258]] random button */}
-							<button onClick={diceHandler} title="random">
-								<SvgIconDice svgProps={{width: '20px', height: '20px'}} colors={fnColorsForRandom()}/>
-							</button>
-						</div>
-            {sortData && <div className="mssc-body__sort-filter-container">
-              {/* [[220129214739]] */}
-							<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
-              {/* [[220130103738]] */}
-							<BrInput
-								icon={BrInputEnIcon.SEARCH}
-								cbOnChange={searchHandler}
-								initialValue={$searchText}
-								autoFocus={true}
-							/>
-              {/*  */}
-						</div>}
-					</div>
-          {/**/}
-					<div className="mssc-list-paginator">
-						<MsscPaginatorFCC
-							pageCurrNum={$pageNumCurrent}
-							pageAllCountNum={$pageCountAll}
-							cbChange={fnPaginationHandle}
-							disabled={$loadingB}
-						/>
-					</div>
-          {/**/}
-					<div className="mssc-list-block" style={{position: 'relative'}}>
-						<BrSpinner show={$loadingB} fullscreen={false}/>
-            {
-              $elems.map((elObj: MsscElem) => {
-                return (<MsscListElemFCC key={elObj.id.val} elem={elObj}/>)
-              })
-            }
-					</div>
-					<div className="mssc-list-paginator">
-						<MsscPaginatorFCC
-							pageCurrNum={$pageNumCurrent}
-							pageAllCountNum={$pageCountAll}
-							cbChange={fnPaginationHandle}
-							disabled={$loadingB}
-						/>
-					</div>
-				</>}
+  function ParamUiFCC({str1, str2}: { str1: string, str2?: any }) {
+    return (
+      <div style={{display: 'flex', alignItems: 'center', columnGap: 6, fontFamily: 'monospace'}}>
+        <div style={{color: 'blue'}}>{str1}</div>
+        <div style={{
+          border: '1px solid silver',
+          borderRadius: 4,
+          padding: '0 8px 0 8px'
+        }}>{(str2 || str2 === 0) ? str2 : '-'}</div>
       </div>
-      {/* ^^dialog delete^^ */}
+    )
+  }
+
+  function ListElemLocalFCC({elem}: { elem: MsscElem }) {
+    const jsxElem: JSX.Element = elem.elem
+
+    /**
+     * [[220129111758]]
+     * @param obj
+     */
+    const menuElemOnSelected = async (obj: SelectResultAsau54) => {
+      switch (obj.idAction) {
+        case EnMsscMenuAction.DELETE:
+          if (obj.idElem) {
+            // чистим если что-то уже выбрано
+            $listModel.selectElemsClear()
+            $listModel.selectElemsAdd([obj.idElem])
+            $listModel.activeIdSet(obj.idElem)
+            refresh()
+          }
+          dialogDeleteShow()
+          break;
+        case EnMsscMenuAction.SELECT:
+          if (obj.idElem) {
+            $listModel.selectElemsAdd([obj.idElem])
+            $listModel.activeIdSet(obj.idElem)
+            refresh()
+          }
+          break;
+        case EnMsscMenuAction.EDIT:
+          if (obj.idElem) {
+            const elem = $elems.find(el => el.id.val === obj.idElem)
+            if (elem) {
+              $listModel.activeIdSet(elem.id.val)
+              const jsxEdit = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel, elem.elemModel)
+              $dialogCreateEditJsxSet(jsxEdit || null)
+              if (jsxEdit) {
+                $dialogCreateEditShowedSet(true)
+              }
+            }
+          }
+          break;
+      }
+    }
+
+    /**
+     * [[220129135526]]
+     * @param id
+     */
+    const checkboxOnChange = (id: string) => (ev: any) => {
+      const checked = ev.target.checked
+      if (checked) {
+        $listModel.selectElemsAdd([id])
+        $listModel.activeIdSet(id)
+      } else {
+        $listModel.selectElemsDelete([id])
+        $listModel.activeIdSet(id)
+      }
+      refresh()
+    }
+
+    return (
+      <div className={`mssc-list-elem ${$listModel.activeIdIsB(elem.id.val, 'mssc-list-elem_active')}`}>
+        <div className="mssc-list-elem__checkbox">
+          <input
+            type="checkbox"
+            checked={$listModel.selectElemIs(elem.id.val)}
+            onChange={checkboxOnChange(elem.id.val)}
+          />
+        </div>
+        <div className="mssc-list-elem__body">{jsxElem}</div>
+        <div className="mssc-list-elem__menu">
+          <MenuAsau54FCC
+            data={Object.assign({}, menuDataSTA, {id: elem.id.val})}
+            cbOnSelected={menuElemOnSelected}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  function SortSearchLocalFCC() {
+    /**
+     * [[220130110028]]
+     */
+    function searchHandler(value: string) {
+      $searchTextSet(value)
+      refreshWhole()
+    }
+
+    /**
+     * [[220129163836]]
+     * @param sortItem
+     */
+    const sortHandler = (sortItem: BrSelectItem<MsscColumnName>) => {
+      $sortIdCurrSet(sortItem.idElem)
+      refreshWhole()
+    }
+
+    return (
+      <>
+        {
+          sortData && <div className="mssc-body__sort-filter-container">
+            {/* [[220129214739]] */}
+						<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
+            {/* [[220130103738]] */}
+						<BrInput
+							icon={BrInputEnIcon.SEARCH}
+							cbOnChange={searchHandler}
+							initialValue={$searchText}
+							autoFocus={true}
+						/>
+            {/*  */}
+					</div>
+        }
+      </>
+    )
+  }
+
+  function PaginatorLocalFCC() {
+
+    async function fnPaginationHandle(nextPage: number) {
+      $pageNumBeforChangeSet($pageNumCurrent)
+      $pageNumCurrentSet(nextPage)
+      refreshPageData()
+    }
+
+    return (
+      <div className="mssc-list-paginator">
+        <MsscPaginatorFCC
+          pageCurrNum={$pageNumCurrent}
+          pageAllCountNum={$pageCountAll}
+          cbChange={fnPaginationHandle}
+          disabled={$loadingB}
+        />
+      </div>
+    )
+  }
+
+  function ButtonsLocalFCC() {
+    const fnColorsForRandom = () => {
+      if (!$randomEnabled) {
+        return new ColorsAsau61()
+      }
+      return new ColorsAsau61().buNormal('#71fc22').buHover('#71fc22')
+    }
+
+    const iconsHandlers = {
+      delete: () => {
+        dialogDeleteShow()
+      },
+      create: async () => {
+        const jsxCreate = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel)
+        $dialogCreateEditJsxSet(jsxCreate || null)
+        if (jsxCreate) {
+          $dialogCreateEditShowedSet(true)
+        }
+      },
+      deselectAll: () => {
+        $listModel.selectElemsClear()
+        refresh()
+      },
+    }
+
+    /**
+     * [[220130202338]]
+     */
+    function diceHandler() {
+      $randomEnabledSet(!$randomEnabled)
+      refreshWhole()
+    }
+
+    const iconsConf = {
+      svgProps: {width: '20px', height: '20px'},
+      colors: new ColorsAsau61().buNormal('#474747')
+    }
+
+    return (
+      <div className="mssc-body__buttons">
+        {/* ^^delete-button^^ */}
+        <button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
+                onClick={iconsHandlers.delete}>
+          <SvgIconTrash {...iconsConf}/>
+        </button>
+        <button title="создать новый элемент" onClick={iconsHandlers.create}>
+          <SvgIconPlus {...iconsConf}/>
+        </button>
+        <button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
+                onClick={iconsHandlers.deselectAll}>
+          <SvgIconUnckecked {...iconsConf}/>
+        </button>
+        {/* [[220130202258]] random button */}
+        <button onClick={diceHandler} title="random">
+          <SvgIconDice svgProps={{width: '20px', height: '20px'}} colors={fnColorsForRandom()}/>
+        </button>
+      </div>
+    )
+  }
+
+  function DialogDeleteLocalFCC() {
+    /**
+     * [[220128215639]]
+     */
+    const dialogDeleteHandlers = {
+      cancel: () => {
+        $listModel.selectElemsClear()
+        $dialogDeleteShowedSet(false)
+      },
+      ok: async () => {
+        if ($listModel.selectElemsCount() > 0) {
+          const ids: MsscIdObject[] = $listModel.selectElems().map(el => ({id: el}))
+          try {
+            $loadingAtDialogSet(true)
+            const noDeletedElems = await source?.elemsDelete(ids)
+            if (noDeletedElems) {
+              if (noDeletedElems.length === 0) {
+                $listModel.selectElemsClear()
+                scrollFixFn(false)
+                $dialogDeleteShowedSet(false)
+                refreshWhole()
+              } else {
+                console.warn(`[${noDeletedElems.length}] elems not deleted`)
+                fnError()
+              }
+            }
+          } catch (err) {
+            console.log('!!-!!-!! err {220128215806}\n', err)
+          } finally {
+            $loadingAtDialogSet(false)
+          }
+        }
+      }
+    }
+
+    return (
       <MsscDialogFCC
         show={$dialogDeleteShowed}
         title={$dialogTitle}
@@ -628,6 +612,52 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
         cbCancel={dialogDeleteHandlers.cancel}
         cbOk={dialogDeleteHandlers.ok}
       />
+    )
+  }
+
+  function InfosLocalFCC() {
+    return (
+      <div className="mssc-base__infos">
+        <ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
+        <ParamUiFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
+        <ParamUiFCC str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
+        <ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
+      </div>
+    )
+  }
+
+  // --- === ---
+
+  return (
+    <div className="mssc-base">
+      {$isError ? <div className="mssc-base__error">ошибка</div> : null}
+      <div className="mssc-base__list">
+        {$loading ? <div>loading ...</div> : null}
+        {!$loading && <>
+					<InfosLocalFCC/>
+					<div className="mssc-base__body">
+            {/* [[220129145117]] */}
+						<ButtonsLocalFCC/>
+            {/*  */}
+						<SortSearchLocalFCC/>
+					</div>
+          {/**/}
+					<PaginatorLocalFCC/>
+          {/* СПИСОК */}
+					<div className="mssc-list-block" style={{position: 'relative'}}>
+						<BrSpinner show={$loadingB} fullscreen={false}/>
+            {
+              $elems.map((elObj: MsscElem) => {
+                return (<ListElemLocalFCC key={elObj.id.val} elem={elObj}/>)
+              })
+            }
+					</div>
+          {/*  */}
+					<PaginatorLocalFCC/>
+				</>}
+      </div>
+      {/* ^^dialog delete^^ */}
+      <DialogDeleteLocalFCC/>
       {/* ^^dialog create/edit ^^ */}
       {$dialogCreateEditShowed && $dialogCreateEditJsx}
       {/* spinner */}

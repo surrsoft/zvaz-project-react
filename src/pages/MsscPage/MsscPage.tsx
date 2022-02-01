@@ -18,8 +18,8 @@ enum EnField {
 }
 
 const airSource = new AirSource({
-  // dbKey: 'appskGCKvIZEdVBTO', // del+
-  dbKey: 'appHOzDglc28fCztP',
+  dbKey: 'appskGCKvIZEdVBTO', // del+
+  // dbKey: 'appHOzDglc28fCztP',
   tableName: 'main',
   columns: [
     'id',

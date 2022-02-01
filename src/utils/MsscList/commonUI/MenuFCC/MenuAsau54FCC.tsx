@@ -6,46 +6,46 @@ import './stylesMenuAsau54.css';
 // ИСПОЛЬЗОВАННЫЕ ТЕХНИКИ: [asau58]
 
 
-export class Asau54Data {
+export class DataAsau54 {
   id: string = ''
-  items: Asau54Item[] = []
+  items: ItemAsau54[] = []
 }
 
 /**
  * идентификатор действия которое пункт меню представляет
  */
-export type Asau54IdActionPMT = string
+export type IdActionAsau54PMT = string
 /**
  * текст для отображения на пункте меню
  */
-export type Asau54ActionTextPMT = string
+export type ActionTextAsau54PMT = string
 
 /**
  * представляет элемент меню
  */
-export class Asau54Item {
-  idAction: Asau54IdActionPMT = ''
-  text: Asau54ActionTextPMT = ''
+export class ItemAsau54 {
+  idAction: IdActionAsau54PMT = ''
+  text: ActionTextAsau54PMT = ''
 }
 
-export class Asau54SelectResult {
-  idAction?: Asau54IdActionPMT
+export class SelectResultAsau54 {
+  idAction?: IdActionAsau54PMT
   idElem?: string
 }
 
-export class Asau54Props {
+export class PropsAtAsau54 {
   /**
    * Данные описывающие пункты меню
    */
-  data?: Asau54Data
+  data?: DataAsau54
   /**
    * Вызывается когда сделан выбор пункта
    * @param el (1) -- выбранный пункт
    */
-  cbOnSelected?: (el: Asau54SelectResult) => void
+  cbOnSelected?: (el: SelectResultAsau54) => void
 }
 
-function MenuAsau54FCC({data, cbOnSelected}: Asau54Props) {
+function MenuAsau54FCC({data, cbOnSelected}: PropsAtAsau54) {
   const [$isListShowed, $isListShowedSet] = useState(false);
   const refBtnDropdown = useRef(null)
 
@@ -56,7 +56,7 @@ function MenuAsau54FCC({data, cbOnSelected}: Asau54Props) {
     })
   };
 
-  const btnOnClick = (idAction: Asau54IdActionPMT, idElem: string) => (ev: any) => {
+  const btnOnClick = (idAction: IdActionAsau54PMT, idElem: string) => (ev: any) => {
     ev.stopPropagation()
     $isListShowedSet(false)
     if (cbOnSelected) {
