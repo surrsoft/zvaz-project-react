@@ -88,9 +88,9 @@ export default function BrInput({
   }
 
   return (
-    <div className="br-filter">
+    <div className="br-input">
       {iconBy(icon)}
-      <input className="br-filter__input" type="text" value={$inputValue} onChange={inputHandler} autoFocus={autoFocus}/>
+      <input className="br-input__input" type="text" value={$inputValue} onChange={inputHandler} autoFocus={autoFocus}/>
       <button onClick={btnHandle}>
         <style>{`.cls1:hover { stroke: red; fill: red; }`}</style>
         <svg className="cls1" width="20px" height="20px" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">

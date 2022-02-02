@@ -6,30 +6,30 @@ import './stylesMenuAsau54.css';
 // ИСПОЛЬЗОВАННЫЕ ТЕХНИКИ: [asau58]
 
 
-export class DataAsau54 {
+export class DataAtAsau54 {
   id: string = ''
-  items: ItemAsau54[] = []
+  items: ItemAtAsau54[] = []
 }
 
 /**
  * идентификатор действия которое пункт меню представляет
  */
-export type IdActionAsau54PMT = string
+export type IdActionAtAsau54PMT = string
 /**
  * текст для отображения на пункте меню
  */
-export type ActionTextAsau54PMT = string
+export type ActionTextAtAsau54PMT = string
 
 /**
  * представляет элемент меню
  */
-export class ItemAsau54 {
-  idAction: IdActionAsau54PMT = ''
-  text: ActionTextAsau54PMT = ''
+export class ItemAtAsau54 {
+  idAction: IdActionAtAsau54PMT = ''
+  text: ActionTextAtAsau54PMT = ''
 }
 
-export class SelectResultAsau54 {
-  idAction?: IdActionAsau54PMT
+export class SelectResultAtAsau54 {
+  idAction?: IdActionAtAsau54PMT
   idElem?: string
 }
 
@@ -37,12 +37,12 @@ export class PropsAtAsau54 {
   /**
    * Данные описывающие пункты меню
    */
-  data?: DataAsau54
+  data?: DataAtAsau54
   /**
    * Вызывается когда сделан выбор пункта
    * @param el (1) -- выбранный пункт
    */
-  cbOnSelected?: (el: SelectResultAsau54) => void
+  cbOnSelected?: (el: SelectResultAtAsau54) => void
 }
 
 function MenuAsau54FCC({data, cbOnSelected}: PropsAtAsau54) {
@@ -56,7 +56,7 @@ function MenuAsau54FCC({data, cbOnSelected}: PropsAtAsau54) {
     })
   };
 
-  const btnOnClick = (idAction: IdActionAsau54PMT, idElem: string) => (ev: any) => {
+  const btnOnClick = (idAction: IdActionAtAsau54PMT, idElem: string) => (ev: any) => {
     ev.stopPropagation()
     $isListShowedSet(false)
     if (cbOnSelected) {

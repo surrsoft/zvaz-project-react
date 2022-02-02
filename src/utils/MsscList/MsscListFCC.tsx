@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import './msscListStyles.scss';
 import { MsscIdObject, MsscSource } from './msscUtils/MsscSource';
@@ -12,7 +12,7 @@ import {
   RsuvTxStringAC
 } from 'rsuv-lib';
 import { MsscElem } from './msscUtils/MsscElem';
-import MenuAsau54FCC, { DataAsau54, ItemAsau54, SelectResultAsau54 } from './commonUI/MenuFCC/MenuAsau54FCC';
+import MenuAsau54FCC, { DataAtAsau54, ItemAtAsau54, SelectResultAtAsau54 } from './commonUI/MenuFCC/MenuAsau54FCC';
 import MsscDialogFCC from './msscComponents/MsscDialogFCC/MsscDialogFCC';
 import ListModelAsau59 from './commonUtils/ListModelAsau59';
 import SvgIconTrash from './commonIcons/SvgIconTrash/SvgIconTrash';
@@ -29,6 +29,21 @@ import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
 import MsscPaginatorFCC from './msscComponents/MsscPaginatorFCC/MsscPaginatorFCC';
 
+export interface Ty1159 {
+  infosJsx?: JSX.Element
+  paginator1Jsx?: JSX.Element
+  paginator2Jsx?: JSX.Element
+  buttonsJsx?: {
+    btnDelete?: JSX.Element,
+    btnCreate?: JSX.Element,
+    btnDeselectAll?: JSX.Element,
+    btnDice?: JSX.Element,
+  }
+  sortJsx?: JSX.Element
+  listJsx?: JSX.Element
+  searchJsx?: JSX.Element
+}
+
 export enum EnMsscMenuAction {
   EDIT = 'edit',
   SELECT = 'select',
@@ -38,9 +53,10 @@ export enum EnMsscMenuAction {
 interface MsscListProps {
   source: MsscSource<any> | null
   sortData?: BrSelectSortData<MsscColumnName>
+  children?: any
 }
 
-const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
+const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element => {
   // source = null; // del+
 
   const config = {
@@ -51,11 +67,11 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
   const menuDataSTA = {
     id: '',
     items: [
-      {idAction: EnMsscMenuAction.EDIT, text: 'Изменить'} as ItemAsau54,
-      {idAction: EnMsscMenuAction.SELECT, text: 'Выбрать'} as ItemAsau54,
-      {idAction: EnMsscMenuAction.DELETE, text: 'Удалить'} as ItemAsau54
+      {idAction: EnMsscMenuAction.EDIT, text: 'Изменить'} as ItemAtAsau54,
+      {idAction: EnMsscMenuAction.SELECT, text: 'Выбрать'} as ItemAtAsau54,
+      {idAction: EnMsscMenuAction.DELETE, text: 'Удалить'} as ItemAtAsau54
     ]
-  } as DataAsau54
+  } as DataAtAsau54
 
   // номер текущей страницы (пагинация)
   const [$pageNumCurrent, $pageNumCurrentSet] = useState(1);
@@ -380,7 +396,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
      * [[220129111758]]
      * @param obj
      */
-    const menuElemOnSelected = async (obj: SelectResultAsau54) => {
+    const menuElemOnSelected = async (obj: SelectResultAtAsau54) => {
       switch (obj.idAction) {
         case EnMsscMenuAction.DELETE:
           if (obj.idElem) {
@@ -451,7 +467,7 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     )
   }
 
-  function SortSearchLocalFCC() {
+  function SearchLocalFCC() {
     /**
      * [[220130110028]]
      */
@@ -459,6 +475,20 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       $searchTextSet(value)
       refreshWhole()
     }
+
+    return (
+      // [[220130103738]]
+      <BrInput
+        icon={BrInputEnIcon.SEARCH}
+        cbOnChange={searchHandler}
+        initialValue={$searchText}
+        autoFocus={true}
+      />
+    )
+  }
+
+  function SortLocalFCC() {
+
 
     /**
      * [[220129163836]]
@@ -475,14 +505,6 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
           sortData && <div className="mssc-body__sort-filter-container">
             {/* [[220129214739]] */}
 						<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
-            {/* [[220130103738]] */}
-						<BrInput
-							icon={BrInputEnIcon.SEARCH}
-							cbOnChange={searchHandler}
-							initialValue={$searchText}
-							autoFocus={true}
-						/>
-            {/*  */}
 					</div>
         }
       </>
@@ -509,29 +531,57 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     )
   }
 
-  function ButtonsLocalFCC() {
+  const iconsConf = {
+    svgProps: {width: '20px', height: '20px'},
+    colors: new ColorsAsau61().buNormal('#474747')
+  }
+
+  function ButtonDeleteLocalFCC() {
+    const deleteHandler = () => {
+      dialogDeleteShow()
+    }
+    return (
+      <button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
+              onClick={deleteHandler}>
+        <SvgIconTrash {...iconsConf}/>
+      </button>
+    )
+  }
+
+  function ButtonCreateLocalFCC() {
+    const createHandler = async () => {
+      const jsxCreate = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel)
+      $dialogCreateEditJsxSet(jsxCreate || null)
+      if (jsxCreate) {
+        $dialogCreateEditShowedSet(true)
+      }
+    }
+    return (
+      <button title="создать новый элемент" onClick={createHandler}>
+        <SvgIconPlus {...iconsConf}/>
+      </button>
+    )
+  }
+
+  function ButtonDeselectAllLocalFCC() {
+    const deselectAllHandler = () => {
+      $listModel.selectElemsClear()
+      refresh()
+    }
+    return (
+      <button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
+              onClick={deselectAllHandler}>
+        <SvgIconUnckecked {...iconsConf}/>
+      </button>
+    )
+  }
+
+  function ButtonDiceLocalFCC() {
     const fnColorsForRandom = () => {
       if (!$randomEnabled) {
         return new ColorsAsau61()
       }
       return new ColorsAsau61().buNormal('#71fc22').buHover('#71fc22')
-    }
-
-    const iconsHandlers = {
-      delete: () => {
-        dialogDeleteShow()
-      },
-      create: async () => {
-        const jsxCreate = await source?.dialogCreateOrEdit(dialogCreateEditCallbacks.ok, dialogCreateEditCallbacks.cancel)
-        $dialogCreateEditJsxSet(jsxCreate || null)
-        if (jsxCreate) {
-          $dialogCreateEditShowedSet(true)
-        }
-      },
-      deselectAll: () => {
-        $listModel.selectElemsClear()
-        refresh()
-      },
     }
 
     /**
@@ -542,29 +592,21 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
       refreshWhole()
     }
 
-    const iconsConf = {
-      svgProps: {width: '20px', height: '20px'},
-      colors: new ColorsAsau61().buNormal('#474747')
-    }
+    // [[220130202258]] random button
+    return (
+      <button onClick={diceHandler} title="random">
+        <SvgIconDice svgProps={{width: '20px', height: '20px'}} colors={fnColorsForRandom()}/>
+      </button>
+    )
+  }
 
+  function ButtonsLocalFCC() {
     return (
       <div className="mssc-body__buttons">
-        {/* ^^delete-button^^ */}
-        <button disabled={$listModel.selectElemsCount() < 1} title="удалить выбранные элементы"
-                onClick={iconsHandlers.delete}>
-          <SvgIconTrash {...iconsConf}/>
-        </button>
-        <button title="создать новый элемент" onClick={iconsHandlers.create}>
-          <SvgIconPlus {...iconsConf}/>
-        </button>
-        <button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
-                onClick={iconsHandlers.deselectAll}>
-          <SvgIconUnckecked {...iconsConf}/>
-        </button>
-        {/* [[220130202258]] random button */}
-        <button onClick={diceHandler} title="random">
-          <SvgIconDice svgProps={{width: '20px', height: '20px'}} colors={fnColorsForRandom()}/>
-        </button>
+        <ButtonDeleteLocalFCC/>
+        <ButtonCreateLocalFCC/>
+        <ButtonDeselectAllLocalFCC/>
+        <ButtonDiceLocalFCC/>
       </div>
     )
   }
@@ -626,36 +668,55 @@ const MsscListFCC = ({source, sortData}: MsscListProps): JSX.Element => {
     )
   }
 
+  function ListLocalFCC() {
+    return (
+      <div className="mssc-list-block" style={{position: 'relative'}}>
+        <BrSpinner show={$loadingB} fullscreen={false}/>
+        {
+          $elems.map((elObj: MsscElem) => {
+            return (<ListElemLocalFCC key={elObj.id.val} elem={elObj}/>)
+          })
+        }
+      </div>
+    )
+  }
+
   // --- === ---
 
   return (
     <div className="mssc-base">
       {$isError ? <div className="mssc-base__error">ошибка</div> : null}
-      <div className="mssc-base__list">
-        {$loading ? <div>loading ...</div> : null}
-        {!$loading && <>
-					<InfosLocalFCC/>
-					<div className="mssc-base__body">
-            {/* [[220129145117]] */}
-						<ButtonsLocalFCC/>
-            {/*  */}
-						<SortSearchLocalFCC/>
-					</div>
-          {/**/}
-					<PaginatorLocalFCC/>
-          {/* СПИСОК */}
-					<div className="mssc-list-block" style={{position: 'relative'}}>
-						<BrSpinner show={$loadingB} fullscreen={false}/>
-            {
-              $elems.map((elObj: MsscElem) => {
-                return (<ListElemLocalFCC key={elObj.id.val} elem={elObj}/>)
-              })
-            }
-					</div>
-          {/*  */}
-					<PaginatorLocalFCC/>
-				</>}
-      </div>
+
+      {/*{!$loading && <div className="mssc-base__list">*/}
+      {/*	<InfosLocalFCC/>*/}
+      {/*	<div className="mssc-base__body">*/}
+      {/*    /!* [[220129145117]] *!/*/}
+      {/*		<ButtonsLocalFCC/>*/}
+      {/*		<SortLocalFCC/>*/}
+      {/*	</div>*/}
+      {/*	<PaginatorLocalFCC/>*/}
+      {/*	<ListLocalFCC/>*/}
+      {/*	<PaginatorLocalFCC/>*/}
+      {/*</div>*/}
+      {/*}*/}
+
+      {
+        !$loading && children?.({
+          infosJsx: <InfosLocalFCC/>,
+          paginator1Jsx: <PaginatorLocalFCC/>,
+          paginator2Jsx: <PaginatorLocalFCC/>,
+          buttonsJsx: {
+            btnDelete: <ButtonDeleteLocalFCC/>,
+            btnCreate: <ButtonCreateLocalFCC/>,
+            btnDeselectAll: <ButtonDeselectAllLocalFCC/>,
+            btnDice: <ButtonDiceLocalFCC/>
+          },
+          sortJsx: <SortLocalFCC/>,
+          searchJsx: <SearchLocalFCC/>,
+          listJsx: <ListLocalFCC/>
+        } as Ty1159)
+      }
+
       {/* ^^dialog delete^^ */}
       <DialogDeleteLocalFCC/>
       {/* ^^dialog create/edit ^^ */}

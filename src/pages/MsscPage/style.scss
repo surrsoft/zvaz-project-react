@@ -118,3 +118,15 @@
     }
   }
 }
+
+.block1722 {
+  display: flex;
+  justify-content: center;
+  column-gap: 16px;
+  margin-bottom: 8px;
+
+  .block1722__buttons {
+    display: flex;
+    column-gap: 8px;
+  }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import './style.scss';
-import MsscListFCC from '../../utils/MsscList/MsscListFCC';
+
+import MsscListFCC, { Ty1159 } from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
@@ -168,6 +169,32 @@ export function MsscPage() {
   } as BrSelectSortData<MsscColumnName>
 
   return (<div>
-    <MsscListFCC source={airSource} sortData={sortDataSTA}/>
+    <MsscListFCC source={airSource} sortData={sortDataSTA}>{({
+                                                               infosJsx,
+                                                               paginator1Jsx,
+                                                               paginator2Jsx,
+                                                               sortJsx,
+                                                               searchJsx,
+                                                               buttonsJsx,
+                                                               listJsx,
+                                                             }: Ty1159) => {
+      return (
+        <>
+          {infosJsx && infosJsx}
+          {paginator1Jsx}
+          <div className="block1722">
+            <div className="block1722__buttons">
+              {buttonsJsx?.btnCreate}
+              {buttonsJsx?.btnDelete}
+              {buttonsJsx?.btnDeselectAll}
+              {buttonsJsx?.btnDice}
+            </div>
+            {searchJsx}
+            {sortJsx}
+          </div>
+          {listJsx}
+        </>
+      )
+    }}</MsscListFCC>
   </div>)
 }
