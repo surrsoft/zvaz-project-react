@@ -123,10 +123,21 @@
   display: flex;
   justify-content: center;
   column-gap: 16px;
+  row-gap: 8px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 
   .block1722__buttons {
     display: flex;
     column-gap: 8px;
   }
+}
+
+.aListElem {
+  display: flex;
+}
+
+.aListElem__active {
+  border: 1px solid red;
+  border-radius: 8px;
 }

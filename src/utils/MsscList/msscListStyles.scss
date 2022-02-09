@@ -28,6 +28,24 @@
     column-gap: 12px;
   }
 
+  .mssc-infos-b {
+    display: inline-flex;
+    column-gap: 6px;
+    font-size: 11px;
+    border: 1px solid silver;
+    border-radius: 8px;
+    padding: 0 8px;
+    align-items: center;
+    justify-content: center;
+
+    .mssc-infos-b__value {
+      cursor: help;
+    }
+
+    .mssc-infos-b__divider {
+    }
+  }
+
   .mssc-base__list {
     border: 1px solid silver;
     border-radius: 8px;
@@ -69,18 +87,19 @@
         border-style: dashed;
       }
 
-      .mssc-list-elem__checkbox {
-        padding: 0 8px 0 8px;
-      }
-
-      .mssc-list-elem__body {
-        flex-grow: 1;
-      }
-
-      .mssc-list-elem__menu {
-        padding: 0 8px 0 8px;
-      }
     }
+  }
+
+  .mssc-list-elem__checkbox {
+    padding: 0 8px 0 8px;
+  }
+
+  .mssc-list-elem__body {
+    flex-grow: 1;
+  }
+
+  .mssc-list-elem__menu {
+    padding: 0 8px 0 8px;
   }
 
   .mssc-paginator {

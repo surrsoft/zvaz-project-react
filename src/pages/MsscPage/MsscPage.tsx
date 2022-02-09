@@ -1,7 +1,8 @@
 import React from 'react';
+import classNames from 'classnames';
 import './style.scss';
 
-import MsscListFCC, { Ty1159 } from '../../utils/MsscList/MsscListFCC';
+import MsscListFCC, { Ty1159, Ty1609 } from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
@@ -168,33 +169,48 @@ export function MsscPage() {
     ]
   } as BrSelectSortData<MsscColumnName>
 
-  return (<div>
-    <MsscListFCC source={airSource} sortData={sortDataSTA}>{({
-                                                               infosJsx,
-                                                               paginator1Jsx,
-                                                               paginator2Jsx,
-                                                               sortJsx,
-                                                               searchJsx,
-                                                               buttonsJsx,
-                                                               listJsx,
-                                                             }: Ty1159) => {
-      return (
-        <>
-          {infosJsx && infosJsx}
-          {paginator1Jsx}
-          <div className="block1722">
-            <div className="block1722__buttons">
-              {buttonsJsx?.btnCreate}
-              {buttonsJsx?.btnDelete}
-              {buttonsJsx?.btnDeselectAll}
-              {buttonsJsx?.btnDice}
-            </div>
-            {searchJsx}
-            {sortJsx}
+  function listElemStructBuilder({checkboxJsx, bodyJsx, menuJsx}: Ty1609) {
+    return (
+      <>
+        {checkboxJsx}
+        {bodyJsx}
+        {menuJsx}
+      </>
+    )
+  }
+
+  const fnBuilder = ({
+                       infosJsx,
+                       paginator1Jsx,
+                       paginator2Jsx,
+                       sortJsx,
+                       searchJsx,
+                       buttonsJsx,
+                       listJsx,
+                     }: Ty1159) => {
+    return (
+      <>
+        {paginator1Jsx}
+        <div className="block1722">
+          <div className="block1722__buttons">
+            {buttonsJsx?.btnCreate}
+            {buttonsJsx?.btnDelete}
+            {buttonsJsx?.btnDeselectAll}
+            {buttonsJsx?.btnDice}
           </div>
-          {listJsx}
-        </>
-      )
-    }}</MsscListFCC>
+          {searchJsx}
+          {sortJsx}
+          {infosJsx}
+        </div>
+        {listJsx}
+      </>
+    )
+  }
+
+  return (<div>
+    <MsscListFCC
+      source={airSource}
+      listElemStruct={listElemStructBuilder}
+      sortData={sortDataSTA}>{fnBuilder}</MsscListFCC>
   </div>)
 }

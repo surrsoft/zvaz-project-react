@@ -28,6 +28,7 @@ import BrInput, { BrInputEnIcon } from './commonUI/BrFilter/BrInput';
 import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
 import MsscPaginatorFCC from './msscComponents/MsscPaginatorFCC/MsscPaginatorFCC';
+import classNames from 'classnames';
 
 export interface Ty1159 {
   infosJsx?: JSX.Element
@@ -50,13 +51,20 @@ export enum EnMsscMenuAction {
   DELETE = 'delete'
 }
 
+export type Ty1609 = { isActive?: boolean, checkboxJsx?: JSX.Element, bodyJsx?: JSX.Element, menuJsx?: JSX.Element }
+
 interface MsscListProps {
   source: MsscSource<any> | null
   sortData?: BrSelectSortData<MsscColumnName>
+  listElemStruct?: ({
+                      checkboxJsx,
+                      bodyJsx,
+                      menuJsx
+                    }: Ty1609) => JSX.Element
   children?: any
 }
 
-const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element => {
+const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps): JSX.Element => {
   // source = null; // del+
 
   const config = {
@@ -376,7 +384,7 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
     }
   }
 
-  function ParamUiFCC({str1, str2}: { str1: string, str2?: any }) {
+  function ParamUiLocalFCC({str1, str2}: { str1: string, str2?: any }) {
     return (
       <div style={{display: 'flex', alignItems: 'center', columnGap: 6, fontFamily: 'monospace'}}>
         <div style={{color: 'blue'}}>{str1}</div>
@@ -385,6 +393,17 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
           borderRadius: 4,
           padding: '0 8px 0 8px'
         }}>{(str2 || str2 === 0) ? str2 : '-'}</div>
+      </div>
+    )
+  }
+
+  function ParamUiLocalFCC_B({str1, str2}: { str1: string, str2?: any }) {
+    return (
+      <div
+        className="mssc-infos-b__value"
+        title={str1}
+      >
+        {(str2 || str2 === 0) ? str2 : '-'}
       </div>
     )
   }
@@ -447,8 +466,8 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
       refresh()
     }
 
-    return (
-      <div className={`mssc-list-elem ${$listModel.activeIdIsB(elem.id.val, 'mssc-list-elem_active')}`}>
+    function RkCheckboxLocalFCC() {
+      return (
         <div className="mssc-list-elem__checkbox">
           <input
             type="checkbox"
@@ -456,15 +475,44 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
             onChange={checkboxOnChange(elem.id.val)}
           />
         </div>
+      )
+    }
+
+    function RkBodyLocalFCC() {
+      return (
         <div className="mssc-list-elem__body">{jsxElem}</div>
+      )
+    }
+
+    function RkMenuLocalFCC() {
+      return (
         <div className="mssc-list-elem__menu">
           <MenuAsau54FCC
             data={Object.assign({}, menuDataSTA, {id: elem.id.val})}
             cbOnSelected={menuElemOnSelected}
           />
         </div>
-      </div>
-    )
+      )
+    }
+
+    const containerCn = classNames('mssc-list-elem', {'mssc-list-elem_active': $listModel.activeIdIs(elem.id.val)})
+
+    return listElemStruct
+      ? (<div className={containerCn}>
+        {listElemStruct({
+          isActive: $listModel.activeIdIs(elem.id.val),
+          checkboxJsx: <RkCheckboxLocalFCC/>,
+          bodyJsx: <RkBodyLocalFCC/>,
+          menuJsx: <RkMenuLocalFCC/>
+        })}
+      </div>)
+      : (
+        <div className={containerCn}>
+          <RkCheckboxLocalFCC/>
+          <RkBodyLocalFCC/>
+          <RkMenuLocalFCC/>
+        </div>
+      )
   }
 
   function SearchLocalFCC() {
@@ -660,10 +708,24 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
   function InfosLocalFCC() {
     return (
       <div className="mssc-base__infos">
-        <ParamUiFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
-        <ParamUiFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
-        <ParamUiFCC str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
-        <ParamUiFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
+        <ParamUiLocalFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
+        <ParamUiLocalFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
+        <ParamUiLocalFCC str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
+        <ParamUiLocalFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
+      </div>
+    )
+  }
+
+  function InfosLocalFCC_B() {
+    return (
+      <div className="mssc-infos-b">
+        <ParamUiLocalFCC_B str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
+        <span className="mssc-infos-b__divider">/</span>
+        <ParamUiLocalFCC_B str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
+        <span className="mssc-infos-b__divider">/</span>
+        <ParamUiLocalFCC_B str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
+        <span className="mssc-infos-b__divider">/</span>
+        <ParamUiLocalFCC_B str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
       </div>
     )
   }
@@ -687,6 +749,7 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
     <div className="mssc-base">
       {$isError ? <div className="mssc-base__error">ошибка</div> : null}
 
+      {/* // del+ mass */}
       {/*{!$loading && <div className="mssc-base__list">*/}
       {/*	<InfosLocalFCC/>*/}
       {/*	<div className="mssc-base__body">*/}
@@ -702,7 +765,7 @@ const MsscListFCC = ({source, sortData, children}: MsscListProps): JSX.Element =
 
       {
         !$loading && children?.({
-          infosJsx: <InfosLocalFCC/>,
+          infosJsx: <InfosLocalFCC_B/>,
           paginator1Jsx: <PaginatorLocalFCC/>,
           paginator2Jsx: <PaginatorLocalFCC/>,
           buttonsJsx: {
