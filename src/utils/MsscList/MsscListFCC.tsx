@@ -29,6 +29,7 @@ import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
 import MsscPaginatorFCC from './msscComponents/MsscPaginatorFCC/MsscPaginatorFCC';
 import classNames from 'classnames';
+import BrMultiselect, { DataElemAtAsau73 } from './commonUI/BrMultiselect/BrMultiselect';
 
 export interface Ty1159 {
   infosJsx?: JSX.Element
@@ -43,6 +44,7 @@ export interface Ty1159 {
   sortJsx?: JSX.Element
   listJsx?: JSX.Element
   searchJsx?: JSX.Element
+  multiselectJsx?: JSX.Element
 }
 
 export enum EnMsscMenuAction {
@@ -743,6 +745,25 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
     )
   }
 
+  function MultiselectLocalFCC() {
+    const data = [
+      new DataElemAtAsau73('1', 'elem 1'),
+      new DataElemAtAsau73('2', 'elem 2', true),
+      new DataElemAtAsau73('3', 'elem 3', false, true),
+    ]
+
+    const onChangeHandle = (checkedElems: DataElemAtAsau73[]) => {
+      console.log('!!-!!-!! checkedElems {220209223245}\n', checkedElems) // del+
+
+    }
+
+    return (
+      <div className="mscc-mselect">
+        <BrMultiselect datas={data} cbOnChange={onChangeHandle}/>
+      </div>
+    )
+  }
+
   // --- === ---
 
   return (
@@ -776,7 +797,8 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
           },
           sortJsx: <SortLocalFCC/>,
           searchJsx: <SearchLocalFCC/>,
-          listJsx: <ListLocalFCC/>
+          listJsx: <ListLocalFCC/>,
+          multiselectJsx: <MultiselectLocalFCC/>
         } as Ty1159)
       }
 

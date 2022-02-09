@@ -1,0 +1,35 @@
+.br-mselect {
+  position: relative;
+  border: 1px solid silver;
+  border-radius: 8px;
+  display: inline-flex;
+  padding: 0 8px;
+
+  .br-mselect__dropdown {
+    display: none;
+    position: absolute;
+    top: 28px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.92);
+    border: 1px solid silver;
+    border-radius: 8px;
+    min-width: 250px;
+    padding: 8px;
+    z-index: 100;
+    min-height: 300px;
+    overflow: auto;
+  }
+
+  .br-mselect__dropdown_showed {
+    display: inline-flex;
+    flex-direction: column;
+    row-gap: 8px;
+  }
+
+  .br-mselect__text {
+
+  }
+  .br-mselect__text_disabled {
+    color: silver;
+  }
+}

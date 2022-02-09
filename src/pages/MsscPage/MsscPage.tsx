@@ -187,6 +187,7 @@ export function MsscPage() {
                        searchJsx,
                        buttonsJsx,
                        listJsx,
+                       multiselectJsx
                      }: Ty1159) => {
     return (
       <>
@@ -202,6 +203,7 @@ export function MsscPage() {
           {sortJsx}
           {infosJsx}
         </div>
+        {multiselectJsx}
         {listJsx}
       </>
     )
