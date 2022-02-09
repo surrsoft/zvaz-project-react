@@ -74,6 +74,11 @@
     display: flex;
     flex-direction: column;
     row-gap: 8px;
+    overflow: auto;
+    height: calc(100vh - 280px);
+    border: 1px solid silver;
+    border-radius: 8px;
+    padding: 16px 0;
 
     .mssc-list-elem {
       border: 1px solid transparent;
@@ -81,6 +86,7 @@
       display: flex;
       align-items: center;
       min-height: 48px;
+      flex-shrink: 0;
 
       &_active {
         border-color: rgba(255, 0, 0, 0.63);
