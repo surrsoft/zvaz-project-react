@@ -58,16 +58,23 @@ export class AirSourceParams<T> {
 
 function msscFiltersToVuscFilter(filters: MsscFilter[]) {
   if (filters && filters.length > 0) {
-    return `SUM(${filters.reduce<string[]>((acc, elFilter) => {
+    const rrTags: string[] = []
+    const rr0 = filters.reduce<string[]>((acc, elFilter) => {
       if (elFilter?.paramId?.val && elFilter?.filterValue) {
         if (!elFilter.isArrElemFind) {
           acc.push(`(FIND(LOWER("${elFilter.filterValue}"),LOWER({${elFilter.paramId.val}})))`)
         } else {
-          acc.push(`(FIND(",${elFilter.filterValue},",CONCATENATE(",",ARRAYJOIN({${elFilter.paramId.val}}),",")))`)
+          rrTags.push(`(FIND("${elFilter.filterValue}",{${elFilter.paramId.val}}))`)
         }
       }
       return acc
-    }, []).join(',')})`
+    }, []);
+    const rr2 = rrTags.join(',')
+    const rr3 = `AND(${rr2})`
+    rr0.push(rr3)
+    const rr = rr0.join(',');
+    // ---
+    return `SUM(${rr})`
   }
   return ''
 }
@@ -95,6 +102,7 @@ export class AirSource<T> implements MsscSource<T> {
 
   private fnFilterSort(filters: MsscFilter[], sorts: RsuvTxSort[]) {
     const filterVusc = msscFiltersToVuscFilter(filters)
+    console.log('!!-!!-!! filterVusc {220210183305}\n', filterVusc) // del+
     let sortArrObj: Array<Ty2214> = []
     if (sorts.length > 0) {
       sortArrObj = sorts.map(el => ({
