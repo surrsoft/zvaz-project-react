@@ -16,11 +16,13 @@ enum EnField {
   COMM = 'comm',
   URL = 'url',
   TIME_CREATED = 'time_created',
-  TIME_LAST_MODIFIED = 'time_last_modified'
+  TIME_LAST_MODIFIED = 'time_last_modified',
+  TAGS = 'tags',
 }
 
 const airSource = new AirSource({
-  dbKey: 'appskGCKvIZEdVBTO', // del+
+  dbKey: 'appZoHaX4a5tRLJlv', // mssc-training-3
+  // dbKey: 'appskGCKvIZEdVBTO',
   // dbKey: 'appHOzDglc28fCztP',
   tableName: 'main',
   columns: [
@@ -33,7 +35,8 @@ const airSource = new AirSource({
     'trans_date_last',
     'show_date_last',
     EnField.TIME_CREATED,
-    EnField.TIME_LAST_MODIFIED
+    EnField.TIME_LAST_MODIFIED,
+    EnField.TAGS,
   ],
   elemJsx: (elObj: any) => {
     return (
@@ -41,6 +44,15 @@ const airSource = new AirSource({
         <div className="list-elem__title">{elObj.title}</div>
         <div><a className="list-elem__url" href={elObj.url} target="_blank">{elObj.url}</a></div>
         <div className="list-elem__comm">{elObj[EnField.COMM] || ''}</div>
+        {(!elObj.tags || elObj.tags.length < 0) ? null : <div className="list-elem__tags">
+          {
+            elObj.tags.map((elTag: string) => {
+              return (
+                <div key={elTag} className="list-elem__tag">{elTag}</div>
+              )
+            })
+          }
+        </div>}
         <div className="list-elem__times">
           <div className="list-elem__time-lastmodif">
             <span className="list-elem__name">last modif:</span> {elObj[EnField.TIME_LAST_MODIFIED] || ''}
@@ -119,7 +131,7 @@ const airSource = new AirSource({
       </div>
     )
   },
-  cbSearchTextToMsscFilter: (searchText: string): MsscFilter[] | null => {
+  cbFilterFromSearchText: (searchText: string): MsscFilter[] | null => {
     if (searchText) {
       const fieldNameTitle = new RsuvTxStringAC(EnField.TITLE)
       const fieldNameComm = new RsuvTxStringAC(EnField.COMM)
@@ -131,6 +143,18 @@ const airSource = new AirSource({
       ];
     }
     return null
+  },
+  cbFilterFromTags: (tags: string[]): MsscFilter[] | null => {
+    if (tags && tags.length > 0) {
+      const filters: MsscFilter[] = []
+      tags.map(elTag => {
+        const fieldNameTags = new RsuvTxStringAC(EnField.TAGS)
+        const filter = {paramId: fieldNameTags, filterValue: elTag, isArrElemFind: true} as MsscFilter
+        filters.push(filter)
+      })
+      return filters;
+    }
+    return null;
   }
 })
 
@@ -213,6 +237,8 @@ export function MsscPage() {
     <MsscListFCC
       source={airSource}
       listElemStruct={listElemStructBuilder}
-      sortData={sortDataSTA}>{fnBuilder}</MsscListFCC>
+      sortData={sortDataSTA}
+      tagsFieldName={EnField.TAGS}
+    >{fnBuilder}</MsscListFCC>
   </div>)
 }

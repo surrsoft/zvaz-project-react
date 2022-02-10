@@ -64,9 +64,10 @@ interface MsscListProps {
                       menuJsx
                     }: Ty1609) => JSX.Element
   children?: any
+  tagsFieldName?: string
 }
 
-const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps): JSX.Element => {
+const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}: MsscListProps): JSX.Element => {
   // source = null; // del+
 
   const config = {
@@ -128,6 +129,8 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
   const [$searchText, $searchTextSet] = useState('');
   const [$randomEnabled, $randomEnabledSet] = useState(false);
   const [$idsShuffled, $idsShuffledSet] = useState<string[]>([]);
+  const [$tags, $tagsSet] = useState<DataElemAtAsau73[]>([]);
+  const [$tagsSelected, $tagsSelectedSet] = useState<DataElemAtAsau73[]>([]);
 
   // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
@@ -169,9 +172,19 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
   }
 
   function fnFiltersCreate(source: MsscSource<any>): MsscFilter[] {
+    let filterTags: MsscFilter[] = []
+    if (tagsFieldName) {
+      const tags = $tagsSelected.map(el => {
+        return el.id
+      })
+      filterTags = source?.filterFromTags(tags) || []
+    }
+    console.log('!!-!!-!! filterTags {220210170830}\n', filterTags) // del+
+    // ---
     // [[220130145735]]
-    const filter = source?.searchTextToMsscFilter($searchText)
-    return filter || [];
+    const filterSearchText = source?.filterFromSearchText($searchText) || []
+    // ---
+    return [...filterTags, ...filterSearchText];
   }
 
   function fnSorts() {
@@ -212,7 +225,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
       let elemsCountByFilter: number = 0;
       if ($randomEnabled) {
         const sorts = fnSorts()
-        const ids = await source?.idsAll(filters, sorts)
+        const ids = await source?.idsAll(filters, sorts) // AWAIT
         if (ids) {
           elemsCountByFilter = ids.length
           const idsShuffled = _.shuffle(ids)
@@ -223,6 +236,23 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
         if (rr) {
           elemsCountByFilter = rr.val;
         }
+      }
+      // --- получение тегов
+      if (tagsFieldName) {
+        const tags = await source?.tags(filters, tagsFieldName)
+        console.log('!!-!!-!! tags {220210130326}\n', tags) // del+
+        const tags0 = tags.map(el => {
+          return new DataElemAtAsau73(el.value, `${el.value} (${el.count})`)
+        })
+        // ---
+        tags0.forEach(elTag => {
+          const b1 = $tagsSelected.find(el => el.id === elTag.id)
+          if (b1) {
+            elTag.checked = true;
+          }
+        })
+        // ---
+        $tagsSet(tags0)
       }
       // --- pagination - pageCountAll
       const pagination = new RsuvPaginationGyth(elemsCountByFilter, config.elemsOnPage)
@@ -746,20 +776,15 @@ const MsscListFCC = ({source, sortData, children, listElemStruct}: MsscListProps
   }
 
   function MultiselectLocalFCC() {
-    const data = [
-      new DataElemAtAsau73('1', 'elem 1'),
-      new DataElemAtAsau73('2', 'elem 2', true),
-      new DataElemAtAsau73('3', 'elem 3', false, true),
-    ]
-
     const onChangeHandle = (checkedElems: DataElemAtAsau73[]) => {
       console.log('!!-!!-!! checkedElems {220209223245}\n', checkedElems) // del+
-
+      $tagsSelectedSet(checkedElems)
+      refreshWhole()
     }
 
     return (
       <div className="mscc-mselect">
-        <BrMultiselect datas={data} cbOnChange={onChangeHandle}/>
+        <BrMultiselect datas={$tags} cbOnChange={onChangeHandle}/>
       </div>
     )
   }

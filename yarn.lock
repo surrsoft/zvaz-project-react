@@ -6755,10 +6755,10 @@ hogg-lib@^1.1.0:
     isomorphic-fetch "^3.0.0"
     rsuv-lib "^1.2.0"
 
-hogg-lib@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.5.0.tgz#a962463fb68e88af286eb57fd09a220f53d9cf39"
-  integrity sha512-BmhTLqaG+Ro8NXeHf5DYhI3fSoe85LiUDjgztnCCgWm3IUISSVjdU0RVB/bEihs6lxcPqfACunOmOLM1tjBuOg==
+hogg-lib@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.6.0.tgz#e3a2d78056b9218ebc7f089af5d5f825ab855e12"
+  integrity sha512-1FfBVeoucDO0WQfCRyqbtKmA4byIk8d26PLsnaYfM7G8GCQnoaNjF+IWSrEZR9YsO5FUqMGGBi2iy1XKEiswbA==
   dependencies:
     "@types/isomorphic-fetch" "^0.0.35"
     airtable "^0.11.1"

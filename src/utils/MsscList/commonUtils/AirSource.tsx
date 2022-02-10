@@ -2,7 +2,7 @@ import { MsscIdObject, MsscSource } from '../msscUtils/MsscSource';
 import {
   HoggConnectorAirtable,
   HoggConnectorNT,
-  HoggOffsetCount,
+  HoggOffsetCount, HoggResultAccum,
   HoggTupleNT,
   tupleFrom,
   tupleToObject
@@ -21,6 +21,7 @@ import { MsscFilter } from '../msscUtils/MsscFilter';
 import { MsscElem } from '../msscUtils/MsscElem';
 import _ from 'lodash';
 import { PElemAsau66, RsuvAsau67 } from 'rsuv-lib/dist/RsuvTuPromiseAllSettled';
+import { MsscTag } from '../msscUtils/MsscTag';
 
 type Ty2130 = { index: number, tuple: HoggTupleNT }
 
@@ -48,14 +49,22 @@ export class AirSourceParams<T> {
   /**
    * на базе (1) нужно сформировать MsscFilter
    */
-  cbSearchTextToMsscFilter?: (searchText: string) => MsscFilter[] | null
+  cbFilterFromSearchText?: (searchText: string) => MsscFilter[] | null
+  /**
+   * на базе тегов (1) нужно сформировать MsscFilter
+   */
+  cbFilterFromTags?: (tags: string[]) => MsscFilter[] | null
 }
 
 function msscFiltersToVuscFilter(filters: MsscFilter[]) {
   if (filters && filters.length > 0) {
     return `SUM(${filters.reduce<string[]>((acc, elFilter) => {
       if (elFilter?.paramId?.val && elFilter?.filterValue) {
-        acc.push(`(FIND(LOWER("${elFilter.filterValue}"),LOWER({${elFilter.paramId.val}})))`)
+        if (!elFilter.isArrElemFind) {
+          acc.push(`(FIND(LOWER("${elFilter.filterValue}"),LOWER({${elFilter.paramId.val}})))`)
+        } else {
+          acc.push(`(FIND(",${elFilter.filterValue},",CONCATENATE(",",ARRAYJOIN({${elFilter.paramId.val}}),",")))`)
+        }
       }
       return acc
     }, []).join(',')})`
@@ -264,12 +273,36 @@ export class AirSource<T> implements MsscSource<T> {
     return null;
   }
 
-  searchTextToMsscFilter(searchText: string): MsscFilter[] | null {
+  filterFromSearchText(searchText: string): MsscFilter[] | null {
     if (searchText) {
-      return this.params.cbSearchTextToMsscFilter?.(searchText) || null
+      return this.params.cbFilterFromSearchText?.(searchText) || null
     }
     return null
   }
 
+  filterFromTags(tags: string[]): MsscFilter[] | null {
+    if (tags && tags.length > 0) {
+      return this.params.cbFilterFromTags?.(tags) || null
+    }
+    return null;
+  }
+
+
+  async tags(filters: MsscFilter[], fieldName: string): Promise<MsscTag[]> {
+    let {filterVusc} = this.fnFilterSort(filters, []);
+    // ---
+    const hoggOffset = new HoggOffsetCount(true);
+    // --- QUERY
+    const queryResult: HoggResultAccum[] = await this.connector
+      .filterVusc(filterVusc)
+      .queryAccum(hoggOffset, fieldName) // <=== QUERY
+    // ---
+    if (queryResult && queryResult.length > 0) {
+      return queryResult.map(el => {
+        return new MsscTag(el.value, el.ids.length)
+      })
+    }
+    return [];
+  }
 
 }

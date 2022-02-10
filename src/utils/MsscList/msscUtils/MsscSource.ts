@@ -8,6 +8,7 @@ import {
 } from 'rsuv-lib';
 import { MsscElem } from './MsscElem';
 import { MsscFilter } from './MsscFilter';
+import { MsscTag } from './MsscTag';
 
 export interface MsscSource<TModel> {
 
@@ -99,10 +100,16 @@ export interface MsscSource<TModel> {
   dialogMiddleware(obj?: TModel): object | TModel | null;
 
   /**
-   * *С-компонент вызывает эту функцию чтобы *клиент на базе (1) подготовил {@link MsscFilter}
+   * *С-компонент вызывает эту функцию чтобы *клиент на базе (1) подготовил {@link MsscFilter[]}
    * @param searchText
    */
-  searchTextToMsscFilter(searchText: string): MsscFilter[] | null
+  filterFromSearchText(searchText: string): MsscFilter[] | null
+
+  /**
+   * *С-компонент вызывает эту функцию чтобы *клиент на базе тегов (1) подготовил {@link MsscFilter[]}
+   * @param tags
+   */
+  filterFromTags(tags: string[]): MsscFilter[] | null
 
   /**
    * получение ID всех элементов хранилища удовлетворяющих (1) и (2)
@@ -110,6 +117,13 @@ export interface MsscSource<TModel> {
    * @param sorts (2) --пустой или не пустой массив
    */
   idsAll(filters: MsscFilter[], sorts: RsuvTxSort[]): Promise<string[]>
+
+  /**
+   * возвращает теги (значения поля (2)) для виджета тегов
+   * @param filters (1) --
+   * @param fieldName (2) --
+   */
+  tags(filters: MsscFilter[], fieldName: string): Promise<MsscTag[]>
 }
 
 /**

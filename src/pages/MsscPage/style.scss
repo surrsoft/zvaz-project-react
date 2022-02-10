@@ -22,6 +22,18 @@
     font-size: 12px;
   }
 
+  .list-elem__tags {
+    display: flex;
+    font-size: 11px;
+    column-gap: 6px;
+
+    .list-elem__tag {
+      border: 1px solid silver;
+      border-radius: 6px;
+      padding: 0 8px;
+    }
+  }
+
   .list-elem__times {
     display: flex;
     column-gap: 8px;
