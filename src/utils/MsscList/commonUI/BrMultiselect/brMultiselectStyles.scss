@@ -5,6 +5,13 @@
   display: inline-flex;
   padding: 0 8px;
 
+  .br-mselect__text0 {
+    font-weight: 700;
+  }
+  .br-mselect__text0_highlight {
+    color: red;
+  }
+
   .br-mselect__dropdown {
     display: none;
     position: absolute;
@@ -20,6 +27,16 @@
     overflow: auto;
   }
 
+  .br-mselect__dropdown-canvas {
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 96;
+  }
+
   .br-mselect__dropdown_showed {
     display: inline-flex;
     flex-direction: column;
@@ -32,4 +49,10 @@
   .br-mselect__text_disabled {
     color: silver;
   }
+
+  .br-mselect__btn-clear {
+    margin-left: 8px;
+  }
+
+
 }

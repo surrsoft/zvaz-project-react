@@ -227,7 +227,7 @@ export function MsscPage() {
           {sortJsx}
           {infosJsx}
         </div>
-        {multiselectJsx}
+        <div className="block1948">{multiselectJsx}</div>
         {listJsx}
       </>
     )

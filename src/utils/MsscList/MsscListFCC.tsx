@@ -584,7 +584,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
         {
           sortData && <div className="mssc-body__sort-filter-container">
             {/* [[220129214739]] */}
-						<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
+						<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr} />
 					</div>
         }
       </>
@@ -784,7 +784,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
 
     return (
       <div className="mscc-mselect">
-        <BrMultiselect datas={$tags} cbOnChange={onChangeHandle}/>
+        <BrMultiselect datas={$tags} cbOnChange={onChangeHandle} text="теги"/>
       </div>
     )
   }
