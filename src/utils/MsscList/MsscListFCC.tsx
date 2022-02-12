@@ -44,7 +44,7 @@ export interface Ty1159 {
   sortJsx?: JSX.Element
   listJsx?: JSX.Element
   searchJsx?: JSX.Element
-  multiselectJsx?: JSX.Element
+  multiselectJsxArr?: JSX.Element[]
 }
 
 export enum EnMsscMenuAction {
@@ -64,12 +64,26 @@ interface MsscListProps {
                       menuJsx
                     }: Ty1609) => JSX.Element
   children?: any
-  tagsFieldName?: string
+  tagsFieldNameArr?: MsscMultFields[]
+}
+
+type MsscTagsID = string
+
+type Ty1041 = {
+  id: MsscTagsID
+  elems: DataElemAtAsau73[]
+  visibleName: string
+}
+
+export type MsscMultFields = {
+  id: MsscTagsID
+  fieldName: string
+  visibleName: string
 }
 
 let scrollTop = 0;
 
-const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}: MsscListProps): JSX.Element => {
+const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameArr}: MsscListProps): JSX.Element => {
   // source = null; // del+
 
   const config = {
@@ -131,7 +145,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
   const [$searchText, $searchTextSet] = useState('');
   const [$randomEnabled, $randomEnabledSet] = useState(false);
   const [$idsShuffled, $idsShuffledSet] = useState<string[]>([]);
-  const [$tags, $tagsSet] = useState<DataElemAtAsau73[]>([]);
+  const [$tags, $tagsSet] = useState<Ty1041[]>([]);
   const [$tagsSelected, $tagsSelectedSet] = useState<DataElemAtAsau73[]>([]);
 
   // ---
@@ -175,7 +189,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
 
   function fnFiltersCreate(source: MsscSource<any>): MsscFilter[] {
     let filterTags: MsscFilter[] = []
-    if (tagsFieldName) {
+    if (tagsFieldNameArr) {
       const tags = $tagsSelected.map(el => {
         return el.id
       })
@@ -237,25 +251,30 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
         }
       }
       // --- получение тегов
-      if (tagsFieldName) {
-        let tags = await source?.tags(filters, tagsFieldName)
-        console.log('!!-!!-!! tags {220210130326}\n', tags) // del+
-        // --- sort
-        tags = _.orderBy(tags, ['count', 'value'], ['desc', 'asc'])
-        // ---
-        const tags0: DataElemAtAsau73[] = tags.map(el => {
-          return new DataElemAtAsau73(el.value, `${el.value} (${el.count})`)
-        })
-        // ---
-        tags0.forEach(elTag => {
-          const b1 = $tagsSelected.find(el => el.id === elTag.id)
-          if (b1) {
-            elTag.checked = true;
-          }
-          elTag.visibleText = SquareBrackets.bracketsRemove(elTag.visibleText)
-        })
-        // ---
-        $tagsSet(tags0)
+      if (tagsFieldNameArr && tagsFieldNameArr.length > 0) {
+        const rr0: Ty1041[] = []
+        for (let elTg of tagsFieldNameArr) { // LOOP
+          let tags = await source?.tags(filters, elTg.fieldName)
+          console.log('!!-!!-!! tags {220210130326}\n', tags) // del+
+          // --- sort
+          tags = _.orderBy(tags, ['count', 'value'], ['desc', 'asc'])
+          // ---
+          const tags0: DataElemAtAsau73[] = tags.map(el => {
+            return new DataElemAtAsau73(el.value, `${el.value} (${el.count})`)
+          })
+          // ---
+          tags0.forEach(elTag => {
+            const b1 = $tagsSelected.find(el => el.id === elTag.id)
+            if (b1) {
+              elTag.checked = true;
+            }
+            elTag.visibleText = SquareBrackets.bracketsRemove(elTag.visibleText)
+          })
+          // ---
+          const rr = {id: elTg.id, elems: tags0, visibleName: elTg.visibleName} as Ty1041
+          rr0.push(rr)
+        } // LOOP
+        $tagsSet(rr0)
       }
       // --- pagination - pageCountAll
       const pagination = new RsuvPaginationGyth(elemsCountByFilter, config.elemsOnPage)
@@ -766,7 +785,6 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
   }
 
 
-
   function ListLocalFCC() {
     const refDivScroll = useRef(null)
 
@@ -791,7 +809,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
     )
   }
 
-  function MultiselectLocalFCC() {
+  function MultiselectLocalFCC({tagsId}: { tagsId: MsscTagsID }) {
 
     /**
      * [[220211130543]]
@@ -803,9 +821,11 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
       refreshWhole()
     }
 
+    const rr = $tags.find((ell: Ty1041) => ell.id === tagsId)
+
     return (
       <div className="mscc-mselect">
-        <BrMultiselect datas={$tags} cbOnChange={onChangeHandle} text="теги"/>
+        <BrMultiselect datas={rr?.elems} cbOnChange={onChangeHandle} text={rr?.visibleName}/>
       </div>
     )
   }
@@ -829,7 +849,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
           sortJsx: <SortLocalFCC/>,
           searchJsx: <SearchLocalFCC/>,
           listJsx: <ListLocalFCC/>,
-          multiselectJsx: <MultiselectLocalFCC/>
+          multiselectJsxArr: tagsFieldNameArr?.map(el => (<MultiselectLocalFCC tagsId={el.id}/>))
         } as Ty1159)
       }
 

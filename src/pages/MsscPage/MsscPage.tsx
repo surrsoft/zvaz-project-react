@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import './style.scss';
 
-import MsscListFCC, { Ty1159, Ty1609 } from '../../utils/MsscList/MsscListFCC';
+import MsscListFCC, { MsscMultFields, Ty1159, Ty1609 } from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
@@ -212,7 +212,7 @@ export function MsscPage() {
                        searchJsx,
                        buttonsJsx,
                        listJsx,
-                       multiselectJsx
+                       multiselectJsxArr
                      }: Ty1159) => {
     return (
       <>
@@ -228,7 +228,11 @@ export function MsscPage() {
           {sortJsx}
           {infosJsx}
         </div>
-        <div className="block1948">{multiselectJsx}</div>
+        <div>
+          {multiselectJsxArr?.map(el => {
+            return (<div className="block1948">{el}</div>)
+          })}
+        </div>
         {listJsx}
       </>
     )
@@ -239,7 +243,7 @@ export function MsscPage() {
       source={airSource}
       listElemStruct={listElemStructBuilder}
       sortData={sortDataSTA}
-      tagsFieldName={EnField.TAGS}
+      tagsFieldNameArr={[{id: EnField.TAGS, fieldName: EnField.TAGS, visibleName: 'теги'} as MsscMultFields]}
     >{fnBuilder}</MsscListFCC>
   </div>)
 }
