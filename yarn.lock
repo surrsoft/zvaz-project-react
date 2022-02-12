@@ -6755,10 +6755,10 @@ hogg-lib@^1.1.0:
     isomorphic-fetch "^3.0.0"
     rsuv-lib "^1.2.0"
 
-hogg-lib@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.6.0.tgz#e3a2d78056b9218ebc7f089af5d5f825ab855e12"
-  integrity sha512-1FfBVeoucDO0WQfCRyqbtKmA4byIk8d26PLsnaYfM7G8GCQnoaNjF+IWSrEZR9YsO5FUqMGGBi2iy1XKEiswbA==
+hogg-lib@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/hogg-lib/-/hogg-lib-2.7.0.tgz#259d1286f1fc760d60dc351ae673f9c917f60695"
+  integrity sha512-ik4LpV9v9vWVGtdrRGmsidUJysllcdsomAh+a4UURz4LwySw60o8yIvtkbqcPrnYFeRw6jo4kQsqZlx+v/jhjA==
   dependencies:
     "@types/isomorphic-fetch" "^0.0.35"
     airtable "^0.11.1"
@@ -11301,10 +11301,10 @@ rsuv-lib@^1.2.0:
     lodash-es "^4.17.21"
     validator "^13.7.0"
 
-rsuv-lib@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-2.7.0.tgz#4c67f30791716de2ef34a8c924f6d466c25a4d8d"
-  integrity sha512-oRMkKMYkUQfkuvlt6shBreh56/E/iHeixKZp/ngNCxZrZzvIkHUrzq1G6d+whaByllGVPhs5eXjwz/VIPC+CkQ==
+rsuv-lib@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-2.8.0.tgz#6186e11aed65baa8af237aafc5fccc9a382a8e4e"
+  integrity sha512-779xAsdMcf4S8A1pF/wQj+PxmOb92u1nH7Ho7n0mPr6MoREWYO0c2J0M6HpsfsvOAaHCE8etcqZi/ZLI6wRwCw==
   dependencies:
     "@types/lodash" "^4.14.170"
     "@types/validator" "^13.6.2"

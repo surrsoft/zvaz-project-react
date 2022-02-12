@@ -4,7 +4,7 @@ import {
   RsuvResultTibo,
   RsuvTxNumIntAB,
   RsuvTxNumIntDiap,
-  RsuvTxSort, RsuvTxStringAB
+  RsuvTxSort
 } from 'rsuv-lib';
 import { MsscElem } from './MsscElem';
 import { MsscFilter } from './MsscFilter';

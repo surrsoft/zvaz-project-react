@@ -24,6 +24,7 @@
     padding: 8px;
     z-index: 100;
     min-height: 300px;
+    max-height: 450px;
     overflow: auto;
   }
 
@@ -54,5 +55,9 @@
     margin-left: 8px;
   }
 
-
+  .br-mselect__elem {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+  }
 }

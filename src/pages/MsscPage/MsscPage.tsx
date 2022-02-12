@@ -8,7 +8,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
 import { RsuvEnSort, RsuvTxStringAC } from 'rsuv-lib';
 import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
-import { MsscColumnName } from '../../utils/MsscList/msscUtils/msscUtils';
+import { MsscColumnName, SquareBrackets } from '../../utils/MsscList/msscUtils/msscUtils';
 import { MsscFilter } from '../../utils/MsscList/msscUtils/MsscFilter';
 
 enum EnField {
@@ -21,7 +21,8 @@ enum EnField {
 }
 
 const airSource = new AirSource({
-  dbKey: 'appZoHaX4a5tRLJlv', // mssc-training-3
+  // dbKey: 'appZoHaX4a5tRLJlv', // mssc-training-3
+  dbKey: 'appXv6ry7Vn262nGR', // sites
   // dbKey: 'appskGCKvIZEdVBTO',
   // dbKey: 'appHOzDglc28fCztP',
   tableName: 'main',
@@ -48,7 +49,7 @@ const airSource = new AirSource({
           {
             elObj.tags.map((elTag: string) => {
               return (
-                <div key={elTag} className="list-elem__tag">{elTag}</div>
+                <div key={elTag} className="list-elem__tag">{SquareBrackets.bracketsRemove(elTag)}</div>
               )
             })
           }

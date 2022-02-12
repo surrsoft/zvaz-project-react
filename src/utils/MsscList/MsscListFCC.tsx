@@ -23,7 +23,7 @@ import useScrollFix from '../useScrollFix';
 import BrSpinner from './commonUI/BrSpinner/BrSpinner';
 import { BrSelectId, BrSelectItem, BrSelectSortData } from './commonUI/BrSelect/brSelectUtils';
 import BrSelect from './commonUI/BrSelect/BrSelect';
-import { MsscColumnName } from './msscUtils/msscUtils';
+import { MsscColumnName, SquareBrackets } from './msscUtils/msscUtils';
 import BrInput, { BrInputEnIcon } from './commonUI/BrFilter/BrInput';
 import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
@@ -66,6 +66,8 @@ interface MsscListProps {
   children?: any
   tagsFieldName?: string
 }
+
+let scrollTop = 0;
 
 const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}: MsscListProps): JSX.Element => {
   // source = null; // del+
@@ -179,9 +181,6 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
       })
       filterTags = source?.filterFromTags(tags) || []
     }
-    console.log('!!-!!-!! filterTags {220210170830}\n', filterTags) // del+
-    // ---
-    // [[220130145735]]
     const filterSearchText = source?.filterFromSearchText($searchText) || []
     // ---
     return [...filterTags, ...filterSearchText];
@@ -239,9 +238,12 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
       }
       // --- получение тегов
       if (tagsFieldName) {
-        const tags = await source?.tags(filters, tagsFieldName)
+        let tags = await source?.tags(filters, tagsFieldName)
         console.log('!!-!!-!! tags {220210130326}\n', tags) // del+
-        const tags0 = tags.map(el => {
+        // --- sort
+        tags = _.orderBy(tags, ['count', 'value'], ['desc', 'asc'])
+        // ---
+        const tags0: DataElemAtAsau73[] = tags.map(el => {
           return new DataElemAtAsau73(el.value, `${el.value} (${el.count})`)
         })
         // ---
@@ -250,6 +252,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
           if (b1) {
             elTag.checked = true;
           }
+          elTag.visibleText = SquareBrackets.bracketsRemove(elTag.visibleText)
         })
         // ---
         $tagsSet(tags0)
@@ -584,7 +587,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
         {
           sortData && <div className="mssc-body__sort-filter-container">
             {/* [[220129214739]] */}
-						<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr} />
+						<BrSelect data={sortData} cbSelect={sortHandler} selectedId={$sortIdCurr}/>
 					</div>
         }
       </>
@@ -762,9 +765,22 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
     )
   }
 
+
+
   function ListLocalFCC() {
+    const refDivScroll = useRef(null)
+
+    function onScrollHandler(ev: any) {
+      scrollTop = ev?.target?.scrollTop
+    }
+
+    useEffect(() => {
+      const node: any = refDivScroll.current
+      node.scrollTo(0, scrollTop)
+    });
+
     return (
-      <div className="mssc-list-block" style={{position: 'relative'}}>
+      <div ref={refDivScroll} className="mssc-list-block" style={{position: 'relative'}} onScroll={onScrollHandler}>
         <BrSpinner show={$loadingB} fullscreen={false}/>
         {
           $elems.map((elObj: MsscElem) => {
@@ -776,6 +792,11 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
   }
 
   function MultiselectLocalFCC() {
+
+    /**
+     * [[220211130543]]
+     * @param checkedElems
+     */
     const onChangeHandle = (checkedElems: DataElemAtAsau73[]) => {
       console.log('!!-!!-!! checkedElems {220209223245}\n', checkedElems) // del+
       $tagsSelectedSet(checkedElems)
@@ -790,24 +811,9 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldName}
   }
 
   // --- === ---
-
   return (
     <div className="mssc-base">
       {$isError ? <div className="mssc-base__error">ошибка</div> : null}
-
-      {/* // del+ mass */}
-      {/*{!$loading && <div className="mssc-base__list">*/}
-      {/*	<InfosLocalFCC/>*/}
-      {/*	<div className="mssc-base__body">*/}
-      {/*    /!* [[220129145117]] *!/*/}
-      {/*		<ButtonsLocalFCC/>*/}
-      {/*		<SortLocalFCC/>*/}
-      {/*	</div>*/}
-      {/*	<PaginatorLocalFCC/>*/}
-      {/*	<ListLocalFCC/>*/}
-      {/*	<PaginatorLocalFCC/>*/}
-      {/*</div>*/}
-      {/*}*/}
 
       {
         !$loading && children?.({

@@ -10,7 +10,7 @@ import {
 import {
   RsuvEnResultCrudSet,
   RsuvResultBoolPknz,
-  RsuvResultTibo,
+  RsuvResultTibo, RsuvTu,
   RsuvTuPromiseAllSettled,
   RsuvTxNumIntAB,
   RsuvTxNumIntDiap,
@@ -64,7 +64,11 @@ function msscFiltersToVuscFilter(filters: MsscFilter[]) {
         if (!elFilter.isArrElemFind) {
           acc.push(`(FIND(LOWER("${elFilter.filterValue}"),LOWER({${elFilter.paramId.val}})))`)
         } else {
-          rrTags.push(`(FIND("${elFilter.filterValue}",{${elFilter.paramId.val}}))`)
+          if (elFilter.filterValue !== RsuvTu.RSUV_NO_TAGS_SPC_VALUE) {
+            rrTags.push(`(FIND("${elFilter.filterValue}",{${elFilter.paramId.val}}))`)
+          } else {
+            rrTags.push(`(LEN({${elFilter.paramId.val}}) < 1)`)
+          }
         }
       }
       return acc

@@ -40,7 +40,8 @@ export interface PropsAtAsau73 {
 }
 
 export default function BrMultiselect({datas = [], cbOnChange, text = 'selected'}: PropsAtAsau73) {
-  const [$selectCount, $selectCountSet] = useState(() => {
+
+  const [$selectCount] = useState(() => {
     return datas.filter(el => el.checked)?.length || 0
   });
   const [$dropdownShow, $dropdownShowSet] = useState(false);
@@ -56,8 +57,6 @@ export default function BrMultiselect({datas = [], cbOnChange, text = 'selected'
 
   const checkboxChange = (elem: DataElemAtAsau73) => (ev: any) => {
     const checked = ev?.target?.checked
-    console.log('!!-!!-!! checked {220209222217}\n', checked) // del+
-    console.log('!!-!!-!! elem {220209222550}\n', elem) // del+
     if (cbOnChange) {
       if (checked) {
         const rr = datas.find(el => el.id === elem.id)
@@ -92,7 +91,7 @@ export default function BrMultiselect({datas = [], cbOnChange, text = 'selected'
       {
         datas.map(el => {
           return (
-            <div key={el.id}>
+            <div className="br-mselect__elem" key={el.id}>
               <input
                 type="checkbox"
                 checked={el.checked}
