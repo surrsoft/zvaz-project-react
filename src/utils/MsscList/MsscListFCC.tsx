@@ -5,7 +5,7 @@ import { MsscIdObject, MsscSource } from './msscUtils/MsscSource';
 import {
   RsuvEnResultCrudSet,
   RsuvEnSort,
-  RsuvPaginationGyth,
+  RsuvPaginationGyth, RsuvTxChecked,
   RsuvTxNumIntAB,
   RsuvTxNumIntDiap,
   RsuvTxSort,
@@ -29,9 +29,9 @@ import { MsscFilter } from './msscUtils/MsscFilter';
 import SvgIconDice from './commonIcons/SvgIconDice/SvgIconDice';
 import MsscPaginatorFCC from './msscComponents/MsscPaginatorFCC/MsscPaginatorFCC';
 import classNames from 'classnames';
-import BrMultiselect, { DataElemAtAsau73 } from './commonUI/BrMultiselect/BrMultiselect';
+import BrMultiselect from './commonUI/BrMultiselect/BrMultiselect';
 
-export interface Ty1159 {
+export interface MsscJsxExternal {
   infosJsx?: JSX.Element
   paginator1Jsx?: JSX.Element
   paginator2Jsx?: JSX.Element
@@ -47,22 +47,31 @@ export interface Ty1159 {
   multiselectJsxArr?: JSX.Element[]
 }
 
-export enum EnMsscMenuAction {
+export enum MsscEnMenuAction {
   EDIT = 'edit',
   SELECT = 'select',
   DELETE = 'delete'
 }
 
-export type Ty1609 = { isActive?: boolean, checkboxJsx?: JSX.Element, bodyJsx?: JSX.Element, menuJsx?: JSX.Element }
+export type MsscElemStruct = { isActive?: boolean, checkboxJsx?: JSX.Element, bodyJsx?: JSX.Element, menuJsx?: JSX.Element }
 
 interface MsscListProps {
+  /**
+   *
+   */
   source: MsscSource<any> | null
   sortData?: BrSelectSortData<MsscColumnName>
+  /**
+   * *клиент определяет как должны распологаться элементы отдельного элемента списка
+   * @param checkboxJsx
+   * @param bodyJsx
+   * @param menuJsx
+   */
   listElemStruct?: ({
                       checkboxJsx,
                       bodyJsx,
                       menuJsx
-                    }: Ty1609) => JSX.Element
+                    }: MsscElemStruct) => JSX.Element
   children?: any
   tagsFieldNameArr?: MsscMultFields[]
 }
@@ -72,21 +81,30 @@ interface MsscListProps {
  */
 type MsscTagsID = string
 
+/**
+ * Представляет *группу-тегов всех
+ */
 type MsscTagGroup = {
   id: MsscTagsID
   /**
    * сами теги
    */
-  elems: DataElemAtAsau73[]
+  elems: RsuvTxChecked[]
   /**
    *
    */
   visibleName: string
 }
 
-type MsscTagsSelected = {
+/**
+ * Представляет *группу-тегов выбранных
+ */
+type MsscTagGroupSelected = {
   id: MsscTagsID
-  elems: DataElemAtAsau73[]
+  /**
+   * сами теги
+   */
+  elems: RsuvTxChecked[]
 }
 
 export type MsscMultFields = {
@@ -108,9 +126,9 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
   const menuDataSTA = {
     id: '',
     items: [
-      {idAction: EnMsscMenuAction.EDIT, text: 'Изменить'} as ItemAtAsau54,
-      {idAction: EnMsscMenuAction.SELECT, text: 'Выбрать'} as ItemAtAsau54,
-      {idAction: EnMsscMenuAction.DELETE, text: 'Удалить'} as ItemAtAsau54
+      {idAction: MsscEnMenuAction.EDIT, text: 'Изменить'} as ItemAtAsau54,
+      {idAction: MsscEnMenuAction.SELECT, text: 'Выбрать'} as ItemAtAsau54,
+      {idAction: MsscEnMenuAction.DELETE, text: 'Удалить'} as ItemAtAsau54
     ]
   } as DataAtAsau54
 
@@ -159,9 +177,11 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
   const [$searchText, $searchTextSet] = useState('');
   const [$randomEnabled, $randomEnabledSet] = useState(false);
   const [$idsShuffled, $idsShuffledSet] = useState<string[]>([]);
+  // --- теги (мультивыбор)
   // все *группы-тегов
   const [$tagGroupArr, $tagGroupArrSet] = useState<MsscTagGroup[]>([]);
-  const [$tagGoupsSelectedArr, $tagGoupsSelectedArrSet] = useState<MsscTagsSelected[]>([]);
+  // *группы-тегов только с выбранными тегами (отмеченными галками)
+  const [$tagGroupSelectedArr, $tagGroupSelectedArrSet] = useState<MsscTagGroupSelected[]>([]);
 
   // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
@@ -175,24 +195,6 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
     elems(ixStart: number, ixEnd: number): MsscIdObject[] {
       return $idsShuffled.slice(ixStart, ixEnd + 1).map((el) => ({id: el}))
     },
-    // /**
-    //  * вставляет id из (1) случаным образом в {@link $idsShuffled}
-    //  * @param ids
-    //  */
-    // elemsAdd(ids: string[]) {
-    //   ids.forEach(elId => {
-    //     const ixPut = _.random($idsShuffled.length)
-    //     $idsShuffled.splice(ixPut, 0, elId)
-    //   })
-    // },
-    // /**
-    //  * удаляет из {@link $idsShuffled} id присутствующие в (1)
-    //  * @param ids
-    //  */
-    // elemsDelete(ids: string[]) {
-    //   const filtered = $idsShuffled.filter(elId => ids.includes(elId))
-    //   $idsShuffledSet(filtered)
-    // }
   }
 
   const fnError = () => {
@@ -205,8 +207,8 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
   function fnFiltersCreate(source: MsscSource<any>): MsscFilter[] {
     let filterTags: MsscFilter[] = []
     if (!_.isEmpty(tagsFieldNameArr)) {
-      $tagGoupsSelectedArr.map((elTagGroup: MsscTagsSelected) => {
-        const tags = elTagGroup.elems.map((el: DataElemAtAsau73) => {
+      $tagGroupSelectedArr.map((elTagGroup: MsscTagGroupSelected) => {
+        const tags = elTagGroup.elems.map((el: RsuvTxChecked) => {
           return el.id
         })
         const filters: MsscFilter[] = source?.filterFromTags(tags, elTagGroup.id) || []
@@ -240,6 +242,10 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
     return rsuvTxSort0 ? [rsuvTxSort0] : [];
   }
 
+  /**
+   * получение всех основных данных
+   * @param source
+   */
   const requestFirst = async (source: MsscSource<any>) => {
 
     try {
@@ -279,12 +285,12 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
           // --- sort
           tags = _.orderBy(tags, ['count', 'value'], ['desc', 'asc'])
           // ---
-          const tags0: DataElemAtAsau73[] = tags.map(el => {
-            return new DataElemAtAsau73(el.value, `${el.value} (${el.count})`)
+          const tags0: RsuvTxChecked[] = tags.map(el => {
+            return new RsuvTxChecked(el.value, `${el.value} (${el.count})`)
           })
           // ---
           tags0.forEach(elTag => {
-            const b1 = $tagGoupsSelectedArr.find(el => el.id === elTag.id)
+            const b1 = $tagGroupSelectedArr.find(el => el.id === elTag.id)
             if (b1) {
               elTag.checked = true;
             }
@@ -309,6 +315,10 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
     }
   };
 
+  /**
+   * получение данных конкретной страницы
+   * @param source
+   */
   const requestTwo = async (source: MsscSource<any>) => {
     try {
       $loadingBSet(true)
@@ -371,27 +381,28 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
     }
   }, [$fdone, $needUpdate2]);
 
-  function refreshPageData() {
-    $needUpdate2Set(!$needUpdate2)
+  const refreshes = {
+    pageDataRefresh: () => {
+      $needUpdate2Set(!$needUpdate2)
+    },
+    /**
+     * Выполнение полного перезапроса всех данных
+     *
+     * СМ, ТАКЖЕ {@link refresh}
+     */
+    whole: () => {
+      $needUpdate1Set(!$needUpdate1)
+    },
+    /**
+     * Перезапрос данных страницы только.
+     *
+     * СМ. ТАКЖЕ {@link refreshes#whole}
+     */
+    refreshPage: () => {
+      $refreshSet(!$refresh)
+    }
   }
 
-  /**
-   * Выполнение полного перезапроса всех данных
-   *
-   * СМ, ТАКЖЕ {@link refresh}
-   */
-  function refreshWhole() {
-    $needUpdate1Set(!$needUpdate1)
-  }
-
-  /**
-   * Перезапрос данных страницы только.
-   *
-   * СМ. ТАКЖЕ {@link refreshWhole}
-   */
-  const refresh = () => {
-    $refreshSet(!$refresh)
-  }
 
   const dialogDeleteShow = () => {
     $dialogTitleSet('удаление')
@@ -442,7 +453,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
         scrollFixFn(false)
         if (success) {
           $dialogCreateEditShowedSet(false)
-          refreshWhole()
+          refreshes.whole()
         } else {
           fnError()
         }
@@ -456,19 +467,6 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
       $dialogCreateEditShowedSet(false)
       scrollFixFn(false)
     }
-  }
-
-  function ParamUiLocalFCC({str1, str2}: { str1: string, str2?: any }) {
-    return (
-      <div style={{display: 'flex', alignItems: 'center', columnGap: 6, fontFamily: 'monospace'}}>
-        <div style={{color: 'blue'}}>{str1}</div>
-        <div style={{
-          border: '1px solid silver',
-          borderRadius: 4,
-          padding: '0 8px 0 8px'
-        }}>{(str2 || str2 === 0) ? str2 : '-'}</div>
-      </div>
-    )
   }
 
   function ParamUiLocalFCC_B({str1, str2}: { str1: string, str2?: any }) {
@@ -491,24 +489,24 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
      */
     const menuElemOnSelected = async (obj: SelectResultAtAsau54) => {
       switch (obj.idAction) {
-        case EnMsscMenuAction.DELETE:
+        case MsscEnMenuAction.DELETE:
           if (obj.idElem) {
             // чистим если что-то уже выбрано
             $listModel.selectElemsClear()
             $listModel.selectElemsAdd([obj.idElem])
             $listModel.activeIdSet(obj.idElem)
-            refresh()
+            refreshes.refreshPage()
           }
           dialogDeleteShow()
           break;
-        case EnMsscMenuAction.SELECT:
+        case MsscEnMenuAction.SELECT:
           if (obj.idElem) {
             $listModel.selectElemsAdd([obj.idElem])
             $listModel.activeIdSet(obj.idElem)
-            refresh()
+            refreshes.refreshPage()
           }
           break;
-        case EnMsscMenuAction.EDIT:
+        case MsscEnMenuAction.EDIT:
           if (obj.idElem) {
             const elem = $elems.find(el => el.id.val === obj.idElem)
             if (elem) {
@@ -537,7 +535,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
         $listModel.selectElemsDelete([id])
         $listModel.activeIdSet(id)
       }
-      refresh()
+      refreshes.refreshPage()
     }
 
     function RkCheckboxLocalFCC() {
@@ -595,7 +593,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
      */
     function searchHandler(value: string) {
       $searchTextSet(value)
-      refreshWhole()
+      refreshes.whole()
     }
 
     return (
@@ -611,14 +609,13 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
 
   function SortLocalFCC() {
 
-
     /**
      * [[220129163836]]
      * @param sortItem
      */
     const sortHandler = (sortItem: BrSelectItem<MsscColumnName>) => {
       $sortIdCurrSet(sortItem.idElem)
-      refreshWhole()
+      refreshes.whole()
     }
 
     return (
@@ -638,7 +635,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
     async function fnPaginationHandle(nextPage: number) {
       $pageNumBeforChangeSet($pageNumCurrent)
       $pageNumCurrentSet(nextPage)
-      refreshPageData()
+      refreshes.pageDataRefresh()
     }
 
     return (
@@ -688,7 +685,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
   function ButtonDeselectAllLocalFCC() {
     const deselectAllHandler = () => {
       $listModel.selectElemsClear()
-      refresh()
+      refreshes.refreshPage()
     }
     return (
       <button disabled={$listModel.selectElemsCount() < 1} title="отменить выбор всех элементов"
@@ -711,7 +708,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
      */
     function diceHandler() {
       $randomEnabledSet(!$randomEnabled)
-      refreshWhole()
+      refreshes.whole()
     }
 
     // [[220130202258]] random button
@@ -719,17 +716,6 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
       <button onClick={diceHandler} title="random">
         <SvgIconDice svgProps={{width: '20px', height: '20px'}} colors={fnColorsForRandom()}/>
       </button>
-    )
-  }
-
-  function ButtonsLocalFCC() {
-    return (
-      <div className="mssc-body__buttons">
-        <ButtonDeleteLocalFCC/>
-        <ButtonCreateLocalFCC/>
-        <ButtonDeselectAllLocalFCC/>
-        <ButtonDiceLocalFCC/>
-      </div>
     )
   }
 
@@ -753,7 +739,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
                 $listModel.selectElemsClear()
                 scrollFixFn(false)
                 $dialogDeleteShowedSet(false)
-                refreshWhole()
+                refreshes.whole()
               } else {
                 console.warn(`[${noDeletedElems.length}] elems not deleted`)
                 fnError()
@@ -776,17 +762,6 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
         cbCancel={dialogDeleteHandlers.cancel}
         cbOk={dialogDeleteHandlers.ok}
       />
-    )
-  }
-
-  function InfosLocalFCC() {
-    return (
-      <div className="mssc-base__infos">
-        <ParamUiLocalFCC str1="элементов на текущ. странице" str2={$elemsOnCurrPage}/>
-        <ParamUiLocalFCC str1="элементов всего по фильтру" str2={$elemsCountByFilter}/>
-        <ParamUiLocalFCC str1="элементов всего" str2={$elemsCountAll === -1 ? '-' : $elemsCountAll}/>
-        <ParamUiLocalFCC str1="элементов выбрано" str2={$listModel.selectElemsCount()}/>
-      </div>
     )
   }
 
@@ -835,24 +810,24 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
      * [[220211130543]]
      * @param checkedElems
      */
-    const onChangeHandle = (checkedElems: DataElemAtAsau73[]) => {
+    const onChangeHandle = (checkedElems: RsuvTxChecked[]) => {
       console.log('!!-!!-!! checkedElems {220209223245}\n', checkedElems) // del+
       debugger; // del+
-      const tagGroups = _.cloneDeep($tagGoupsSelectedArr)
-      const group = tagGroups.find((el: MsscTagsSelected) => el.id === tagsId)
+      const tagGroups = _.cloneDeep($tagGroupSelectedArr)
+      const group = tagGroups.find((el: MsscTagGroupSelected) => el.id === tagsId)
       if (group) {
         group.elems = checkedElems;
       } else {
-        const newGroup = {id: tagsId, elems: checkedElems} as MsscTagsSelected
+        const newGroup = {id: tagsId, elems: checkedElems} as MsscTagGroupSelected
         tagGroups.push(newGroup)
       }
-      $tagGoupsSelectedArrSet(tagGroups)
-      refreshWhole()
+      $tagGroupSelectedArrSet(tagGroups)
+      refreshes.whole()
     }
 
     const rr: MsscTagGroup | undefined = $tagGroupArr.find((ell: MsscTagGroup) => ell.id === tagsId)
-    const tagGroup = $tagGoupsSelectedArr.find(el => el.id === tagsId)
-    rr?.elems.forEach((el: DataElemAtAsau73) => {
+    const tagGroup = $tagGroupSelectedArr.find(el => el.id === tagsId)
+    rr?.elems.forEach((el: RsuvTxChecked) => {
       const b1 = tagGroup?.elems.find(el0 => el0.id === el.id)
       if (b1) {
         el.checked = true
@@ -886,7 +861,7 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
           searchJsx: <SearchLocalFCC/>,
           listJsx: <ListLocalFCC/>,
           multiselectJsxArr: tagsFieldNameArr?.map(el => (<MultiselectLocalFCC tagsId={el.id}/>))
-        } as Ty1159)
+        } as MsscJsxExternal)
       }
 
       {/* ^^dialog delete^^ */}

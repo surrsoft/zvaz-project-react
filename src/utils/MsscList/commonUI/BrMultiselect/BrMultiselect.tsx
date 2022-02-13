@@ -2,6 +2,7 @@ import './brMultiselectStyles.scss';
 import { useState } from 'react';
 import classNames from 'classnames';
 import { Simulate } from 'react-dom/test-utils';
+import { RsuvTxChecked } from 'rsuv-lib';
 
 // [[asau73]]
 
@@ -10,29 +11,17 @@ import { Simulate } from 'react-dom/test-utils';
 -- *t-component, *т-компонент - текущий компонент
  */
 
-export class DataElemAtAsau73 {
-  constructor(
-    public id: string,
-    public visibleText: string,
-    public checked: boolean = false,
-    public disabled: boolean = false,
-    public payload?: any
-  ) {
-
-  }
-}
-
 export interface PropsAtAsau73 {
   /**
    *
    */
-  datas?: DataElemAtAsau73[]
+  datas?: RsuvTxChecked[]
   /**
    * *Т-компонент вызывает это при установке/снятии галки, передавая в (1) список текущих чекнутых элементов
    * (т.е. в состоянии после установки/снятия галки)
    * @param data (1) --
    */
-  cbOnChange?: (checkedList: DataElemAtAsau73[]) => void
+  cbOnChange?: (checkedList: RsuvTxChecked[]) => void
   /**
    *
    */
@@ -56,7 +45,7 @@ export default function BrMultiselect({datas = [], cbOnChange, text = 'selected'
     cbOnChange?.([])
   }
 
-  const checkboxChange = (elem: DataElemAtAsau73) => (ev: any) => {
+  const checkboxChange = (elem: RsuvTxChecked) => (ev: any) => {
     const checked = ev?.target?.checked
     if (cbOnChange) {
       if (checked) {

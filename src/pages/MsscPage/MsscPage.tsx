@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import './style.scss';
 
-import MsscListFCC, { MsscMultFields, Ty1159, Ty1609 } from '../../utils/MsscList/MsscListFCC';
+import MsscListFCC, { MsscMultFields, MsscJsxExternal, MsscElemStruct } from '../../utils/MsscList/MsscListFCC';
 import { AirSource } from '../../utils/MsscList/commonUtils/AirSource';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup'
@@ -209,7 +209,7 @@ export function MsscPage() {
     ]
   } as BrSelectSortData<MsscColumnName>
 
-  function listElemStructBuilder({checkboxJsx, bodyJsx, menuJsx}: Ty1609) {
+  function listElemStructBuilder({checkboxJsx, bodyJsx, menuJsx}: MsscElemStruct) {
     return (
       <>
         {checkboxJsx}
@@ -228,7 +228,7 @@ export function MsscPage() {
                        buttonsJsx,
                        listJsx,
                        multiselectJsxArr
-                     }: Ty1159) => {
+                     }: MsscJsxExternal) => {
     return (
       <>
         {paginator1Jsx}
