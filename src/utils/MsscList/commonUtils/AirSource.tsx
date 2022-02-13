@@ -53,7 +53,7 @@ export class AirSourceParams<T> {
   /**
    * на базе тегов (1) нужно сформировать MsscFilter
    */
-  cbFilterFromTags?: (tags: string[]) => MsscFilter[] | null
+  cbFilterFromTags?: (tags: string[], fieldName: string) => MsscFilter[] | null
 }
 
 function msscFiltersToVuscFilter(filters: MsscFilter[]) {
@@ -292,9 +292,9 @@ export class AirSource<T> implements MsscSource<T> {
     return null
   }
 
-  filterFromTags(tags: string[]): MsscFilter[] | null {
+  filterFromTags(tags: string[], fieldName: string): MsscFilter[] | null {
     if (tags && tags.length > 0) {
-      return this.params.cbFilterFromTags?.(tags) || null
+      return this.params.cbFilterFromTags?.(tags, fieldName) || null
     }
     return null;
   }

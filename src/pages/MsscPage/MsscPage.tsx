@@ -10,6 +10,7 @@ import { RsuvEnSort, RsuvTxStringAC } from 'rsuv-lib';
 import { BrSelectSortData } from '../../utils/MsscList/commonUI/BrSelect/brSelectUtils';
 import { MsscColumnName, SquareBrackets } from '../../utils/MsscList/msscUtils/msscUtils';
 import { MsscFilter } from '../../utils/MsscList/msscUtils/MsscFilter';
+import _ from 'lodash';
 
 enum EnField {
   TITLE = 'title',
@@ -18,11 +19,17 @@ enum EnField {
   TIME_CREATED = 'time_created',
   TIME_LAST_MODIFIED = 'time_last_modified',
   TAGS = 'tags',
+  TAGS2 = 'tags2',
 }
 
+const tagsFieldNameArr = [
+  {id: EnField.TAGS, fieldName: EnField.TAGS, visibleName: 'теги'} as MsscMultFields,
+  {id: EnField.TAGS2, fieldName: EnField.TAGS2, visibleName: 'теги-2'} as MsscMultFields,
+];
+
 const airSource = new AirSource({
-  // dbKey: 'appZoHaX4a5tRLJlv', // mssc-training-3
-  dbKey: 'appXv6ry7Vn262nGR', // sites
+  dbKey: 'appZoHaX4a5tRLJlv', // mssc-training-3
+  // dbKey: 'appXv6ry7Vn262nGR', // sites
   // dbKey: 'appskGCKvIZEdVBTO',
   // dbKey: 'appHOzDglc28fCztP',
   tableName: 'main',
@@ -38,6 +45,7 @@ const airSource = new AirSource({
     EnField.TIME_CREATED,
     EnField.TIME_LAST_MODIFIED,
     EnField.TAGS,
+    EnField.TAGS2,
   ],
   elemJsx: (elObj: any) => {
     return (
@@ -45,15 +53,22 @@ const airSource = new AirSource({
         <div className="list-elem__title">{elObj.title}</div>
         <div><a className="list-elem__url" href={elObj.url} target="_blank">{elObj.url}</a></div>
         <div className="list-elem__comm">{elObj[EnField.COMM] || ''}</div>
-        {(!elObj.tags || elObj.tags.length < 0) ? null : <div className="list-elem__tags">
-          {
-            elObj.tags.map((elTag: string) => {
-              return (
-                <div key={elTag} className="list-elem__tag">{SquareBrackets.bracketsRemove(elTag)}</div>
-              )
-            })
-          }
-        </div>}
+        <div className="list-elem__tags-con">
+          {(!elObj.tags || elObj.tags.length < 0) ? null : <div className="list-elem__tags">
+            {
+              elObj.tags.map((elTag: string) => {
+                return (
+                  <div key={elTag} className="list-elem__tag">{SquareBrackets.bracketsRemove(elTag)}</div>
+                )
+              })
+            }
+          </div>}
+          {_.isEmpty(elObj[EnField.TAGS2]) ? null : <div className="list-elem__tags2">
+            {elObj[EnField.TAGS2].map((elTag: string) => {
+              return (<div key={elTag} className="list-elem__tag2">{SquareBrackets.bracketsRemove(elTag)}</div>)
+            })}
+          </div>}
+        </div>
         <div className="list-elem__times">
           <div className="list-elem__time-lastmodif">
             <span className="list-elem__name">last modif:</span> {elObj[EnField.TIME_LAST_MODIFIED] || ''}
@@ -145,11 +160,11 @@ const airSource = new AirSource({
     }
     return null
   },
-  cbFilterFromTags: (tags: string[]): MsscFilter[] | null => {
+  cbFilterFromTags: (tags: string[], fieldName: string): MsscFilter[] | null => {
     if (tags && tags.length > 0) {
       const filters: MsscFilter[] = []
       tags.map(elTag => {
-        const fieldNameTags = new RsuvTxStringAC(EnField.TAGS)
+        const fieldNameTags = new RsuvTxStringAC(fieldName)
         const filter = {paramId: fieldNameTags, filterValue: elTag, isArrElemFind: true} as MsscFilter
         filters.push(filter)
       })
@@ -228,7 +243,7 @@ export function MsscPage() {
           {sortJsx}
           {infosJsx}
         </div>
-        <div>
+        <div className="blk-tags">
           {multiselectJsxArr?.map(el => {
             return (<div className="block1948">{el}</div>)
           })}
@@ -238,12 +253,13 @@ export function MsscPage() {
     )
   }
 
+
   return (<div>
     <MsscListFCC
       source={airSource}
       listElemStruct={listElemStructBuilder}
       sortData={sortDataSTA}
-      tagsFieldNameArr={[{id: EnField.TAGS, fieldName: EnField.TAGS, visibleName: 'теги'} as MsscMultFields]}
+      tagsFieldNameArr={tagsFieldNameArr}
     >{fnBuilder}</MsscListFCC>
   </div>)
 }

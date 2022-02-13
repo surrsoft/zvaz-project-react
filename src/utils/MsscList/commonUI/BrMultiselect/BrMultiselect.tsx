@@ -40,6 +40,7 @@ export interface PropsAtAsau73 {
 }
 
 export default function BrMultiselect({datas = [], cbOnChange, text = 'selected'}: PropsAtAsau73) {
+  console.log('!!-!!-!! datas {220213102051}\n', datas) // del+
 
   const [$selectCount] = useState(() => {
     return datas.filter(el => el.checked)?.length || 0

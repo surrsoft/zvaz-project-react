@@ -107,9 +107,10 @@ export interface MsscSource<TModel> {
 
   /**
    * *С-компонент вызывает эту функцию чтобы *клиент на базе тегов (1) подготовил {@link MsscFilter[]}
-   * @param tags
+   * @param tags (1) --
+   * @param fieldName (2) --
    */
-  filterFromTags(tags: string[]): MsscFilter[] | null
+  filterFromTags(tags: string[], fieldName: string): MsscFilter[] | null
 
   /**
    * получение ID всех элементов хранилища удовлетворяющих (1) и (2)

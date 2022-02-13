@@ -35,6 +35,20 @@
     }
   }
 
+
+  .list-elem__tags2 {
+    display: flex;
+    font-size: 11px;
+    column-gap: 6px;
+
+    .list-elem__tag2 {
+      border-radius: 6px;
+      padding: 0 8px;
+      background-color: rgba(0, 34, 255, 0.71);
+      color: white;
+    }
+  }
+
   .list-elem__times {
     display: flex;
     column-gap: 8px;
@@ -160,4 +174,15 @@
 .aListElem__active {
   border: 1px solid red;
   border-radius: 8px;
+}
+
+.blk-tags {
+  display: flex;
+  column-gap: 8px;
+  justify-content: center;
+}
+
+.list-elem__tags-con {
+  display: flex;
+  column-gap: 16px;
 }

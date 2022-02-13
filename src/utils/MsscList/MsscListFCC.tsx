@@ -67,12 +67,26 @@ interface MsscListProps {
   tagsFieldNameArr?: MsscMultFields[]
 }
 
+/**
+ * идентификатор группы тегов
+ */
 type MsscTagsID = string
 
-type Ty1041 = {
+type MsscTagGroup = {
+  id: MsscTagsID
+  /**
+   * сами теги
+   */
+  elems: DataElemAtAsau73[]
+  /**
+   *
+   */
+  visibleName: string
+}
+
+type MsscTagsSelected = {
   id: MsscTagsID
   elems: DataElemAtAsau73[]
-  visibleName: string
 }
 
 export type MsscMultFields = {
@@ -145,8 +159,9 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
   const [$searchText, $searchTextSet] = useState('');
   const [$randomEnabled, $randomEnabledSet] = useState(false);
   const [$idsShuffled, $idsShuffledSet] = useState<string[]>([]);
-  const [$tags, $tagsSet] = useState<Ty1041[]>([]);
-  const [$tagsSelected, $tagsSelectedSet] = useState<DataElemAtAsau73[]>([]);
+  // все *группы-тегов
+  const [$tagGroupArr, $tagGroupArrSet] = useState<MsscTagGroup[]>([]);
+  const [$tagGoupsSelectedArr, $tagGoupsSelectedArrSet] = useState<MsscTagsSelected[]>([]);
 
   // ---
   const scrollFixFn = useScrollFix($dialogCreateEditShowed)
@@ -189,12 +204,16 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
 
   function fnFiltersCreate(source: MsscSource<any>): MsscFilter[] {
     let filterTags: MsscFilter[] = []
-    if (tagsFieldNameArr) {
-      const tags = $tagsSelected.map(el => {
-        return el.id
+    if (!_.isEmpty(tagsFieldNameArr)) {
+      $tagGoupsSelectedArr.map((elTagGroup: MsscTagsSelected) => {
+        const tags = elTagGroup.elems.map((el: DataElemAtAsau73) => {
+          return el.id
+        })
+        const filters: MsscFilter[] = source?.filterFromTags(tags, elTagGroup.id) || []
+        filterTags.push(...filters)
       })
-      filterTags = source?.filterFromTags(tags) || []
     }
+    console.log('!!-!!-!! filterTags {220213095531}\n', filterTags) // del+
     const filterSearchText = source?.filterFromSearchText($searchText) || []
     // ---
     return [...filterTags, ...filterSearchText];
@@ -252,9 +271,10 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
       }
       // --- получение тегов
       if (tagsFieldNameArr && tagsFieldNameArr.length > 0) {
-        const rr0: Ty1041[] = []
+        const rr0: MsscTagGroup[] = []
         for (let elTg of tagsFieldNameArr) { // LOOP
           let tags = await source?.tags(filters, elTg.fieldName)
+          console.log('!!-!!-!! elTg {220210130326}\n', elTg) // del+
           console.log('!!-!!-!! tags {220210130326}\n', tags) // del+
           // --- sort
           tags = _.orderBy(tags, ['count', 'value'], ['desc', 'asc'])
@@ -264,17 +284,17 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
           })
           // ---
           tags0.forEach(elTag => {
-            const b1 = $tagsSelected.find(el => el.id === elTag.id)
+            const b1 = $tagGoupsSelectedArr.find(el => el.id === elTag.id)
             if (b1) {
               elTag.checked = true;
             }
             elTag.visibleText = SquareBrackets.bracketsRemove(elTag.visibleText)
           })
           // ---
-          const rr = {id: elTg.id, elems: tags0, visibleName: elTg.visibleName} as Ty1041
+          const rr = {id: elTg.id, elems: tags0, visibleName: elTg.visibleName} as MsscTagGroup
           rr0.push(rr)
         } // LOOP
-        $tagsSet(rr0)
+        $tagGroupArrSet(rr0)
       }
       // --- pagination - pageCountAll
       const pagination = new RsuvPaginationGyth(elemsCountByFilter, config.elemsOnPage)
@@ -817,11 +837,27 @@ const MsscListFCC = ({source, sortData, children, listElemStruct, tagsFieldNameA
      */
     const onChangeHandle = (checkedElems: DataElemAtAsau73[]) => {
       console.log('!!-!!-!! checkedElems {220209223245}\n', checkedElems) // del+
-      $tagsSelectedSet(checkedElems)
+      debugger; // del+
+      const tagGroups = _.cloneDeep($tagGoupsSelectedArr)
+      const group = tagGroups.find((el: MsscTagsSelected) => el.id === tagsId)
+      if (group) {
+        group.elems = checkedElems;
+      } else {
+        const newGroup = {id: tagsId, elems: checkedElems} as MsscTagsSelected
+        tagGroups.push(newGroup)
+      }
+      $tagGoupsSelectedArrSet(tagGroups)
       refreshWhole()
     }
 
-    const rr = $tags.find((ell: Ty1041) => ell.id === tagsId)
+    const rr: MsscTagGroup | undefined = $tagGroupArr.find((ell: MsscTagGroup) => ell.id === tagsId)
+    const tagGroup = $tagGoupsSelectedArr.find(el => el.id === tagsId)
+    rr?.elems.forEach((el: DataElemAtAsau73) => {
+      const b1 = tagGroup?.elems.find(el0 => el0.id === el.id)
+      if (b1) {
+        el.checked = true
+      }
+    })
 
     return (
       <div className="mscc-mselect">
