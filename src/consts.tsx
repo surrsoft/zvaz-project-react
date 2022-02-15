@@ -12,6 +12,7 @@ export enum EPageName {
   NXCA = 'NxcaPage',
   MVRO = 'MvroPage',
   NOTION_PAGE = 'NotionPage',
+  MULTILEVELMENU_PAGE = 'MLMenu',
 }
 
 export const pages: WnouT2<EPageName> = {
@@ -23,6 +24,7 @@ export const pages: WnouT2<EPageName> = {
     {value: EPageName.NXCA, text: 'NxcaPage', subValue: '/nxca'},
     {value: EPageName.MVRO, text: 'MvroPage', subValue: '/mvro'},
     {value: EPageName.NOTION_PAGE, text: 'NotionPage', subValue: '/notion'},
+    {value: EPageName.MULTILEVELMENU_PAGE, text: 'MLMenu', subValue: '/mlmenu'},
   ],
   selectedValue: EPageName.MAIN
 }
