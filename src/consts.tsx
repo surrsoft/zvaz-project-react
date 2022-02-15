@@ -11,6 +11,7 @@ export enum EPageName {
   MSSC = 'MSSC',
   NXCA = 'NxcaPage',
   MVRO = 'MvroPage',
+  NOTION_PAGE = 'NotionPage',
 }
 
 export const pages: WnouT2<EPageName> = {
@@ -21,6 +22,7 @@ export const pages: WnouT2<EPageName> = {
     {value: EPageName.MSSC, text: 'MSSC', subValue: '/mssc'},
     {value: EPageName.NXCA, text: 'NxcaPage', subValue: '/nxca'},
     {value: EPageName.MVRO, text: 'MvroPage', subValue: '/mvro'},
+    {value: EPageName.NOTION_PAGE, text: 'NotionPage', subValue: '/notion'},
   ],
   selectedValue: EPageName.MAIN
 }

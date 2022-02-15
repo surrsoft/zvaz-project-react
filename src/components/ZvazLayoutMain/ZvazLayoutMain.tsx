@@ -8,6 +8,7 @@ import { Learn02 } from '../../pages/Learn02/Learn02';
 import { MsscPage } from '../../pages/MsscPage/MsscPage';
 import NxcaPage from '../../pages/NxcaPage/NxcaPage';
 import { MvroPage } from '../../pages/MvroPage/MvroPage';
+import NotionPage from '../../pages/NotionPage/NotionPage';
 
 function fnPath(pageName: string) {
   return pages.options.find(el => el.value === pageName)?.subValue || ''
@@ -39,6 +40,9 @@ function ZvazLayoutMain() {
           </Route>
           <Route exact path={fnPath(EPageName.MVRO)}>
             <MvroPage/>
+          </Route>
+          <Route exact path={fnPath(EPageName.NOTION_PAGE)}>
+            <NotionPage/>
           </Route>
           <Redirect to={fnPath(EPageName.MAIN) || '/'}/>
         </Switch>
