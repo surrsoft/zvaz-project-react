@@ -1,18 +1,35 @@
 import './temp01PageStyles.scss';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Temp01Page() {
-  const elems = ['hello', 'world', 'and']
+  const elems = [
+    ['hello1', 'hello2', 'hello3'],
+    ['world'],
+    ['and1', 'and2', 'and3', 'and4', 'and5', 'and6', 'and7',]
+  ]
 
+  const refElem = useRef(null)
+
+  const [menuHeight, setMenuHeight] = useState(null);
   const [$elemIndex, $elemIndexSet] = useState(0);
   const [$valMs] = useState<number>(() => {
     const root: any = document.querySelector(':root');
     // SYNC [[220216114243]]
-    const valMs = Number(getComputedStyle(root).getPropertyValue('--sauc-timeout').replace(' ', '').replace('ms', ''))
-    return valMs;
+    return Number(getComputedStyle(root).getPropertyValue('--sauc-timeout').replace(' ', '').replace('ms', ''))
   });
 
+  useEffect(() => {
+    const main: any = refElem.current
+    const firstChild = main.firstChild.firstChild;
+    const offsetHeight = firstChild.offsetHeight;
+    setMenuHeight(offsetHeight)
+  }, [])
+
+  function calcHeight(el: any) {
+    const height = el.offsetHeight;
+    setMenuHeight(height);
+  }
 
   function varChange(is: boolean) {
     const root: any = document.querySelector(':root');
@@ -39,14 +56,17 @@ export default function Temp01Page() {
     }
   };
 
-  return (<div>
-    <TransitionGroup className="tgroup">
+  return (<div className="main-con" ref={refElem}>
+    <TransitionGroup className="tgroup" style={{height: menuHeight + 'px'}}>
       <CSSTransition
         classNames="fade"
         timeout={$valMs}
-        key={elems[$elemIndex]}
+        key={elems[$elemIndex][0]}
+        onEnter={calcHeight}
       >
-        <div className={`elem ${elems[$elemIndex]}`}>{elems[$elemIndex]}</div>
+        <div className="elem">{elems[$elemIndex].map(el => {
+          return (<div>{el}</div>)
+        })}</div>
       </CSSTransition>
     </TransitionGroup>
     <button className="btn" onClick={btnHandle(true)}>left</button>

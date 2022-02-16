@@ -32,7 +32,6 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
   const [$backElemCurrent, $backElemCurrentSet] = useState<SaucMenuElem | null>(null);
   const [$allBackElems] = useState<Array<SaucMenuElem | null>>([]);
   const [$allMenuElems] = useState<SaucMenuElem[][]>([]);
-  const [$spc, $spcSet] = useState(Date.now());
   const [$transIn, $transInSet] = useState(false);
 
   function btnMainHandle() {
@@ -46,7 +45,6 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
       // ---
       $backElemCurrentSet(elBack)
       $menuElemsCurrentSet(children)
-      $spcSet(Date.now())
       $transInSet(!$transIn)
     }
   };
@@ -57,7 +55,6 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
     // ---
     $backElemCurrentSet(lastBackElem[0])
     $menuElemsCurrentSet(lastMenuElems[0])
-    $spcSet(Date.now())
     $transInSet(!$transIn)
   }
 
