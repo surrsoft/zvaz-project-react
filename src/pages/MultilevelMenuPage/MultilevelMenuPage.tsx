@@ -18,7 +18,13 @@ export default function MultilevelMenuPage() {
           body: (<div>Отечественные</div>),
           cb: (el) => {
             console.log('!!-!!-!! el {220215131940}\n', el) // del+
-          }
+          },
+          children: [
+            {id: 'lada', body: (<div>LADA</div>)},
+            {id: 'gaz', body: (<div>ГАЗ</div>)},
+            {id: 'zaz', body: (<div>ЗАЗ</div>)},
+            {id: 'uaz', body: (<div>УАЗ</div>)},
+          ]
         },
         {
           id: 'in',
@@ -33,6 +39,11 @@ export default function MultilevelMenuPage() {
               id: 'Honda', body: (<div>Honda</div>), cb: (el) => {
                 console.log('!!-!!-!! el {220215155831}\n', el) // del+
               }
+            },
+            {
+              id: 'BMW', body: (<div>BMW</div>), cb: (el) => {
+                console.log('!!-!!-!! el {220215155831}\n', el) // del+
+              }
             }
           ],
 
@@ -42,6 +53,42 @@ export default function MultilevelMenuPage() {
     {
       id: 'estate',
       body: (<div>Недвижимость</div>),
+      cb: (el) => {
+        console.log('!!-!!-!! el {220215131412}\n', el) // del+
+      },
+      children: [
+        {
+          id: 'country',
+          body: (<div>Загородная</div>),
+          children: [
+            {
+              id: 'moscow', body: (<div>Москва</div>),
+              children: [
+                {id: 'centr', body: (<div>Центральный район</div>)},
+                {id: 'severo-zap', body: (<div>Северо-Западный район</div>)},
+              ]
+            },
+            {id: 'moscow-obl', body: (<div>Московская обл.</div>)},
+          ]
+        },
+        {
+          id: 'city',
+          body: (<div>Городская</div>),
+          children: [
+            {
+              id: 'moscow2', body: (<div>Москва</div>), children: [
+                {id: 'centr2', body: (<div>Центральный район</div>)},
+                {id: 'severo-zap2', body: (<div>Северо-Западный район</div>)},
+              ]
+            },
+            {id: 'moscow-obl2', body: (<div>Московская обл.</div>)},
+          ]
+        }
+      ]
+    },
+    {
+      id: 'other',
+      body: (<div>Прочее</div>),
       cb: (el) => {
         console.log('!!-!!-!! el {220215131412}\n', el) // del+
       }

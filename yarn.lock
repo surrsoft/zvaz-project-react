@@ -11362,6 +11362,21 @@ rsuv-lib@^1.2.0:
     lodash-es "^4.17.21"
     validator "^13.7.0"
 
+rsuv-lib@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-2.10.0.tgz#b3a5fad7d40b90ef3f0fafe88570dbe99df3a15f"
+  integrity sha512-bs/8gzQpBOCoG5T123pvTjPdCgragGK6uo54a89gK6RzqpLDSZprfsrmU+LJCDwuvgX5olqFGpxIAFHvrSNpkg==
+  dependencies:
+    "@types/lodash" "^4.14.170"
+    "@types/validator" "^13.6.2"
+    dayjs "^1.10.7"
+    email-validator "^2.0.4"
+    hogg-lib "^1.1.0"
+    isomorphic-fetch "^3.0.0"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+    validator "^13.7.0"
+
 rsuv-lib@^2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/rsuv-lib/-/rsuv-lib-2.9.0.tgz#7d6b677990becd96cb010bb2ba3ce5201b9e6916"
