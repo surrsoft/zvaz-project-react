@@ -4,7 +4,7 @@
   --sauc-transx0: 110%; // SYNC [220216111625]
   --sauc-transx: var(--sauc-transx0); // SYNC [220216114204]
   --sauc-transxNegate: calc(var(--sauc-transx) * -1);
-  --sauc-time-function: ease-in-out
+  --sauc-time-function: ease-in-out;
 }
 
 .tgroup {
