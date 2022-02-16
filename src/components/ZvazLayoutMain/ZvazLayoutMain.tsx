@@ -10,6 +10,7 @@ import NxcaPage from '../../pages/NxcaPage/NxcaPage';
 import { MvroPage } from '../../pages/MvroPage/MvroPage';
 import NotionPage from '../../pages/NotionPage/NotionPage';
 import MultilevelMenuPage from '../../pages/MultilevelMenuPage/MultilevelMenuPage';
+import Temp01Page from '../../pages/Temp01/Temp01Page';
 
 function fnPath(pageName: string) {
   return pages.options.find(el => el.value === pageName)?.subValue || ''
@@ -47,6 +48,9 @@ function ZvazLayoutMain() {
           </Route>
           <Route exact path={fnPath(EPageName.MULTILEVELMENU_PAGE)}>
             <MultilevelMenuPage/>
+          </Route>
+          <Route exact path={fnPath(EPageName.TEMP_01)}>
+            <Temp01Page/>
           </Route>
           <Redirect to={fnPath(EPageName.MAIN) || '/'}/>
         </Switch>
