@@ -96,5 +96,9 @@ export default function MultilevelMenuPage() {
       </SaucMLMenuFCC>
     </div>
     <div>value: {$value}</div>
+    <button className="a-btn" onClick={() => {
+      alert(111)
+    }}>temp
+    </button>
   </div>)
 }

@@ -136,11 +136,16 @@ export default function SaucMLMenuFCC({
     transDirectionSet(true)
   }
 
+  function canvasHandle() {
+    $dropdownShowSet(false)
+  }
+
   const elemsObjCurr = $childrenList.find(el => el.id === $currId)
 
   return (
     <div className="sauc-menu">
       <button className="sauc-menu__btn" onClick={btnMainHandle}>{children}</button>
+      {!$dropdownShow ? null : (<div className="sauc-menu__canvas" onClick={canvasHandle}/>)}
       {!$dropdownShow ? null : (
         <div className="sauc-menu__base" ref={refElem}>
           <TransitionGroup className="sauc-menu__tgroup" style={{height: ($menuHeight) + 'px'}}>
