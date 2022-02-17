@@ -1,6 +1,9 @@
 import './temp01PageStyles.scss';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useEffect, useRef, useState } from 'react';
+import CompAB, { AB } from './components/CompAB';
+import CompT from './components/CompT';
+import CompS from './components/CompS';
 
 export default function Temp01Page() {
   const elems = [
@@ -71,5 +74,12 @@ export default function Temp01Page() {
     </TransitionGroup>
     <button className="btn" onClick={btnHandle(true)}>left</button>
     <button className="btn" onClick={btnHandle(false)}>right</button>
+
+    <div className="conlearn">
+      <CompAB>
+        <CompT><CompS symb={AB.A}/></CompT>
+        <CompT><CompS symb={AB.B}/></CompT>
+      </CompAB>
+    </div>
   </div>)
 }
