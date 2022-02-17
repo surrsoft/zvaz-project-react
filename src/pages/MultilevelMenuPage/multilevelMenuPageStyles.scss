@@ -1,16 +1,29 @@
-.a-icon {
+.a-icon-wrap {
   width: 32px;
   height: 32px;
-  border: 1px solid red;
-  border-radius: 50%;
-  background-color: #d0cccc;
-  padding: 2px;
+  border: 1px solid silver;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     cursor: pointer;
-    filter: brightness(1.2);
   }
 
+  --timeout: 200ms;
+
+  .a-icon {
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    transition: transform var(--timeout) ease;
+
+    &:hover{
+      transform: scale(1.3);
+      transition: transform var(--timeout) ease;
+    }
+  }
 }
 
 .a-bar {
@@ -20,4 +33,38 @@
   align-items: center;
   justify-content: end;
   padding: 4px 8px;
+}
+
+.mmp-wrap {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .mmp-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.a-elem {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  width: 100%;
+  min-height: 32px;
+  padding-left: 4px;
+
+  .a-elem__body {
+    flex-grow: 1;
+  }
 }

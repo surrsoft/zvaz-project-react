@@ -17,6 +17,8 @@ export interface SaucMenuElem {
   cb?: (elem: SaucMenuElem) => void
 }
 
+export type SaucElemStruct = (icon: JSX.Element, body: JSX.Element, subIcon: JSX.Element | null) => JSX.Element
+
 export interface SaucProps {
   menuElems: SaucMenuElem[]
   /**
@@ -24,7 +26,7 @@ export interface SaucProps {
    */
   iconSubmenu?: JSX.Element
   children?: ReactNode
-  isOverflow?: boolean
+  elemCustomStruct?: SaucElemStruct
 }
 
 interface SaucElem0 {
@@ -36,9 +38,9 @@ const SAUC_ROOT_ID = 'root-id-is'
 
 export default function SaucMLMenuFCC({
                                         menuElems,
-                                        iconSubmenu = (<IconChevron/>),
+                                        iconSubmenu = (<div className="sauc-menu__achevron"><IconChevron/></div>),
                                         children,
-                                        isOverflow = true
+                                        elemCustomStruct
                                       }: SaucProps) {
 
   const [$valMs] = useState<number>(() => {
@@ -159,18 +161,30 @@ export default function SaucMLMenuFCC({
               <div className="sauc-dropdown">
                 {!$backElemCurrent ? null : (
                   <div key={$backElemCurrent.id} className="sauc-menu__back-item" onClick={backHandle}>
-                    <div className="back-item__icon"><IconChevronToLeft/></div>
+                    <div className="back-item__icon">
+                      <div className="sauc-menu__achevron"><IconChevronToLeft/></div>
+                    </div>
                     <div className="back-item__body">{$backElemCurrent.body}</div>
                   </div>)}
                 {
                   elemsObjCurr?.elems.map((el: SaucMenuElem) => {
                     return (
                       <div key={el.id} className="sauc-dropdown__elem" onClick={menuItemClickHandle(el, el.children)}>
-                        <div className="elem__icon">{el.icon || (<IconCircle/>)}</div>
-                        <div className="elem__body">{el.body}</div>
-                        {
-                          _.isEmpty(el.children) ? null : (<div className="elem__icon-sub">{iconSubmenu}</div>)
-                        }
+                        {elemCustomStruct
+                          ? elemCustomStruct(
+                            el.icon || (<div className="sauc-dropdown__aicon"><IconCircle/></div>),
+                            el.body || (<div/>),
+                            _.isEmpty(el.children) ? null : iconSubmenu
+                          )
+                          : (
+                            <>
+                              <div className="elem__icon">{el.icon || (<IconCircle/>)}</div>
+                              <div className="elem__body">{el.body}</div>
+                              {
+                                _.isEmpty(el.children) ? null : (<div className="elem__icon-sub">{iconSubmenu}</div>)
+                              }
+                            </>
+                          )}
                       </div>
                     )
                   })
