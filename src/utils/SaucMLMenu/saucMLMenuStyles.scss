@@ -15,135 +15,132 @@
   flex-direction: column;
   position: relative;
 
-  .sauc-menu__canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    z-index: 100;
+
+}
+
+.sauc-menu__canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 100;
+}
+
+.sauc-menu__btn {
+  z-index: 110;
+}
+
+.sauc-menu__achevron {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid silver;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+
+  &:hover {
+    fill: red;
+    stroke: red;
   }
 
-  .sauc-menu__base {
-    z-index: 110;
-    position: absolute;
-    min-width: 240px;
-    top: 38px;
-    right: 0;
-    overflow: hidden;
-    border: 1px solid silver;
-    border-radius: 8px;
-    background-color: white;
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
 
-    .sauc-menu__tgroup {
-      transition: height var(--sauc-bs-timeout) ease;
+.sauc-menu__back-item {
+  display: flex;
+  cursor: pointer;
+  column-gap: 8px;
+  align-items: center;
+}
 
-      .sauc-dropdown {
-        flex-direction: column;
-        row-gap: 8px;
-        padding: 8px 8px;
-        width: 100%;
-        display: inline-flex;
-        position: absolute;
+// --- sfade
 
-        &.sauc-dropdown-enter-done {
+.sauc-menu__fade-enter {
+  transform: translateX(var(--sauc-bs-transxNegate));
+  opacity: 0;
+}
+
+.sauc-menu__fade-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
+}
+
+.sauc-menu__fade-exit-active {
+  transform: translateX(var(--sauc-bs-transx));
+  opacity: 0;
+  transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
+}
+
+.sauc-menu__base {
+  z-index: 110;
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid silver;
+  border-radius: 8px;
+  background-color: white;
+
+  .sauc-menu__tgroup {
+    transition: height var(--sauc-bs-timeout) ease;
+
+    .sauc-dropdown {
+      flex-direction: column;
+      row-gap: 8px;
+      padding: 8px 8px;
+      width: 100%;
+      display: inline-flex;
+      position: absolute;
+
+      &.sauc-dropdown-enter-done {
+      }
+
+      .sauc-dropdown__elem {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        cursor: pointer;
+
+        .sauc-dropdown__aicon {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
-        .sauc-dropdown__elem {
+        .elem__icon {
+          width: 24px;
+          height: 24px;
           display: flex;
           align-items: center;
-          column-gap: 8px;
-          cursor: pointer;
+        }
 
-          .sauc-dropdown__aicon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .elem__body {
+          flex-grow: 1;
+        }
+
+        .elem__icon-sub {
+          display: flex;
+          align-items: center;
+
+          &:hover {
+            cursor: pointer;
+            fill: red;
+            stroke: red;
           }
 
-          .elem__icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-          }
-
-          .elem__body {
-            flex-grow: 1;
-          }
-
-          .elem__icon-sub {
-            display: flex;
-            align-items: center;
-
-            &:hover {
-              cursor: pointer;
-              fill: red;
-              stroke: red;
-            }
-
-            svg {
-              width: 16px;
-              height: 16px;
-            }
+          svg {
+            width: 16px;
+            height: 16px;
           }
         }
       }
-    }
-  }
-
-  // --- sfade
-
-  .sauc-menu__fade-enter {
-    transform: translateX(var(--sauc-bs-transxNegate));
-    opacity: 0;
-  }
-
-  .sauc-menu__fade-enter-active {
-    transform: translateX(0);
-    opacity: 1;
-    transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
-  }
-
-  .sauc-menu__fade-exit-active {
-    transform: translateX(var(--sauc-bs-transx));
-    opacity: 0;
-    transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
-  }
-
-  // ---
-
-  .sauc-menu__btn {
-    z-index: 110;
-  }
-
-  .sauc-menu__back-item {
-    display: flex;
-    cursor: pointer;
-    column-gap: 8px;
-    align-items: center;
-  }
-
-  .sauc-menu__achevron {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid silver;
-    border-radius: 8px;
-    width: 32px;
-    height: 32px;
-
-    &:hover {
-      fill: red;
-      stroke: red;
-    }
-
-    svg {
-      width: 16px;
-      height: 16px;
     }
   }
 }

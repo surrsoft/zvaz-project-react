@@ -57,6 +57,7 @@ export default function SaucMLMenuFCC({
   const [$menuHeight, $menuHeightSet] = useState(null);
 
   const refElem = useRef(null)
+  const refBtn = useRef(null)
 
   function fnPopulateRecurs(arrBack: SaucElem0[], elId: SaucMenuElemId, elems?: SaucMenuElem[]) {
     if (elems && elems.length > 0) {
@@ -142,14 +143,77 @@ export default function SaucMLMenuFCC({
     $dropdownShowSet(false)
   }
 
+  const cfg = {
+    defaultWidth: 280,
+    marginPx: 16
+  }
+
+  const [$baseTop, $baseTopSet] = useState(0);
+  const [$baseRight, $baseRightSet] = useState(0);
+  const [$baseWidth, $baseWidthSet] = useState(cfg.defaultWidth);
+  const [$resize, $resizeSet] = useState(Date.now());
+
+  function resizeLis() {
+    const iH = window.innerHeight
+    const iW = window.innerWidth
+    console.log('!!-!!-!! iH {220217231641}\n', iH) // del+
+    console.log('!!-!!-!! iW {220217231646}\n', iW) // del+
+    $resizeSet(Date.now())
+  }
+
+  useEffect(() => {
+    window.onresize = resizeLis
+  }, []);
+
+  useEffect(() => {
+    // ---
+    const btn: any = refBtn.current
+    console.log('!!-!!-!! btn {220217223425}\n', btn) // del+
+    if (btn) {
+      const pTop = btn.offsetTop
+      const pLeft = btn.offsetLeft
+      const pH = btn.offsetHeight
+      const pW = btn.offsetWidth
+      console.log('!!-!!-!! pTop {220217224426}\n', pTop) // del+
+      console.log('!!-!!-!! pLeft {220217224432}\n', pLeft) // del+
+      console.log('!!-!!-!! pH {220217224620}\n', pH) // del+
+      console.log('!!-!!-!! pW {220217224625}\n', pW) // del+
+      $baseTopSet(pTop + pH + 6)
+      const body = document.getElementsByTagName('body')[0]
+      console.log('!!-!!-!! body {220217225309}\n', body) // del+
+      const bodyWidth = body.offsetWidth
+      console.log('!!-!!-!! bodyWidth {220217225345}\n', bodyWidth) // del+
+      let baseRight = bodyWidth - pLeft - pW;
+      const rr = pLeft + pW - $baseWidth
+      debugger; // del+
+      if (rr < cfg.marginPx) {
+        baseRight = bodyWidth - cfg.marginPx - $baseWidth
+      }
+      console.log('!!-!!-!! baseRight {220217232558}\n', baseRight) // del+
+      if (baseRight < cfg.marginPx) {
+        baseRight = cfg.marginPx
+        $baseWidthSet(240)
+      } else {
+        if($baseWidth < cfg.defaultWidth) {
+          $baseWidthSet(cfg.defaultWidth)
+        }
+      }
+      $baseRightSet(baseRight)
+    }
+  }, [$resize]);
+
   const elemsObjCurr = $childrenList.find(el => el.id === $currId)
 
-  return (
-    <div className="sauc-menu">
-      <button className="sauc-menu__btn" onClick={btnMainHandle}>{children}</button>
-      {!$dropdownShow ? null : (<div className="sauc-menu__canvas" onClick={canvasHandle}/>)}
+  return (<div className="sauc-wr-menu">
+
+      <div className="sauc-menu" ref={refBtn}>
+        <button className="sauc-menu__btn" onClick={btnMainHandle}>{children}</button>
+        {!$dropdownShow ? null : (<div className="sauc-menu__canvas" onClick={canvasHandle}/>)}
+      </div>
+
       {!$dropdownShow ? null : (
-        <div className="sauc-menu__base" ref={refElem}>
+        <div className="sauc-menu__base" ref={refElem}
+             style={{top: $baseTop, right: $baseRight, width: $baseWidth}}>
           <TransitionGroup className="sauc-menu__tgroup" style={{height: ($menuHeight) + 'px'}}>
             <CSSTransition
               key={elemsObjCurr?.id}
