@@ -2,23 +2,27 @@ import './multilevelMenuPageStyles.scss';
 import SaucMLMenuFCC, { SaucMenuElem } from '../../utils/SaucMLMenu/SaucMLMenuFCC';
 import { ReactComponent as IconBell } from '../../utils/SaucMLMenu/icons/bell.svg';
 import { ReactComponent as IconCaret } from '../../utils/SaucMLMenu/icons/caret.svg';
+import { useState } from 'react';
 
 export default function MultilevelMenuPage() {
+
+  const [$value, $valueSet] = useState('');
+
+  function cbItem(el: SaucMenuElem) {
+    $valueSet(el.id)
+  }
+
   const menuElemsSTA: SaucMenuElem[] = [
     {
       id: 'auto',
       body: (<div>Автомобили</div>),
-      cb: (el) => {
-        console.log('!!-!!-!! el {220215131411}\n', el) // del+
-      },
+      cb: cbItem,
       icon: (<IconBell/>),
       children: [
         {
           id: 'su',
           body: (<div>Отечественные</div>),
-          cb: (el) => {
-            console.log('!!-!!-!! el {220215131940}\n', el) // del+
-          },
+          cb: cbItem,
           children: [
             {id: 'lada', body: (<div>LADA</div>)},
             {id: 'gaz', body: (<div>ГАЗ</div>)},
@@ -31,19 +35,13 @@ export default function MultilevelMenuPage() {
           body: (<div>Иномарки</div>),
           children: [
             {
-              id: 'Mazda', body: (<div>Mazda</div>), cb: (el) => {
-                console.log('!!-!!-!! el {220215155830}\n', el) // del+
-              }
+              id: 'Mazda', body: (<div>Mazda</div>), cb: cbItem
             },
             {
-              id: 'Honda', body: (<div>Honda</div>), cb: (el) => {
-                console.log('!!-!!-!! el {220215155831}\n', el) // del+
-              }
+              id: 'Honda', body: (<div>Honda</div>), cb: cbItem
             },
             {
-              id: 'BMW', body: (<div>BMW</div>), cb: (el) => {
-                console.log('!!-!!-!! el {220215155831}\n', el) // del+
-              }
+              id: 'BMW', body: (<div>BMW</div>), cb: cbItem
             }
           ],
 
@@ -53,9 +51,7 @@ export default function MultilevelMenuPage() {
     {
       id: 'estate',
       body: (<div>Недвижимость</div>),
-      cb: (el) => {
-        console.log('!!-!!-!! el {220215131412}\n', el) // del+
-      },
+      cb: cbItem,
       children: [
         {
           id: 'country',
@@ -89,15 +85,16 @@ export default function MultilevelMenuPage() {
     {
       id: 'other',
       body: (<div>Прочее</div>),
-      cb: (el) => {
-        console.log('!!-!!-!! el {220215131412}\n', el) // del+
-      }
+      cb: cbItem
     }
   ]
 
   return (<div>
-    <SaucMLMenuFCC menuElems={menuElemsSTA}>
-      <IconCaret className="a-icon"/>
-    </SaucMLMenuFCC>
+    <div className="a-bar">
+      <SaucMLMenuFCC menuElems={menuElemsSTA} isOverflow={true}>
+        <IconCaret className="a-icon"/>
+      </SaucMLMenuFCC>
+    </div>
+    <div>value: {$value}</div>
   </div>)
 }

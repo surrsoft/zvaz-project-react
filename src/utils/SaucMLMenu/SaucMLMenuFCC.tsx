@@ -24,6 +24,7 @@ export interface SaucProps {
    */
   iconSubmenu?: JSX.Element
   children?: ReactNode
+  isOverflow?: boolean
 }
 
 interface SaucElem0 {
@@ -31,9 +32,14 @@ interface SaucElem0 {
   elems: SaucMenuElem[]
 }
 
-const ROOT_ID = 'root-id-is'
+const SAUC_ROOT_ID = 'root-id-is'
 
-export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>), children}: SaucProps) {
+export default function SaucMLMenuFCC({
+                                        menuElems,
+                                        iconSubmenu = (<IconChevron/>),
+                                        children,
+                                        isOverflow = true
+                                      }: SaucProps) {
 
   const [$valMs] = useState<number>(() => {
     // SYNC [[220216134141]]
@@ -45,8 +51,8 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
   const [$backElemCurrent, $backElemCurrentSet] = useState<SaucMenuElem | null>(null);
   const [$allBackElems] = useState<Array<SaucMenuElem | null>>([]);
   const [$childrenList, $childrenListSet] = useState<SaucElem0[]>([]);
-  const [$currId, $currIdSet] = useState(ROOT_ID);
-  const [menuHeight, setMenuHeight] = useState(null);
+  const [$currId, $currIdSet] = useState(SAUC_ROOT_ID);
+  const [$menuHeight, $menuHeightSet] = useState(null);
 
   const refElem = useRef(null)
 
@@ -62,15 +68,16 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
   function transDirectionSet(is: boolean) {
     const root: any = document.querySelector(':root');
     if (root) {
+      // SYNC [[220216175236]]
       const val = getComputedStyle(root).getPropertyValue('--sauc-bs-transx0')
       const rr2 = is ? val : ('-' + val).replace(' ', '');
+      // SYNC [[220216175308]]
       root.style.setProperty('--sauc-bs-transx', rr2)
     }
   }
 
   useEffect(() => {
     const ids = RsuvTuTree.values(menuElems, 'id', 'children')
-    console.log('!!-!!-!! ids {220216144726}\n', ids) // del+
     const b1 = ids.every(el => !!el)
     if (!b1) {
       throw new Error('ERR* having non valid ids [[220216145010]]');
@@ -82,7 +89,7 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
   }, []);
 
   useEffect(() => {
-    const childrenList: SaucElem0[] = [{id: ROOT_ID, elems: menuElems} as SaucElem0]
+    const childrenList: SaucElem0[] = [{id: SAUC_ROOT_ID, elems: menuElems} as SaucElem0]
     menuElems.forEach((el: SaucMenuElem) => {
       fnPopulateRecurs(childrenList, el.id, el.children)
     })
@@ -94,32 +101,38 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
     if (main) {
       const firstChild = main.firstChild.firstChild;
       const offsetHeight = firstChild.offsetHeight;
-      setMenuHeight(offsetHeight)
+      $menuHeightSet(offsetHeight)
     }
   }, [])
 
   function calcHeight(el: any) {
     const height = el.offsetHeight;
-    setMenuHeight(height);
+    $menuHeightSet(height);
   }
 
   function btnMainHandle() {
-    $dropdownShowSet(!$dropdownShow)
+    const show = !$dropdownShow;
+    if (show) {
+      $currIdSet(SAUC_ROOT_ID)
+      $backElemCurrentSet(null)
+    }
+    $dropdownShowSet(show)
   }
 
-  const menuItemClickHandle = (elBack: SaucMenuElem, children?: SaucMenuElem[]) => () => {
+  const menuItemClickHandle = (elCurr: SaucMenuElem, children?: SaucMenuElem[]) => () => {
     if (children && children.length > 0) {
       $allBackElems.push($backElemCurrent)
-      $backElemCurrentSet(elBack)
-      $currIdSet(elBack.id)
+      $backElemCurrentSet(elCurr)
+      $currIdSet(elCurr.id)
       transDirectionSet(false)
     }
+    elCurr.cb?.(elCurr)
   };
 
   const backHandle = () => {
     const lastBackElem: any = $allBackElems.splice($allBackElems.length - 1, 1)
     $backElemCurrentSet(lastBackElem[0] || null)
-    $currIdSet(lastBackElem[0]?.id || ROOT_ID)
+    $currIdSet(lastBackElem[0]?.id || SAUC_ROOT_ID)
     transDirectionSet(true)
   }
 
@@ -130,12 +143,13 @@ export default function SaucMLMenuFCC({menuElems, iconSubmenu = (<IconChevron/>)
       <button className="sauc-menu__btn" onClick={btnMainHandle}>{children}</button>
       {!$dropdownShow ? null : (
         <div className="sauc-menu__base" ref={refElem}>
-          <TransitionGroup className="sauc-menu__tgroup" style={{height: menuHeight + 'px'}}>
+          <TransitionGroup className="sauc-menu__tgroup" style={{height: ($menuHeight) + 'px'}}>
             <CSSTransition
               key={elemsObjCurr?.id}
               classNames="sauc-menu__fade"
               timeout={$valMs}
               onEnter={calcHeight}
+              appear={true}
             >
               <div className="sauc-dropdown">
                 {!$backElemCurrent ? null : (
