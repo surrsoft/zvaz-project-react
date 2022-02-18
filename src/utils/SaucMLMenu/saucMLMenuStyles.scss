@@ -23,56 +23,11 @@
     background-color: transparent;
     z-index: 100;
   }
-}
 
-.sauc-menu__btn {
-  z-index: 110;
-}
-
-.sauc-menu__achevron {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid silver;
-  border-radius: 8px;
-  width: 32px;
-  height: 32px;
-
-  &:hover {
-    fill: red;
-    stroke: red;
+  .sauc-menu__btn {
+    z-index: 110;
   }
 
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-.sauc-menu__back-item {
-  display: flex;
-  cursor: pointer;
-  column-gap: 8px;
-  align-items: center;
-}
-
-// --- sfade
-
-.sauc-menu__fade-enter {
-  transform: translateX(var(--sauc-bs-transxNegate));
-  opacity: 0;
-}
-
-.sauc-menu__fade-enter-active {
-  transform: translateX(0);
-  opacity: 1;
-  transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
-}
-
-.sauc-menu__fade-exit-active {
-  transform: translateX(var(--sauc-bs-transx));
-  opacity: 0;
-  transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
 }
 
 .sauc-menu__base {
@@ -83,8 +38,49 @@
   border-radius: 8px;
   background-color: white;
 
+  .sauc-menu__achevron {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid silver;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+
+    &:hover {
+      fill: red;
+      stroke: red;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
   .sauc-menu__tgroup {
     transition: height var(--sauc-bs-timeout) ease;
+
+    // --- fade
+
+    .sauc-menu__fade-enter {
+      transform: translateX(var(--sauc-bs-transxNegate));
+      opacity: 0;
+    }
+
+    .sauc-menu__fade-enter-active {
+      transform: translateX(0);
+      opacity: 1;
+      transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
+    }
+
+    .sauc-menu__fade-exit-active {
+      transform: translateX(var(--sauc-bs-transx));
+      opacity: 0;
+      transition: all var(--sauc-bs-timeout) var(--sauc-bs-time-function);
+    }
+
+    // ---
 
     .sauc-dropdown {
       flex-direction: column;
@@ -93,6 +89,13 @@
       width: 100%;
       display: inline-flex;
       position: absolute;
+
+      .sauc-menu__back-item {
+        display: flex;
+        cursor: pointer;
+        column-gap: 8px;
+        align-items: center;
+      }
 
       &.sauc-dropdown-enter-done {
       }
