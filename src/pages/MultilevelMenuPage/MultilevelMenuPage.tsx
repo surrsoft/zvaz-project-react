@@ -146,7 +146,12 @@ export default function MultilevelMenuPage() {
   return (<div>
     <div className="a-divider"/>
     <div className="a-bar">
-      <SaucMLMenuFCC menuElems={menuElemsSTA} elemCustomStruct={elemStruct}>
+      <SaucMLMenuFCC
+        menuElems={menuElemsSTA}
+        elemCustomStruct={elemStruct}
+        containerStyles={{backgroundColor: '#404040', color: '#fff', borderWidth: 0}}
+        iconsColorOverwrite={"#fff"}
+      >
         <div className="a-icon-wrap">
           <IconCaret className="a-icon"/>
         </div>

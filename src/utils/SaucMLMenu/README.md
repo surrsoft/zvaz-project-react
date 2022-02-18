@@ -6,3 +6,7 @@
 # сделать
 * ( - ) ошибка в консоли 
   * ```Warning: findDOMNode is deprecated in StrictMode. findDOMNode was passed an instance of Transition which is inside StrictMode. Instead, add a ref directly to the element you want to reference. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-find-node```
+
+# понятия
+* *пункт - отдельный пункт меню
+* *л-иконка - это иконки *пунктов, указываемые пользователем

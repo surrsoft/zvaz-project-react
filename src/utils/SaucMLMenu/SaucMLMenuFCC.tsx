@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { ReactComponent as IconChevron } from './icons/chevron.svg';
 import { ReactComponent as IconChevronToLeft } from './icons/chevronToLeft.svg';
 import { ReactComponent as IconCircle } from './icons/circle.svg';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { RsuvTuTree } from 'rsuv-lib';
 
@@ -20,13 +20,30 @@ export interface SaucMenuElem {
 export type SaucElemStruct = (icon: JSX.Element, body: JSX.Element, subIcon: JSX.Element | null) => JSX.Element
 
 export interface SaucProps {
+  /**
+   * базовый элемент, при нажатии на который будет появляеться выпадающее меню
+   */
+  children?: ReactNode
+  /**
+   * базовый источник данных для выпадающего меню
+   */
   menuElems: SaucMenuElem[]
   /**
    * иконка для показа справа у пунктов меню имеющих подменю
    */
   iconSubmenu?: JSX.Element
-  children?: ReactNode
+  /**
+   * элемент для кастомизации расположения комонентов внутри отдельного элемента меню
+   */
   elemCustomStruct?: SaucElemStruct
+  /**
+   * стили для применения к контейнеру выпадающего меню. Здесь можно задать фон, рамку и пр.
+   */
+  containerStyles?: Omit<CSSProperties, "top" | "right" | "width" | "position" | "overflow"> | {}
+  /**
+   * если указать здесь цвет, то он переопределит цвет *л-иконок
+   */
+  iconsColorOverwrite?: string
 }
 
 interface SaucElem0 {
@@ -40,7 +57,9 @@ export default function SaucMLMenuFCC({
                                         menuElems,
                                         iconSubmenu = (<div className="sauc-menu__achevron"><IconChevron/></div>),
                                         children,
-                                        elemCustomStruct
+                                        elemCustomStruct,
+                                        containerStyles = {},
+                                        iconsColorOverwrite
                                       }: SaucProps) {
 
   const [$valMs] = useState<number>(() => {
@@ -210,7 +229,7 @@ export default function SaucMLMenuFCC({
         $baseTopSet(btnPosTop + btnH + cfg.gapAtBtnPx)
       }
       // --- baseRight
-      let baseRight = btnPosCenterHoriz
+      let baseRight
       if (btnIsLeft) {
         baseRight = bodyWidth - btnPosLeft - $baseWidth
       } else {
@@ -236,6 +255,13 @@ export default function SaucMLMenuFCC({
 
   const elemsObjCurr = $childrenList.find(el => el.id === $currId)
 
+  function iconOver(icon: JSX.Element | undefined) {
+    if (icon && iconsColorOverwrite) {
+      return <div style={{fill: iconsColorOverwrite, stroke: iconsColorOverwrite}}>{icon}</div>
+    }
+    return icon;
+  }
+
   return (<div className="sauc-wr-menu">
 
       <div className="sauc-menu" ref={refBtn}>
@@ -244,8 +270,11 @@ export default function SaucMLMenuFCC({
       </div>
 
       {!$dropdownShow ? null : (
-        <div className="sauc-menu__base" ref={refElem}
-             style={{top: $baseTop, right: $baseRight, width: $baseWidth}}>
+        <div
+          className="sauc-menu__base"
+          ref={refElem}
+          style={{top: $baseTop, right: $baseRight, width: $baseWidth, ...containerStyles}}
+        >
           <TransitionGroup className="sauc-menu__tgroup" style={{height: ($menuHeight) + 'px'}}>
             <CSSTransition
               key={elemsObjCurr?.id}
@@ -258,7 +287,7 @@ export default function SaucMLMenuFCC({
                 {!$backElemCurrent ? null : (
                   <div key={$backElemCurrent.id} className="sauc-menu__back-item" onClick={backHandle}>
                     <div className="back-item__icon">
-                      <div className="sauc-menu__achevron"><IconChevronToLeft/></div>
+                      <div className="sauc-menu__achevron">{iconOver(<IconChevronToLeft/>)}</div>
                     </div>
                     <div className="back-item__body">{$backElemCurrent.body}</div>
                   </div>)}
@@ -268,13 +297,15 @@ export default function SaucMLMenuFCC({
                       <div key={el.id} className="sauc-dropdown__elem" onClick={menuItemClickHandle(el, el.children)}>
                         {elemCustomStruct
                           ? elemCustomStruct(
-                            el.icon || (<div className="sauc-dropdown__aicon"><IconCircle/></div>),
+                            iconOver(el.icon) || (
+                              <div className="sauc-dropdown__aicon">{iconOver(<IconCircle/>)}</div>),
                             el.body || (<div/>),
-                            _.isEmpty(el.children) ? null : iconSubmenu
+                            _.isEmpty(el.children) ? null : (iconOver(iconSubmenu) || null)
                           )
                           : (
                             <>
-                              <div className="elem__icon">{el.icon || (<IconCircle/>)}</div>
+                              <div className="elem__icon">{iconOver(el.icon) || iconOver(
+                                <IconCircle/>)}</div>
                               <div className="elem__body">{el.body}</div>
                               {
                                 _.isEmpty(el.children) ? null : (<div className="elem__icon-sub">{iconSubmenu}</div>)
