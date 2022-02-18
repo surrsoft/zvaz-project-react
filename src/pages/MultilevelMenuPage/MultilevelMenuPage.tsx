@@ -151,6 +151,7 @@ export default function MultilevelMenuPage() {
         elemCustomStruct={elemStruct}
         containerStyles={{backgroundColor: '#404040', color: '#fff', borderWidth: 0}}
         iconsColorOverwrite={"#fff"}
+        showAllBackLevels={true}
       >
         <div className="a-icon-wrap">
           <IconCaret className="a-icon"/>

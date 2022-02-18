@@ -44,6 +44,10 @@ export interface SaucProps {
    * если указать здесь цвет, то он переопределит цвет *л-иконок
    */
   iconsColorOverwrite?: string
+  /**
+   * если TRUE то пункты "назад" показываются все (всех предков), а не только один. По умолчанию FALSE
+   */
+  showAllBackLevels?: boolean
 }
 
 interface SaucElem0 {
@@ -59,7 +63,8 @@ export default function SaucMLMenuFCC({
                                         children,
                                         elemCustomStruct,
                                         containerStyles = {},
-                                        iconsColorOverwrite
+                                        iconsColorOverwrite,
+                                        showAllBackLevels = false
                                       }: SaucProps) {
 
   const [$valMs] = useState<number>(() => {
@@ -141,6 +146,7 @@ export default function SaucMLMenuFCC({
     if (show) {
       $currIdSet(SAUC_ROOT_ID)
       $backElemCurrentSet(null)
+      $allBackElems.length = 0
     }
     $dropdownShowSet(show)
     recalc()
@@ -159,10 +165,19 @@ export default function SaucMLMenuFCC({
     recalc()
   };
 
-  const backHandle = () => {
-    const lastBackElem: any = $allBackElems.splice($allBackElems.length - 1, 1)
-    $backElemCurrentSet(lastBackElem[0] || null)
-    $currIdSet(lastBackElem[0]?.id || SAUC_ROOT_ID)
+  const backHandle = (level: number) => () => {
+    let elem;
+    if (showAllBackLevels) {
+      const rr = $allBackElems.length - level + 1
+      debugger; // del+
+      const lastBackElems: any = $allBackElems.splice($allBackElems.length - rr, rr)
+      elem = lastBackElems[0];
+    } else {
+      const lastBackElems: any = $allBackElems.splice($allBackElems.length - 1, 1)
+      elem = lastBackElems[0];
+    }
+    $backElemCurrentSet(elem || null)
+    $currIdSet(elem?.id || SAUC_ROOT_ID)
     transDirectionSet(true)
     recalc()
   }
@@ -185,8 +200,6 @@ export default function SaucMLMenuFCC({
   function resizeLis() {
     const iH = window.innerHeight
     const iW = window.innerWidth
-    console.log('!!-!!-!! iH {220217231641}\n', iH) // del+
-    console.log('!!-!!-!! iW {220217231646}\n', iW) // del+
     $resizeSet(Date.now())
   }
 
@@ -197,22 +210,15 @@ export default function SaucMLMenuFCC({
   useEffect(() => {
     // ---
     const btn: any = refBtn.current
-    console.log('!!-!!-!! btn {220217223425}\n', btn) // del+
     if (btn) {
       const btnPosTop = btn.offsetTop
       const btnPosLeft = btn.offsetLeft
       const btnH = btn.offsetHeight
       const btnW = btn.offsetWidth
-      console.log('!!-!!-!! btnPosTop {220217224426}\n', btnPosTop) // del+
-      console.log('!!-!!-!! btnPosLeft {220217224432}\n', btnPosLeft) // del+
-      console.log('!!-!!-!! btnH {220217224620}\n', btnH) // del+
-      console.log('!!-!!-!! btnW {220217224625}\n', btnW) // del+
-
       // --- bodyWidth, bodyHeight
       const body = document.getElementsByTagName('body')[0]
       const bodyWidth = body.offsetWidth
       const bodyHeight = body.offsetHeight
-      console.log('!!-!!-!! bodyWidth {220217225345}\n', bodyWidth) // del+
       // ---
       const btnPosCenterHoriz = btnPosLeft + btnW / 2
       const bodyCenterHoriz = bodyWidth / 2
@@ -262,6 +268,20 @@ export default function SaucMLMenuFCC({
     return icon;
   }
 
+  function CompLocalFCC({backElem, level = 0}: { backElem: SaucMenuElem, level?: number }) {
+    if (!backElem) {
+      return null;
+    }
+    return (
+      <div key={backElem.id} className="sauc-menu__back-item" onClick={backHandle(level)}>
+        <div className="back-item__icon">
+          <div className="sauc-menu__achevron">{iconOver(<IconChevronToLeft/>)}</div>
+        </div>
+        <div className="back-item__body">{backElem.body}</div>
+      </div>
+    )
+  }
+
   return (<div className="sauc-wr-menu">
 
       <div className="sauc-menu" ref={refBtn}>
@@ -285,12 +305,14 @@ export default function SaucMLMenuFCC({
             >
               <div className="sauc-dropdown">
                 {!$backElemCurrent ? null : (
-                  <div key={$backElemCurrent.id} className="sauc-menu__back-item" onClick={backHandle}>
-                    <div className="back-item__icon">
-                      <div className="sauc-menu__achevron">{iconOver(<IconChevronToLeft/>)}</div>
+                  !showAllBackLevels ? <CompLocalFCC backElem={$backElemCurrent}/> : (
+                    <div className="sauc-dropdown__backs">
+                      {(!$backElemCurrent ? [] : [...$allBackElems, $backElemCurrent]).map((el: SaucMenuElem | null, ix: number) => {
+                        return el ? <CompLocalFCC backElem={el} level={ix}/> : null;
+                      })}
                     </div>
-                    <div className="back-item__body">{$backElemCurrent.body}</div>
-                  </div>)}
+                  )
+                )}
                 {
                   elemsObjCurr?.elems.map((el: SaucMenuElem) => {
                     return (
