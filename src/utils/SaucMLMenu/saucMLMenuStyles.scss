@@ -10,22 +10,19 @@
 
 // SYNC [220216134141]
 .sauc-menu {
-
   display: inline-flex;
   flex-direction: column;
   position: relative;
 
-
-}
-
-.sauc-menu__canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  z-index: 100;
+  .sauc-menu__canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 100;
+  }
 }
 
 .sauc-menu__btn {

@@ -113,6 +113,10 @@ export default function SaucMLMenuFCC({
     $menuHeightSet(height);
   }
 
+  function recalc() {
+    $recalcSet(!recalc)
+  }
+
   function btnMainHandle() {
     const show = !$dropdownShow;
     if (show) {
@@ -120,7 +124,10 @@ export default function SaucMLMenuFCC({
       $backElemCurrentSet(null)
     }
     $dropdownShowSet(show)
+    recalc()
   }
+
+  const [$recalc, $recalcSet] = useState(false);
 
   const menuItemClickHandle = (elCurr: SaucMenuElem, children?: SaucMenuElem[]) => () => {
     if (children && children.length > 0) {
@@ -130,6 +137,7 @@ export default function SaucMLMenuFCC({
       transDirectionSet(false)
     }
     elCurr.cb?.(elCurr)
+    recalc()
   };
 
   const backHandle = () => {
@@ -137,6 +145,7 @@ export default function SaucMLMenuFCC({
     $backElemCurrentSet(lastBackElem[0] || null)
     $currIdSet(lastBackElem[0]?.id || SAUC_ROOT_ID)
     transDirectionSet(true)
+    recalc()
   }
 
   function canvasHandle() {
@@ -145,7 +154,8 @@ export default function SaucMLMenuFCC({
 
   const cfg = {
     defaultWidth: 280,
-    marginPx: 16
+    marginPx: 16,
+    gapAtBtnPx: 6
   }
 
   const [$baseTop, $baseTopSet] = useState(0);
@@ -170,37 +180,59 @@ export default function SaucMLMenuFCC({
     const btn: any = refBtn.current
     console.log('!!-!!-!! btn {220217223425}\n', btn) // del+
     if (btn) {
-      const pTop = btn.offsetTop
-      const pLeft = btn.offsetLeft
-      const pH = btn.offsetHeight
-      const pW = btn.offsetWidth
-      console.log('!!-!!-!! pTop {220217224426}\n', pTop) // del+
-      console.log('!!-!!-!! pLeft {220217224432}\n', pLeft) // del+
-      console.log('!!-!!-!! pH {220217224620}\n', pH) // del+
-      console.log('!!-!!-!! pW {220217224625}\n', pW) // del+
-      $baseTopSet(pTop + pH + 6)
+      const btnPosTop = btn.offsetTop
+      const btnPosLeft = btn.offsetLeft
+      const btnH = btn.offsetHeight
+      const btnW = btn.offsetWidth
+      console.log('!!-!!-!! btnPosTop {220217224426}\n', btnPosTop) // del+
+      console.log('!!-!!-!! btnPosLeft {220217224432}\n', btnPosLeft) // del+
+      console.log('!!-!!-!! btnH {220217224620}\n', btnH) // del+
+      console.log('!!-!!-!! btnW {220217224625}\n', btnW) // del+
+
+      // --- bodyWidth, bodyHeight
       const body = document.getElementsByTagName('body')[0]
-      console.log('!!-!!-!! body {220217225309}\n', body) // del+
       const bodyWidth = body.offsetWidth
+      const bodyHeight = body.offsetHeight
       console.log('!!-!!-!! bodyWidth {220217225345}\n', bodyWidth) // del+
-      let baseRight = bodyWidth - pLeft - pW;
-      const rr = pLeft + pW - $baseWidth
-      debugger; // del+
-      if (rr < cfg.marginPx) {
-        baseRight = bodyWidth - cfg.marginPx - $baseWidth
+      // ---
+      const btnPosCenterHoriz = btnPosLeft + btnW / 2
+      const bodyCenterHoriz = bodyWidth / 2
+      const btnIsLeft = btnPosCenterHoriz < bodyCenterHoriz
+      // ---
+      const btnPosCenterVert = btnPosTop + btnH / 2
+      const bodyCenterVert = bodyHeight / 2
+      const btnIsTop = btnPosCenterVert > bodyCenterVert
+      // ---
+      const baseTop = btnPosTop - cfg.gapAtBtnPx - ($menuHeight || 0);
+      if (btnIsTop && baseTop > 0) {
+        $baseTopSet(baseTop)
+      } else {
+        $baseTopSet(btnPosTop + btnH + cfg.gapAtBtnPx)
+      }
+      // --- baseRight
+      let baseRight = btnPosCenterHoriz
+      if (btnIsLeft) {
+        baseRight = bodyWidth - btnPosLeft - $baseWidth
+      } else {
+        baseRight = bodyWidth - btnPosLeft - btnW;
+        const rr = btnPosLeft + btnW - $baseWidth
+        if (rr < cfg.marginPx) {
+          baseRight = bodyWidth - cfg.marginPx - $baseWidth
+        }
       }
       console.log('!!-!!-!! baseRight {220217232558}\n', baseRight) // del+
+      // ---
       if (baseRight < cfg.marginPx) {
         baseRight = cfg.marginPx
         $baseWidthSet(240)
       } else {
-        if($baseWidth < cfg.defaultWidth) {
+        if ($baseWidth < cfg.defaultWidth) {
           $baseWidthSet(cfg.defaultWidth)
         }
       }
       $baseRightSet(baseRight)
     }
-  }, [$resize]);
+  }, [$resize, $recalc, $menuHeight]);
 
   const elemsObjCurr = $childrenList.find(el => el.id === $currId)
 

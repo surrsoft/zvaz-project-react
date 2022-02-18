@@ -26,13 +26,17 @@
   }
 }
 
+.a-divider {
+  height: 10px;
+}
+
 .a-bar {
   border: 1px solid silver;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  justify-content: start;
-  padding: 4px 8px 4px 80px;
+  justify-content: end;
+  padding: 4px 80px 4px 8px;
 }
 
 .mmp-wrap {

@@ -144,6 +144,7 @@ export default function MultilevelMenuPage() {
   }
 
   return (<div>
+    <div className="a-divider"/>
     <div className="a-bar">
       <SaucMLMenuFCC menuElems={menuElemsSTA} elemCustomStruct={elemStruct}>
         <div className="a-icon-wrap">
