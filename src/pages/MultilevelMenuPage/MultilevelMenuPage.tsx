@@ -1,5 +1,5 @@
 import './multilevelMenuPageStyles.scss';
-import SaucMLMenuFCC, { SaucElemStruct, SaucMenuElem } from '../../utils/SaucMLMenu/SaucMLMenuFCC';
+import SaucMLMenuFCC from '../../utils/SaucMLMenu/SaucMLMenuFCC';
 import { ReactComponent as IconCaret } from './icons/caret.svg';
 import { ReactComponent as IconEstate } from './icons/estate.svg';
 import { ReactComponent as IconAutomobile } from './icons/automobile.svg';
@@ -11,12 +11,14 @@ import { ReactComponent as IconAutoBrandBmw } from './icons/auto-brands/bmw.svg'
 import { ReactComponent as IconOsWindows } from './icons/os/windows.svg';
 import { ReactComponent as IconOsMac } from './icons/os/mac.svg';
 import { useState } from 'react';
+import { SaucMenuElemType } from '../../utils/SaucMLMenu/types/SaucMenuElemType';
+import { SaucElemStructType } from '../../utils/SaucMLMenu/types/SaucElemStructType';
 
 export default function MultilevelMenuPage() {
 
   const [$value, $valueSet] = useState('');
 
-  function cbItem(el: SaucMenuElem) {
+  function cbItem(el: SaucMenuElemType) {
     $valueSet(el.id)
   }
 
@@ -28,7 +30,7 @@ export default function MultilevelMenuPage() {
     )
   }
 
-  const menuElemsSTA: SaucMenuElem[] = [
+  const menuElemsSTA: SaucMenuElemType[] = [
     {
       id: 'auto',
       body: (<div>Автомобили</div>),
@@ -133,7 +135,7 @@ export default function MultilevelMenuPage() {
     }
   ]
 
-  const elemStruct: SaucElemStruct = (icon, body, subIcon) => {
+  const elemStruct: SaucElemStructType = (icon, body, subIcon) => {
     return (
       <div className="a-elem">
         {icon}

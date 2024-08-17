@@ -1,62 +1,25 @@
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { RsuvTuTree } from 'rsuv-lib';
 import './saucMLMenuStyles.scss';
 import _ from 'lodash';
 import { ReactComponent as IconChevron } from './icons/chevron.svg';
 import { ReactComponent as IconChevronToLeft } from './icons/chevronToLeft.svg';
 import { ReactComponent as IconCircle } from './icons/circle.svg';
-import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { RsuvTuTree } from 'rsuv-lib';
-
-export type SaucMenuElemId = string
-
-export interface SaucMenuElem {
-  id: SaucMenuElemId
-  icon?: JSX.Element
-  body?: JSX.Element
-  children?: SaucMenuElem[]
-  cb?: (elem: SaucMenuElem) => void
-}
-
-export type SaucElemStruct = (icon: JSX.Element, body: JSX.Element, subIcon: JSX.Element | null) => JSX.Element
-
-export interface SaucProps {
-  /**
-   * базовый элемент, при нажатии на который будет появляеться выпадающее меню
-   */
-  children?: ReactNode
-  /**
-   * базовый источник данных для выпадающего меню
-   */
-  menuElems: SaucMenuElem[]
-  /**
-   * иконка для показа справа у пунктов меню имеющих подменю
-   */
-  iconSubmenu?: JSX.Element
-  /**
-   * элемент для кастомизации расположения комонентов внутри отдельного элемента меню
-   */
-  elemCustomStruct?: SaucElemStruct
-  /**
-   * стили для применения к контейнеру выпадающего меню. Здесь можно задать фон, рамку и пр.
-   */
-  containerStyles?: Omit<CSSProperties, "top" | "right" | "width" | "position" | "overflow"> | {}
-  /**
-   * если указать здесь цвет, то он переопределит цвет *л-иконок
-   */
-  iconsColorOverwrite?: string
-  /**
-   * если TRUE то пункты "назад" показываются все (всех предков), а не только один. По умолчанию FALSE
-   */
-  showAllBackLevels?: boolean
-}
+import { useEffect, useRef, useState } from 'react';
+import { SaucMenuElemIdType } from './types/SaucMenuElemIdType';
+import { SaucMenuElemType } from './types/SaucMenuElemType';
+import { SaucPropsType } from './types/SaucPropsType';
 
 interface SaucElem0 {
-  id: SaucMenuElemId
-  elems: SaucMenuElem[]
+  id: SaucMenuElemIdType
+  elems: SaucMenuElemType[]
 }
 
 const SAUC_ROOT_ID = 'root-id-is'
 
+/**
+ *
+ */
 export default function SaucMLMenuFCC({
                                         menuElems,
                                         iconSubmenu = (<div className="sauc-menu__achevron"><IconChevron/></div>),
@@ -65,7 +28,7 @@ export default function SaucMLMenuFCC({
                                         containerStyles = {},
                                         iconsColorOverwrite,
                                         showAllBackLevels = false
-                                      }: SaucProps) {
+                                      }: SaucPropsType) {
 
   const [$valMs] = useState<number>(() => {
     // SYNC [[220216134141]]
@@ -74,8 +37,8 @@ export default function SaucMLMenuFCC({
     return Number(getComputedStyle(root).getPropertyValue('--sauc-bs-timeout').replace(' ', '').replace('ms', ''))
   });
   const [$dropdownShow, $dropdownShowSet] = useState(false);
-  const [$backElemCurrent, $backElemCurrentSet] = useState<SaucMenuElem | null>(null);
-  const [$allBackElems] = useState<Array<SaucMenuElem | null>>([]);
+  const [$backElemCurrent, $backElemCurrentSet] = useState<SaucMenuElemType | null>(null);
+  const [$allBackElems] = useState<Array<SaucMenuElemType | null>>([]);
   const [$childrenList, $childrenListSet] = useState<SaucElem0[]>([]);
   const [$currId, $currIdSet] = useState(SAUC_ROOT_ID);
   const [$menuHeight, $menuHeightSet] = useState(null);
@@ -83,7 +46,7 @@ export default function SaucMLMenuFCC({
   const refElem = useRef(null)
   const refBtn = useRef(null)
 
-  function fnPopulateRecurs(arrBack: SaucElem0[], elId: SaucMenuElemId, elems?: SaucMenuElem[]) {
+  function fnPopulateRecurs(arrBack: SaucElem0[], elId: SaucMenuElemIdType, elems?: SaucMenuElemType[]) {
     if (elems && elems.length > 0) {
       arrBack.push({id: elId, elems: elems} as SaucElem0)
       elems.forEach(el => {
@@ -117,7 +80,7 @@ export default function SaucMLMenuFCC({
 
   useEffect(() => {
     const childrenList: SaucElem0[] = [{id: SAUC_ROOT_ID, elems: menuElems} as SaucElem0]
-    menuElems.forEach((el: SaucMenuElem) => {
+    menuElems.forEach((el: SaucMenuElemType) => {
       fnPopulateRecurs(childrenList, el.id, el.children)
     })
     $childrenListSet(childrenList)
@@ -154,7 +117,7 @@ export default function SaucMLMenuFCC({
 
   const [$recalc, $recalcSet] = useState(false);
 
-  const menuItemClickHandle = (elCurr: SaucMenuElem, children?: SaucMenuElem[]) => () => {
+  const menuItemClickHandle = (elCurr: SaucMenuElemType, children?: SaucMenuElemType[]) => () => {
     if (children && children.length > 0) {
       $allBackElems.push($backElemCurrent)
       $backElemCurrentSet(elCurr)
@@ -268,7 +231,7 @@ export default function SaucMLMenuFCC({
     return icon;
   }
 
-  function CompLocalFCC({backElem, level = 0}: { backElem: SaucMenuElem, level?: number }) {
+  function CompLocalFCC({backElem, level = 0}: { backElem: SaucMenuElemType, level?: number }) {
     if (!backElem) {
       return null;
     }
@@ -307,14 +270,14 @@ export default function SaucMLMenuFCC({
                 {!$backElemCurrent ? null : (
                   !showAllBackLevels ? <CompLocalFCC backElem={$backElemCurrent}/> : (
                     <div className="sauc-dropdown__backs">
-                      {(!$backElemCurrent ? [] : [...$allBackElems, $backElemCurrent]).map((el: SaucMenuElem | null, ix: number) => {
+                      {(!$backElemCurrent ? [] : [...$allBackElems, $backElemCurrent]).map((el: SaucMenuElemType | null, ix: number) => {
                         return el ? <CompLocalFCC backElem={el} level={ix}/> : null;
                       })}
                     </div>
                   )
                 )}
                 {
-                  elemsObjCurr?.elems.map((el: SaucMenuElem) => {
+                  elemsObjCurr?.elems.map((el: SaucMenuElemType) => {
                     return (
                       <div key={el.id} className="sauc-dropdown__elem" onClick={menuItemClickHandle(el, el.children)}>
                         {elemCustomStruct
